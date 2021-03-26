@@ -1,0 +1,15 @@
+#############################################
+#                                           #
+#            MESSAGES CONFIGURATION         #
+#                                           #
+#############################################
+
+reload_message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &aPlugin reloaded!"
+
+no_permission_message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cYou don't have the permission!"
+
+unknown_command: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cUnknown Command!"
+
+toggled_on_message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Your %toggled_ability% has been toggled &2On&7!"
+
+toggled_off_message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Your %toggled_ability% has been toggled &cOff&7!"

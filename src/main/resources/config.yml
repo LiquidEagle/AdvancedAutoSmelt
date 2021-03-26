@@ -1,0 +1,57 @@
+##################################################################
+#                           _        _____                _ _    #
+#      /\        /\        | |      / ____|              | | |   #
+#     /  \      /  \  _   _| |_ ___| (___  _ __ ___   ___| | |_  #
+#    / /\ \    / /\ \| | | | __/ _ \\___ \| '_ ` _ \ / _ \ | __| #
+#   / ____ \  / ____ \ |_| | || (_) |___) | | | | | |  __/ | |_  #
+#  /_/    \_\/_/    \_\__,_|\__\___/_____/|_| |_| |_|\___|_|\__| #
+#                                                                #
+# Version: 1.2.2                                                 #
+# Author: Pulsi_                                                 #
+# Thanks for using this plugin!                                  #
+#                                                                #
+##################################################################
+
+#Receive updates messages when there is a new Update available
+update_checker: true
+
+
+######################################################
+#                   < AUTOSMELT >                    #
+######################################################
+AutoSmelt:
+
+  #Disable the autosmelt in creative mode, this will avoid the possibility of dupe blocks
+  disable-creative-mode: true
+
+  #Automatically smelt Iron Ore -> Permission: advancedautosmelt.smelt.iron
+  smelt_iron: true
+  #Give or not the experience when breaking an Iron Ore Block
+  give_exp_iron: true
+  #Give to the Player some Experience for Mining Iron Ores
+  iron_exp: 1
+
+  ##Automatically smelt Gold Ore -> Permission: advancedautosmelt.smelt.gold
+  smelt_gold: true
+  #Give or not the experience when breaking an Iron Ore Block
+  give_exp_gold: true
+  #Give to the Player some Experience for Mining Gold Ores
+  gold_exp: 2
+
+  #The stone will be mined like silk touch -> advancedautosmelt.smelt.stone
+  smelt_stone: true
+
+  #This will smelt ores not smelted in the Inventory
+  smelt-ores-in-inventory: true
+
+
+######################################################
+#                   < AUTOPICKUP >                   #
+######################################################
+AutoPickup:
+
+  #Should the plugin enable this Option? -> Permission: advancedautosmelt.pickup
+  enable_autopickup: true
+
+  #The player will directly receive Experience -> Permission: advancedautosmelt.pickupexp
+  autopickup_experience: true
