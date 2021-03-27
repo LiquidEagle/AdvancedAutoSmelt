@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Consumer;
 
@@ -22,15 +21,11 @@ import java.util.Scanner;
 
 public class UpdateChecker implements Listener {
 
-    private JavaPlugin plugin;
+    private AdvancedAutoSmelt plugin;
     private int resourceId;
-
-    public UpdateChecker(JavaPlugin plugin, int resourceId) {
+    public UpdateChecker(AdvancedAutoSmelt plugin, int resourceId) {
         this.plugin = plugin;
         this.resourceId = resourceId;
-    }
-
-    public UpdateChecker() {
     }
 
     public void getVersion(final Consumer<String> consumer) {
@@ -41,50 +36,47 @@ public class UpdateChecker implements Listener {
                     consumer.accept(scanner.next());
                 }
             } catch (IOException exception) {
-                this.plugin.getServer().getConsoleSender().sendMessage("");
-                this.plugin.getServer().getConsoleSender().sendMessage(Translator.Colors("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cI can't look for updates: &f" + exception.getMessage()));
-                this.plugin.getServer().getConsoleSender().sendMessage("");
+                plugin.getServer().getConsoleSender().sendMessage("");
+                plugin.getServer().getConsoleSender().sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cI can't look for updates: &f" + exception.getMessage()));
+                plugin.getServer().getConsoleSender().sendMessage("");
             }
         });
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (AdvancedAutoSmelt.getInstance().getConfig().getBoolean("update_checker")) {
-            Player p = e.getPlayer();
-            if (p.isOp() || p.hasPermission("advancedautosmelt.notify")) {
-                new UpdateChecker(AdvancedAutoSmelt.getInstance(), 90587).getVersion(version -> {
-                    if (AdvancedAutoSmelt.getInstance().getDescription().getVersion().equalsIgnoreCase(version)) {
+        if (!plugin.getConfig().getBoolean("update_checker")) return;
+        Player p = e.getPlayer();
+        if (p.isOp() || p.hasPermission("advancedautosmelt.notify")) {
+            new UpdateChecker(plugin, 90587).getVersion(version -> {
+                if (plugin.getDescription().getVersion().equalsIgnoreCase(version)) {
 
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            p.sendMessage("");
+                            p.sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2There are no updates available!"));
+                            p.sendMessage("");
+                        }
+                    }.runTaskLater(plugin, 60);
+                } else {
 
-                                p.sendMessage("");
-                                p.sendMessage(Translator.Colors("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2There are no updates available!"));
-                                p.sendMessage("");
+                    TextComponent update = new TextComponent(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2There is a new update available!"));
+                    update.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/advancedautosmelt-smelt-ores-autopickup-items-and-exp.90587/"));
+                    update.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click here to download it!").color(ChatColor.LIGHT_PURPLE).create()));
 
-                            }
-                        }.runTaskLater(AdvancedAutoSmelt.getInstance(), 60);
-                    } else {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
 
-                        TextComponent update = new TextComponent(Translator.Colors("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2There is a new update available!"));
-                        update.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/advancedautosmelt-smelt-ores-autopickup-items-and-exp.90587/"));
-                        update.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click here to download it!").color(ChatColor.LIGHT_PURPLE).create()));
+                            p.sendMessage("");
+                            p.spigot().sendMessage(update);
+                            p.sendMessage("");
 
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-
-                                p.sendMessage("");
-                                p.spigot().sendMessage(update);
-                                p.sendMessage("");
-
-                            }
-                        }.runTaskLater(AdvancedAutoSmelt.getInstance(), 60);
-                    }
-                });
-            }
+                        }
+                    }.runTaskLater(plugin, 60);
+                }
+            });
         }
     }
 }
