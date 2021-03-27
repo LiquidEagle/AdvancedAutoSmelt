@@ -35,13 +35,13 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
         ConfigManager messages = new ConfigManager(this, "messages.yml");
         this.version = this.getDescription().getVersion();
-        this.noPerm = messages.getConfig().getString("no_permission_message");
-        this.reload = messages.getConfig().getString("reload_message");
-        this.unknownCommand = messages.getConfig().getString("unknown_command");
-        this.toggleOn = messages.getConfig().getString("toggled_on_message");
-        this.toggleOff = messages.getConfig().getString("toggled_off_message");
-        this.goldExp = this.getConfig().getInt("AutoSmelt.gold_exp");
-        this.ironExp = this.getConfig().getInt("AutoSmelt.iron_exp");
+        this.noPerm = messages.getConfig().getString("no_permission-message");
+        this.reload = messages.getConfig().getString("reload-message");
+        this.unknownCommand = messages.getConfig().getString("unknown-command");
+        this.toggleOn = messages.getConfig().getString("toggled-on-message");
+        this.toggleOff = messages.getConfig().getString("toggled-off-message");
+        this.goldExp = this.getConfig().getInt("AutoSmelt.gold-exp");
+        this.ironExp = this.getConfig().getInt("AutoSmelt.iron-exp");
 
 
         getServer().getPluginManager().registerEvents(new AutoPickup(this), this);

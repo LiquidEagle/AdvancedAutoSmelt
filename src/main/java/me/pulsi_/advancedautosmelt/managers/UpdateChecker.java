@@ -45,7 +45,7 @@ public class UpdateChecker implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (!plugin.getConfig().getBoolean("update_checker")) return;
+        if (!plugin.getConfig().getBoolean("update-checker")) return;
         Player p = e.getPlayer();
         if (p.isOp() || p.hasPermission("advancedautosmelt.notify")) {
             new UpdateChecker(plugin, 90587).getVersion(version -> {

@@ -34,15 +34,11 @@ public class AutoPickupExpCustom implements Listener {
 
         Player p = e.getPlayer();
 
-        if (!(plugin.getConfig().getBoolean("AutoSmelt.give_exp_gold"))) return;
+        if (!(plugin.getConfig().getBoolean("AutoSmelt.give-exp-gold"))) return;
         if (plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode")) {
-            System.out.println("Creative disabled boolean");
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-            System.out.println("Creative disabled equals");
-            if (plugin.getConfig().getBoolean("AutoPickup.autopickup_experience")) {
-                System.out.println("AutoPickup");
+            if (plugin.getConfig().getBoolean("AutoPickup.autopickup-experience")) {
 
-                System.out.println(autoPickupOFF);
                 if (!autoPickupOFF.contains(p.getName())) {
                     p.giveExp(goldExp);
                 } else {
@@ -55,7 +51,7 @@ public class AutoPickupExpCustom implements Listener {
 
         } else {
 
-            if (plugin.getConfig().getBoolean("AutoPickup.autopickup_experience")) {
+            if (plugin.getConfig().getBoolean("AutoPickup.autopickup-experience")) {
 
                 if (!autoPickupOFF.contains(p.getName())) {
                     p.giveExp(goldExp);
@@ -70,10 +66,12 @@ public class AutoPickupExpCustom implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void pickupIronExp(BlockBreakEvent e) {
+
         Player p = e.getPlayer();
-        if (!(plugin.getConfig().getBoolean("AutoSmelt.give_exp_iron"))) return;
+
+        if (!(plugin.getConfig().getBoolean("AutoSmelt.give-exp-iron"))) return;
         if (plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode")) {
-            if (plugin.getConfig().getBoolean("AutoPickup.autopickup_experience")) {
+            if (plugin.getConfig().getBoolean("AutoPickup.autopickup-experience")) {
 
                 if (!autoPickupOFF.contains(p.getName())) {
                     if (p.getGameMode().equals(GameMode.CREATIVE)) return;
@@ -90,7 +88,7 @@ public class AutoPickupExpCustom implements Listener {
             }
         } else {
 
-            if (plugin.getConfig().getBoolean("AutoPickup.autopickup_experience")) {
+            if (plugin.getConfig().getBoolean("AutoPickup.autopickup-experience")) {
 
                 if (!autoPickupOFF.contains(p.getName())) {
                     if (!(e.getBlock().getType() == Material.IRON_ORE)) return;

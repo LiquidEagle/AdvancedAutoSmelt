@@ -27,7 +27,7 @@ public class AutoPickupExp implements Listener {
         if (plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode")) {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
 
-            if (!(plugin.getConfig().getBoolean("AutoPickup.autopickup_experience"))) return;
+            if (!(plugin.getConfig().getBoolean("AutoPickup.autopickup-experience"))) return;
             if (autoPickupOFF.contains(p.getName())) return;
             int exp = e.getExpToDrop();
             e.setExpToDrop(0);
@@ -35,7 +35,7 @@ public class AutoPickupExp implements Listener {
 
         } else {
 
-            if (!(plugin.getConfig().getBoolean("AutoPickup.autopickup_experience"))) return;
+            if (!(plugin.getConfig().getBoolean("AutoPickup.autopickup-experience"))) return;
             if (autoPickupOFF.contains(p.getName())) return;
             int exp = e.getExpToDrop();
             e.setExpToDrop(0);

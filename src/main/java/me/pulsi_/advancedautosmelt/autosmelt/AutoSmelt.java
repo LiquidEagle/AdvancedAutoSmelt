@@ -61,8 +61,8 @@ public class AutoSmelt implements Listener {
         if (!Commands.autoSmeltOFF.contains(p.getName())) {
             if (e.getBlock().getType() == block) {
                 e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), i);
-                e.getBlock().setType(air);
             }
+            e.getBlock().setType(air);
         }
     }
 
@@ -86,15 +86,15 @@ public class AutoSmelt implements Listener {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
 
         }
-        if (plugin.getConfig().getBoolean("AutoSmelt.smelt_gold")) {
+        if (plugin.getConfig().getBoolean("AutoSmelt.smelt-gold")) {
             if (!(p.hasPermission("advancedautosmelt.smelt.gold"))) return;
-            if (plugin.getConfig().getBoolean("AutoPickup.enable_autopickup")) {
+            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
 
                 smelt(p, Material.GOLD_ORE, goldIngot, goldOre, Material.AIR, e);
 
             } else {
 
-                if (plugin.getConfig().getBoolean("AutoSmelt.smelt_gold")) {
+                if (plugin.getConfig().getBoolean("AutoSmelt.smelt-gold")) {
 
                     smeltNoPickup(p, Material.GOLD_ORE, Material.AIR, goldIngot, e);
                 }
@@ -102,7 +102,7 @@ public class AutoSmelt implements Listener {
 
         } else {
 
-            if (plugin.getConfig().getBoolean("AutoPickup.enable_autopickup")) {
+            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
 
                 pickNoSmelt(p, Material.GOLD_ORE, Material.AIR, goldOre, e);
             }
@@ -118,15 +118,15 @@ public class AutoSmelt implements Listener {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
 
         }
-        if (plugin.getConfig().getBoolean("AutoSmelt.smelt_iron")) {
+        if (plugin.getConfig().getBoolean("AutoSmelt.smelt-iron")) {
             if (!(p.hasPermission("advancedautosmelt.smelt.iron"))) return;
-            if (plugin.getConfig().getBoolean("AutoPickup.enable_autopickup")) {
+            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
 
                 smelt(p, Material.IRON_ORE, ironIngot, ironOre, Material.AIR, e);
 
             } else {
 
-                if (plugin.getConfig().getBoolean("AutoSmelt.smelt_iron")) {
+                if (plugin.getConfig().getBoolean("AutoSmelt.smelt-iron")) {
 
                     smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
                 }
@@ -134,7 +134,7 @@ public class AutoSmelt implements Listener {
 
         } else {
 
-            if (plugin.getConfig().getBoolean("AutoPickup.enable_autopickup")) {
+            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
 
                 pickNoSmelt(p, Material.IRON_ORE, Material.AIR, ironOre, e);
             }
@@ -150,15 +150,15 @@ public class AutoSmelt implements Listener {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
 
         }
-        if (plugin.getConfig().getBoolean("AutoSmelt.smelt_stone")) {
+        if (plugin.getConfig().getBoolean("AutoSmelt.smelt-stone")) {
             if (!(p.hasPermission("advancedautosmelt.smelt.stone"))) return;
-            if (plugin.getConfig().getBoolean("AutoPickup.enable_autopickup")) {
+            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
 
                 smelt(p, Material.STONE, stone, cobblestone, Material.AIR, e);
 
             } else {
 
-                if (plugin.getConfig().getBoolean("AutoSmelt.smelt_stone")) {
+                if (plugin.getConfig().getBoolean("AutoSmelt.smelt-stone")) {
 
                     smeltNoPickup(p, Material.STONE, Material.AIR, stone, e);
                 }
@@ -166,7 +166,7 @@ public class AutoSmelt implements Listener {
 
         } else {
 
-            if (plugin.getConfig().getBoolean("AutoPickup.enable_autopickup")) {
+            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
 
                 pickNoSmelt(p, Material.STONE, Material.AIR, cobblestone, e);
             }

@@ -15,6 +15,7 @@ import java.util.Set;
 public class AutoPickup implements Listener {
 
     private AdvancedAutoSmelt plugin;
+
     public AutoPickup(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
     }
@@ -31,29 +32,56 @@ public class AutoPickup implements Listener {
 
             if (autoPickupOFF.contains(p.getName())) return;
             if (!p.hasPermission("advancedautosmelt.autopickup")) return;
-            if (!plugin.getConfig().getBoolean("AutoPickup.enable_autopickup")) return;
+            if (!plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) return;
             if (e.getBlock().getType().equals(Material.IRON_ORE) ||
                     e.getBlock().getType().equals(Material.GOLD_ORE) ||
                     e.getBlock().getType().equals(Material.STONE)) return;
-            for (ItemStack drops : e.getBlock().getDrops()) {
-                if (!p.getInventory().addItem(drops).isEmpty()) {
-                    p.getWorld().dropItem(p.getLocation(), drops);
+
+            if (plugin.getConfig().getBoolean("AutoPickup.use-blacklist")) {
+                for (String blacklist : plugin.getConfig().getStringList("AutoPickup.blacklist"))
+                if (blacklist.contains(e.getBlock().getType().toString())) return;
+
+                for (ItemStack drops : e.getBlock().getDrops()) {
+                    if (!p.getInventory().addItem(drops).isEmpty()) {
+                        p.getWorld().dropItem(p.getLocation(), drops);
+                    }
+                    e.getBlock().setType(Material.AIR);
                 }
-                e.getBlock().setType(Material.AIR);
+            } else {
+                for (ItemStack drops : e.getBlock().getDrops()) {
+                    if (!p.getInventory().addItem(drops).isEmpty()) {
+                        p.getWorld().dropItem(p.getLocation(), drops);
+                    }
+                    e.getBlock().setType(Material.AIR);
+                }
             }
+
         } else {
 
             if (autoPickupOFF.contains(p.getName())) return;
             if (!p.hasPermission("advancedautosmelt.autopickup")) return;
-            if (!plugin.getConfig().getBoolean("AutoPickup.enable_autopickup")) return;
+            if (!plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) return;
             if (e.getBlock().getType().equals(Material.IRON_ORE) ||
                     e.getBlock().getType().equals(Material.GOLD_ORE) ||
                     e.getBlock().getType().equals(Material.STONE)) return;
-            for (ItemStack drops : e.getBlock().getDrops()) {
-                if (!p.getInventory().addItem(drops).isEmpty()) {
-                    p.getWorld().dropItem(p.getLocation(), drops);
+
+            if (plugin.getConfig().getBoolean("AutoPickup.use-blacklist")) {
+                for (String blacklist : plugin.getConfig().getStringList("AutoPickup.blacklist"))
+                    if (blacklist.contains(e.getBlock().getType().toString())) return;
+
+                for (ItemStack drops : e.getBlock().getDrops()) {
+                    if (!p.getInventory().addItem(drops).isEmpty()) {
+                        p.getWorld().dropItem(p.getLocation(), drops);
+                        e.getBlock().setType(Material.AIR);
+                    }
                 }
-                e.getBlock().setType(Material.AIR);
+            } else {
+                for (ItemStack drops : e.getBlock().getDrops()) {
+                    if (!p.getInventory().addItem(drops).isEmpty()) {
+                        p.getWorld().dropItem(p.getLocation(), drops);
+                    }
+                    e.getBlock().setType(Material.AIR);
+                }
             }
         }
     }
