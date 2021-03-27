@@ -14,9 +14,17 @@ import java.util.Set;
 
 public class AutoSmelt implements Listener {
 
-    private AdvancedAutoSmelt plugin;
+    private boolean isSmeltGold;
+    private boolean isSmeltIron;
+    private boolean isSmeltStone;
+    private boolean isAutoSmeltDCM;
+    private boolean isAutoPickupEnabled;
     public AutoSmelt(AdvancedAutoSmelt plugin) {
-        this.plugin = plugin;
+        this.isAutoSmeltDCM = plugin.isAutoSmeltDCM();
+        this.isAutoPickupEnabled = plugin.isAutoPickupEnabled();
+        this.isSmeltGold = plugin.isSmeltGold();
+        this.isSmeltIron = plugin.isSmeltIron();
+        this.isSmeltStone = plugin.isSmeltStone();
     }
 
     private ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT);
@@ -25,6 +33,7 @@ public class AutoSmelt implements Listener {
     private ItemStack ironOre = new ItemStack(Material.IRON_ORE);
     private ItemStack stone = new ItemStack(Material.STONE);
     private ItemStack cobblestone = new ItemStack(Material.COBBLESTONE);
+
     private Set<String> autoPickupOFF = Commands.autoPickupOFF;
     private Set<String> autoSmeltOFF = Commands.autoPickupOFF;
 
@@ -82,28 +91,17 @@ public class AutoSmelt implements Listener {
 
         Player p = e.getPlayer();
 
-        if (plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode")) {
-            if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-
-        }
-        if (plugin.getConfig().getBoolean("AutoSmelt.smelt-gold")) {
+        if (isAutoSmeltDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }
+        if (isSmeltGold) {
             if (!(p.hasPermission("advancedautosmelt.smelt.gold"))) return;
-            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
-
+            if (isAutoPickupEnabled) {
                 smelt(p, Material.GOLD_ORE, goldIngot, goldOre, Material.AIR, e);
-
             } else {
-
-                if (plugin.getConfig().getBoolean("AutoSmelt.smelt-gold")) {
-
-                    smeltNoPickup(p, Material.GOLD_ORE, Material.AIR, goldIngot, e);
-                }
+                if (!isSmeltGold) return;
+                smeltNoPickup(p, Material.GOLD_ORE, Material.AIR, goldIngot, e);
             }
-
         } else {
-
-            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
-
+            if (isAutoPickupEnabled) {
                 pickNoSmelt(p, Material.GOLD_ORE, Material.AIR, goldOre, e);
             }
         }
@@ -114,28 +112,17 @@ public class AutoSmelt implements Listener {
 
         Player p = e.getPlayer();
 
-        if (plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode")) {
-            if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-
-        }
-        if (plugin.getConfig().getBoolean("AutoSmelt.smelt-iron")) {
+        if (isAutoSmeltDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }
+        if (isSmeltIron) {
             if (!(p.hasPermission("advancedautosmelt.smelt.iron"))) return;
-            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
-
+            if (isAutoPickupEnabled) {
                 smelt(p, Material.IRON_ORE, ironIngot, ironOre, Material.AIR, e);
-
             } else {
-
-                if (plugin.getConfig().getBoolean("AutoSmelt.smelt-iron")) {
-
-                    smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
-                }
+                if (!isSmeltIron) return;
+                smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
             }
-
         } else {
-
-            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
-
+            if (isAutoPickupEnabled) {
                 pickNoSmelt(p, Material.IRON_ORE, Material.AIR, ironOre, e);
             }
         }
@@ -146,28 +133,17 @@ public class AutoSmelt implements Listener {
 
         Player p = e.getPlayer();
 
-        if (plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode")) {
-            if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-
-        }
-        if (plugin.getConfig().getBoolean("AutoSmelt.smelt-stone")) {
+        if (isAutoSmeltDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }
+        if (isSmeltStone) {
             if (!(p.hasPermission("advancedautosmelt.smelt.stone"))) return;
-            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
-
+            if (isAutoPickupEnabled) {
                 smelt(p, Material.STONE, stone, cobblestone, Material.AIR, e);
-
             } else {
-
-                if (plugin.getConfig().getBoolean("AutoSmelt.smelt-stone")) {
-
-                    smeltNoPickup(p, Material.STONE, Material.AIR, stone, e);
-                }
+                if (!isSmeltStone) return;
+                smeltNoPickup(p, Material.STONE, Material.AIR, stone, e);
             }
-
         } else {
-
-            if (plugin.getConfig().getBoolean("AutoPickup.enable-autopickup")) {
-
+            if (isAutoPickupEnabled) {
                 pickNoSmelt(p, Material.STONE, Material.AIR, cobblestone, e);
             }
         }

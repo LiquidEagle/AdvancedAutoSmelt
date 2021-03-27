@@ -10,13 +10,10 @@ import org.bukkit.inventory.ItemStack;
 
 public class BlockBreakSmeltInv implements Listener {
 
-    private AdvancedAutoSmelt plugin;
-
+    private boolean isSmeltInv;
     public BlockBreakSmeltInv(AdvancedAutoSmelt plugin) {
-        this.plugin = plugin;
+        this.isSmeltInv = plugin.isSmeltInv();
     }
-
-
 
     public static int getAmount(Player arg0, ItemStack arg1) {
         if (arg1 == null)
@@ -33,7 +30,7 @@ public class BlockBreakSmeltInv implements Listener {
 
     @EventHandler
     public void smeltIronInv(BlockBreakEvent e) {
-        if (!(plugin.getConfig().getBoolean("AutoSmelt.smelt-ores-in-inventory"))) return;
+        if (!isSmeltInv) return;
         Player p = e.getPlayer();
         if (!(p.hasPermission("advancedautosmelt.smeltinv"))) return;
 
@@ -50,7 +47,7 @@ public class BlockBreakSmeltInv implements Listener {
 
     @EventHandler
     public void smeltGoldInv(BlockBreakEvent e) {
-        if (!(plugin.getConfig().getBoolean("AutoSmelt.smelt-ores-in-inventory"))) return;
+        if (!isSmeltInv) return;
         Player p = e.getPlayer();
         if (!(p.hasPermission("advancedautosmelt.smeltinv"))) return;
 

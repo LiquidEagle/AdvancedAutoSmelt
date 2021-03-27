@@ -6,7 +6,7 @@
 
 reload-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &aPlugin reloaded!"
 
-no_permission-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cYou don't have the permission!"
+no-permission-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cYou don't have the permission!"
 
 unknown-command: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cUnknown Command!"
 

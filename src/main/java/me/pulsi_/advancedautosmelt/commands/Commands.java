@@ -56,19 +56,19 @@ public class Commands implements CommandExecutor {
                 s.sendMessage(Translator.c(""));
                 s.sendMessage(Translator.c("&d   &lAdvanced&a&lAuto&c&lSmelt &aList"));
                 s.sendMessage(Translator.c(""));
-                s.sendMessage(Translator.c("&8- &7AutoSmelt Iron: " + plugin.getConfig().getBoolean("AutoSmelt.smelt_iron"))
+                s.sendMessage(Translator.c("&8- &7AutoSmelt Iron: " + plugin.getConfig().getBoolean("AutoSmelt.smelt-iron"))
                         .replace("true", Translator.c("&2Enabled"))
                         .replace("false", Translator.c("&cDisabled")));
-                s.sendMessage(Translator.c("&8- &7AutoSmelt Gold: " + plugin.getConfig().getBoolean("AutoSmelt.smelt_gold"))
+                s.sendMessage(Translator.c("&8- &7AutoSmelt Gold: " + plugin.getConfig().getBoolean("AutoSmelt.smelt-gold"))
                         .replace("true", Translator.c("&2Enabled"))
                         .replace("false", Translator.c("&cDisabled")));
-                s.sendMessage(Translator.c("&8- &7AutoSmelt Stone: " + plugin.getConfig().getBoolean("AutoSmelt.smelt_stone"))
+                s.sendMessage(Translator.c("&8- &7AutoSmelt Stone: " + plugin.getConfig().getBoolean("AutoSmelt.smelt-stone"))
                         .replace("true", Translator.c("&2Enabled"))
                         .replace("false", Translator.c("&cDisabled")));
-                s.sendMessage(Translator.c("&8- &7AutoPickup: " + plugin.getConfig().getBoolean("AutoPickup.enable_autopickup"))
+                s.sendMessage(Translator.c("&8- &7AutoPickup: " + plugin.getConfig().getBoolean("AutoPickup.enable-autopickup"))
                         .replace("true", Translator.c("&2Enabled"))
                         .replace("false", Translator.c("&cDisabled")));
-                s.sendMessage(Translator.c("&8- &7AutoPickupExp " + plugin.getConfig().getBoolean("AutoPickup.autopickup_experience"))
+                s.sendMessage(Translator.c("&8- &7AutoPickupExp " + plugin.getConfig().getBoolean("AutoPickup.autopickup-experience"))
                         .replace("true", Translator.c("&2Enabled"))
                         .replace("false", Translator.c("&cDisabled")));
                 s.sendMessage(Translator.c(""));

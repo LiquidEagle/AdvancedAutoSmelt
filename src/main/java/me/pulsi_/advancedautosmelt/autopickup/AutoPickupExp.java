@@ -14,9 +14,12 @@ public class AutoPickupExp implements Listener {
 
     Set<String> autoPickupOFF = Commands.autoPickupOFF;
 
-    private AdvancedAutoSmelt plugin;
+    private boolean isAutoSmeltDCM;
+    private boolean isAutoPickupExp;
+
     public AutoPickupExp(AdvancedAutoSmelt plugin) {
-        this.plugin = plugin;
+        this.isAutoSmeltDCM = plugin.isAutoSmeltDCM();
+        this.isAutoPickupExp = plugin.isAutoPickupExp();
     }
 
     @EventHandler
@@ -24,22 +27,11 @@ public class AutoPickupExp implements Listener {
 
         Player p = e.getPlayer();
 
-        if (plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode")) {
-            if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-
-            if (!(plugin.getConfig().getBoolean("AutoPickup.autopickup-experience"))) return;
-            if (autoPickupOFF.contains(p.getName())) return;
-            int exp = e.getExpToDrop();
-            e.setExpToDrop(0);
-            p.giveExp(exp);
-
-        } else {
-
-            if (!(plugin.getConfig().getBoolean("AutoPickup.autopickup-experience"))) return;
-            if (autoPickupOFF.contains(p.getName())) return;
-            int exp = e.getExpToDrop();
-            e.setExpToDrop(0);
-            p.giveExp(exp);
-        }
+        if (isAutoSmeltDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }
+        if (!isAutoPickupExp) return;
+        if (autoPickupOFF.contains(p.getName())) return;
+        int exp = e.getExpToDrop();
+        e.setExpToDrop(0);
+        p.giveExp(exp);
     }
 }
