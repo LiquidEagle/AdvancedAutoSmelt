@@ -6,7 +6,7 @@
 #   / ____ \  / ____ \ |_| | || (_) |___) | | | | | |  __/ | |_  #
 #  /_/    \_\/_/    \_\__,_|\__\___/_____/|_| |_| |_|\___|_|\__| #
 #                                                                #
-# Version: 2.4.3                                                 #
+# Version: 2.5.3                                                 #
 # Author: Pulsi_                                                 #
 # Thanks for using this plugin!                                  #
 #                                                                #
@@ -61,3 +61,25 @@ AutoPickup:
   blacklist:
     - SAND
     - DIRT
+
+
+######################################################
+#                    < FORTUNE >                     #
+######################################################
+
+Fortune: #Please, if you run into some problems like Fortune section not save parts, this is not a bug! Reload the server for make these saves work!
+
+  #Enable the fortune feature, this will give extra blocks based on your fortune level -> Permission: advancedautosmelt.fortune
+  enable-fortune-support: true
+
+  #Use the block whitelist
+  use-whitelist: true
+  #This will work with blocks too
+  whitelist:
+    - IRON_ORE
+    - COAL_ORE
+    - LAPIS_ORE
+    - DIAMOND_ORE
+    - EMERALD_ORE
+    - GOLD_ORE
+    - REDSTONE_ORE

@@ -18,7 +18,7 @@ public class AutoPickupExp implements Listener {
     private boolean isAutoPickupExp;
 
     public AutoPickupExp(AdvancedAutoSmelt plugin) {
-        this.isAutoSmeltDCM = plugin.isAutoSmeltDCM();
+        this.isAutoSmeltDCM = plugin.isDCM();
         this.isAutoPickupExp = plugin.isAutoPickupExp();
     }
 

@@ -5,6 +5,7 @@ import me.pulsi_.advancedautosmelt.autopickup.AutoPickupExpCustom;
 import me.pulsi_.advancedautosmelt.autosmelt.AutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
 import me.pulsi_.advancedautosmelt.events.BlockBreakSmeltInv;
+import me.pulsi_.advancedautosmelt.events.FortuneSupport;
 import me.pulsi_.advancedautosmelt.managers.ConfigManager;
 import me.pulsi_.advancedautosmelt.managers.Translator;
 import me.pulsi_.advancedautosmelt.managers.UpdateChecker;
@@ -18,28 +19,34 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     ConfigManager messagesConfig;
 
-    private String version;
-    private String noPerm;
-    private String reload;
-    private String unknownCommand;
-    private String toggleOn;
-    private String toggleOff;
+    public void loadValues() {
 
-    private List<String> blackList;
+        ConfigManager messages = new ConfigManager(this, "messages.yml");
 
-    private boolean isAutoSmeltDCM;
-    private boolean isAutoPickupEnabled;
-    private boolean isAutoPickupBlacklist;
-    private boolean isSmeltInv;
-    private boolean isSmeltGold;
-    private boolean isSmeltIron;
-    private boolean isSmeltStone;
-    private boolean isAutoPickupExp;
-    private boolean isGivingGoldExp;
-    private boolean isGivingIronExp;
+        this.version = plugin.getDescription().getVersion();
+        this.noPerm = messages.getConfig().getString("no-permission-message");
+        this.reload = messages.getConfig().getString("reload-message");
+        this.unknownCommand = messages.getConfig().getString("unknown-command");
+        this.toggleOn = messages.getConfig().getString("toggled-on-message");
+        this.toggleOff = messages.getConfig().getString("toggled-off-message");
+        this.goldExp = plugin.getConfig().getInt("AutoSmelt.gold-exp");
+        this.ironExp = plugin.getConfig().getInt("AutoSmelt.iron-exp");
+        this.isDCM = plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode");
+        this.isAutoPickupEnabled = plugin.getConfig().getBoolean("AutoPickup.enable-autopickup");
+        this.isAutoPickupBlacklist = plugin.getConfig().getBoolean("AutoPickup.use-blacklist");
+        this.blackList = plugin.getConfig().getStringList("AutoPickup.blacklist");
+        this.isSmeltInv = plugin.getConfig().getBoolean("AutoSmelt.smelt-ores-in-inventory");
+        this.isSmeltGold = plugin.getConfig().getBoolean("AutoSmelt.smelt-gold");
+        this.isSmeltIron = plugin.getConfig().getBoolean("AutoSmelt.smelt-iron");
+        this.isSmeltStone = plugin.getConfig().getBoolean("AutoSmelt.smelt-stone");
+        this.isAutoPickupExp = plugin.getConfig().getBoolean("AutoPickup.autopickup-experience");
+        this.isGivingGoldExp = plugin.getConfig().getBoolean("AutoSmelt.give-exp-gold");
+        this.isGivingIronExp = plugin.getConfig().getBoolean("AutoSmelt.give-exp-iron");
+        this.isEFS = plugin.getConfig().getBoolean("Fortune.enable-fortune-support");
+        this.useWhitelist = plugin.getConfig().getBoolean("Fortune.use-whitelist");
+        this.whiteList = plugin.getConfig().getStringList("Fortune.whitelist");
 
-    private int goldExp;
-    private int ironExp;
+    }
 
     @Override
     public void onEnable() {
@@ -50,28 +57,8 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         getCommand("advancedautosmelt").setExecutor(new Commands(this));
         getCommand("advancedautosmelt").setTabCompleter(new TabCompletion());
 
-        ConfigManager messages = new ConfigManager(this, "messages.yml");
-        this.version = this.getDescription().getVersion();
-        this.noPerm = messages.getConfig().getString("no-permission-message");
-        this.reload = messages.getConfig().getString("reload-message");
-        this.unknownCommand = messages.getConfig().getString("unknown-command");
-        this.toggleOn = messages.getConfig().getString("toggled-on-message");
-        this.toggleOff = messages.getConfig().getString("toggled-off-message");
-        this.goldExp = this.getConfig().getInt("AutoSmelt.gold-exp");
-        this.ironExp = this.getConfig().getInt("AutoSmelt.iron-exp");
-        this.isAutoSmeltDCM = this.getConfig().getBoolean("AutoSmelt.disable-creative-mode");
-        this.isAutoPickupEnabled = this.getConfig().getBoolean("AutoPickup.enable-autopickup");
-        this.isAutoPickupBlacklist = this.getConfig().getBoolean("AutoPickup.use-blacklist");
-        this.blackList = this.getConfig().getStringList("AutoPickup.blacklist");
-        this.isSmeltInv = this.getConfig().getBoolean("AutoSmelt.smelt-ores-in-inventory");
-        this.isSmeltGold = this.getConfig().getBoolean("AutoSmelt.smelt-gold");
-        this.isSmeltIron = this.getConfig().getBoolean("AutoSmelt.smelt-iron");
-        this.isSmeltStone = this.getConfig().getBoolean("AutoSmelt.smelt-stone");
-        this.isAutoPickupExp = this.getConfig().getBoolean("AutoPickup.autopickup-experience");
-        this.isGivingGoldExp = this.getConfig().getBoolean("AutoSmelt.give-exp-gold");
-        this.isGivingIronExp = this.getConfig().getBoolean("AutoSmelt.give-exp-iron");
-
         getServer().getPluginManager().registerEvents(new AutoPickup(this), this);
+        getServer().getPluginManager().registerEvents(new FortuneSupport(this), this);
         getServer().getPluginManager().registerEvents(new AutoPickupExp(this), this);
         getServer().getPluginManager().registerEvents(new AutoSmelt(this), this);
         getServer().getPluginManager().registerEvents(new BlockBreakSmeltInv(this), this);
@@ -86,8 +73,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(Translator.c("&d  / ____ \\  &a/ ____ \\ |_| | || (_) |&c___) | | | | | |  __/ | |_ "));
         getServer().getConsoleSender().sendMessage(Translator.c("&d /_/    \\_\\&a/_/    \\_\\__,_|\\__\\___/&c_____/|_| |_| |_|\\___|_|\\__|"));
         getServer().getConsoleSender().sendMessage(Translator.c(""));
-        getServer().getConsoleSender().sendMessage(Translator.c("&2Enabling Plugin! &bv%v%")
-                .replace("%v%", this.getDescription().getVersion()));
+        getServer().getConsoleSender().sendMessage(Translator.c("&2Enabling Plugin! &bv%v%").replace("%v%", version));
         getServer().getConsoleSender().sendMessage(Translator.c("&fAuthor: Pulsi_"));
         getServer().getConsoleSender().sendMessage(Translator.c(""));
     }
@@ -108,7 +94,11 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     }
 
-    public String getNoPerm() {
+    public ConfigManager getMessagesConfig() {
+        return messagesConfig;
+    }
+
+    public static String getNoPerm() {
         return noPerm;
     }
 
@@ -140,26 +130,59 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         return ironExp;
     }
 
-    public boolean isAutoSmeltDCM() { return isAutoSmeltDCM; }
+    public boolean isDCM() {
+        return isDCM;
+    }
 
-    public boolean isAutoPickupEnabled() { return isAutoPickupEnabled; }
+    public boolean isAutoPickupEnabled() {
+        return isAutoPickupEnabled;
+    }
 
-    public boolean isAutoPickupBlacklist() { return isAutoPickupBlacklist; }
+    public boolean isAutoPickupBlacklist() {
+        return isAutoPickupBlacklist;
+    }
 
-    public List<String> getBlackList() { return blackList; }
+    public List<String> getBlackList() {
+        return blackList;
+    }
 
-    public boolean isSmeltInv() { return isSmeltInv; }
+    public boolean isSmeltInv() {
+        return isSmeltInv;
+    }
 
-    public boolean isSmeltGold() { return isSmeltGold; }
+    public boolean isSmeltGold() {
+        return isSmeltGold;
+    }
 
-    public boolean isSmeltIron() { return isSmeltIron; }
+    public boolean isSmeltIron() {
+        return isSmeltIron;
+    }
 
-    public boolean isSmeltStone() { return isSmeltStone; }
+    public boolean isSmeltStone() {
+        return isSmeltStone;
+    }
 
-    public boolean isAutoPickupExp() { return isAutoPickupExp; }
+    public boolean isAutoPickupExp() {
+        return isAutoPickupExp;
+    }
 
-    public boolean isGivingGoldExp() { return isGivingGoldExp; }
+    public boolean isGivingGoldExp() {
+        return isGivingGoldExp;
+    }
 
-    public boolean isGivingIronExp() { return isGivingIronExp; }
+    public boolean isGivingIronExp() {
+        return isGivingIronExp;
+    }
 
+    public boolean isEFS() {
+        return isEFS;
+    }
+
+    public boolean useWhitelist() {
+        return useWhitelist;
+    }
+
+    public List<String> getWhiteList() {
+        return whiteList;
+    }
 }

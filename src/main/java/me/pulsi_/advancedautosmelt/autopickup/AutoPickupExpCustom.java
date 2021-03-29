@@ -24,7 +24,7 @@ public class AutoPickupExpCustom implements Listener {
     private boolean isAutoSmeltDCM;
 
     public AutoPickupExpCustom(AdvancedAutoSmelt plugin) {
-        this.isAutoSmeltDCM = plugin.isAutoSmeltDCM();
+        this.isAutoSmeltDCM = plugin.isDCM();
         this.goldExp = plugin.getGoldExp();
         this.ironExp = plugin.getIronExp();
         this.autoPickupOFF = Commands.autoPickupOFF;

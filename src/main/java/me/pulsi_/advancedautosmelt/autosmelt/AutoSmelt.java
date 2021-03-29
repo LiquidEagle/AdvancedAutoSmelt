@@ -19,8 +19,9 @@ public class AutoSmelt implements Listener {
     private boolean isSmeltStone;
     private boolean isAutoSmeltDCM;
     private boolean isAutoPickupEnabled;
+
     public AutoSmelt(AdvancedAutoSmelt plugin) {
-        this.isAutoSmeltDCM = plugin.isAutoSmeltDCM();
+        this.isAutoSmeltDCM = plugin.isDCM();
         this.isAutoPickupEnabled = plugin.isAutoPickupEnabled();
         this.isSmeltGold = plugin.isSmeltGold();
         this.isSmeltIron = plugin.isSmeltIron();

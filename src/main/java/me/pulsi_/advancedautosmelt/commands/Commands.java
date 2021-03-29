@@ -1,6 +1,8 @@
 package me.pulsi_.advancedautosmelt.commands;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import me.pulsi_.advancedautosmelt.managers.ConfigManager;
+import me.pulsi_.advancedautosmelt.managers.ConfigValues;
 import me.pulsi_.advancedautosmelt.managers.Translator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,20 +14,35 @@ import java.util.Set;
 
 public class Commands implements CommandExecutor {
 
-    public static Set<String> autoPickupOFF = new HashSet<>();
-    public static Set<String> autoSmeltOFF = new HashSet<>();
-
     private AdvancedAutoSmelt plugin;
+    private String noPerm;
+    private String reload;
+    private String version;
+    private String toggleOn;
+    private String toggleOff;
+    private String unknownCommand;
+    private ConfigManager messages;
+
     public Commands(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
+        this.noPerm = ConfigValues.getNoPerm();
+        this.reload = plugin.getReload();
+        this.version = plugin.getVersion();
+        this.toggleOn = plugin.getToggleOn();
+        this.toggleOff = plugin.getToggleOff();
+        this.unknownCommand = plugin.getUnknownCommand();
+        this.messages = plugin.getMessagesConfig();
     }
+
+    public static Set<String> autoPickupOFF = new HashSet<>();
+    public static Set<String> autoSmeltOFF = new HashSet<>();
 
     @Override
     public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
 
         if (args.length == 0) {
             s.sendMessage(Translator.c(""));
-            s.sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &bv%v%, By Pulsi_").replace("%v%",plugin.getVersion()));
+            s.sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &bv%v%, By Pulsi_").replace("%v%", version));
             s.sendMessage(Translator.c(""));
 
         } else if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
@@ -40,15 +57,17 @@ public class Commands implements CommandExecutor {
                 s.sendMessage(Translator.c("&8- &c/AdvancedAutoSmelt Info &7See the Info of the plugin"));
                 s.sendMessage(Translator.c(""));
             } else {
-                s.sendMessage(Translator.c(plugin.getNoPerm()));
+                s.sendMessage(Translator.c(noPerm));
             }
 
         } else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             if (s.hasPermission("advancedautosmelt.reload")) {
-                s.sendMessage(Translator.c(plugin.getReload()));
+                s.sendMessage(Translator.c(reload));
                 plugin.reloadConfig();
+                plugin.loadValues();
+                messages.reloadConfig();
             } else {
-                s.sendMessage(Translator.c(plugin.getNoPerm()));
+                s.sendMessage(Translator.c(noPerm));
             }
 
         } else if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
@@ -73,7 +92,7 @@ public class Commands implements CommandExecutor {
                         .replace("false", Translator.c("&cDisabled")));
                 s.sendMessage(Translator.c(""));
             } else {
-                s.sendMessage(Translator.c(plugin.getNoPerm()));
+                s.sendMessage(Translator.c(noPerm));
             }
 
         } else if (args.length == 1 && args[0].equalsIgnoreCase("info")) {
@@ -87,7 +106,7 @@ public class Commands implements CommandExecutor {
                 s.sendMessage(Translator.c("&8- &cAliases: &aaautosmelt, autosmelt, asmelt, smelt, as"));
                 s.sendMessage(Translator.c(""));
             } else {
-                s.sendMessage(Translator.c(plugin.getNoPerm()));
+                s.sendMessage(Translator.c(noPerm));
             }
 
         } else if (args.length == 2 && args[0].equalsIgnoreCase("info") && args[1].equalsIgnoreCase("permissions")) {
@@ -100,7 +119,7 @@ public class Commands implements CommandExecutor {
                 s.sendMessage(Translator.c("&7advancedautosmelt.pickupexp / advancedautosmelt.toggle.autosmelt"));
                 s.sendMessage(Translator.c("&7advancedautosmelt.notify / advancedautosmelt.smeltinv"));
             } else {
-                s.sendMessage(Translator.c(plugin.getNoPerm()));
+                s.sendMessage(Translator.c(noPerm));
             }
         } else if (args.length == 1 && args[0].equalsIgnoreCase("toggle")) {
             s.sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &aAvailable options are: &7AutoPickup, AutoSmelt"));
@@ -111,11 +130,11 @@ public class Commands implements CommandExecutor {
                 if (s instanceof Player) {
                     if (!autoPickupOFF.contains(p.getName())) {
                         autoPickupOFF.add(p.getName());
-                        s.sendMessage(Translator.c(plugin.getToggleOff())
+                        s.sendMessage(Translator.c(toggleOn)
                         .replace("%toggled_ability%","AutoPickup"));
                     } else {
                         autoPickupOFF.remove(p.getName());
-                        s.sendMessage(Translator.c(plugin.getToggleOn())
+                        s.sendMessage(Translator.c(toggleOff)
                         .replace("%toggled_ability%","AutoPickup"));
                     }
                 } else {
@@ -131,22 +150,22 @@ public class Commands implements CommandExecutor {
                 if (s instanceof Player) {
                     if (!autoSmeltOFF.contains(p.getName())) {
                         autoSmeltOFF.add(p.getName());
-                        s.sendMessage(Translator.c(plugin.getToggleOff())
+                        s.sendMessage(Translator.c(toggleOff)
                         .replace("%toggled_ability%","AutoSmelt"));
                     } else {
                         autoSmeltOFF.remove(p.getName());
-                        s.sendMessage(Translator.c(plugin.getToggleOn())
+                        s.sendMessage(Translator.c(toggleOn)
                         .replace("%toggled_ability%","AutoSmelt"));
                     }
                 } else {
                     s.sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cOnly players can execute this command!"));
                 }
             } else {
-                s.sendMessage(Translator.c(plugin.getNoPerm()));
+                s.sendMessage(Translator.c(noPerm));
             }
 
         } else {
-            s.sendMessage(Translator.c(plugin.getUnknownCommand()));
+            s.sendMessage(Translator.c(unknownCommand));
         }
         return true;
     }

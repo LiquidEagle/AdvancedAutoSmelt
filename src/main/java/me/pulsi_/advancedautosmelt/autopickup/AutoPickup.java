@@ -1,5 +1,4 @@
 package me.pulsi_.advancedautosmelt.autopickup;
-
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
 import org.bukkit.GameMode;
@@ -20,8 +19,9 @@ public class AutoPickup implements Listener {
     private boolean isAutoPickupEnabled;
     private boolean isAutoPickupBlacklist;
     private List<String> blackList;
+
     public AutoPickup(AdvancedAutoSmelt plugin) {
-        this.isAutoSmeltDCM = plugin.isAutoSmeltDCM();
+        this.isAutoSmeltDCM = plugin.isDCM();
         this.isAutoPickupEnabled = plugin.isAutoPickupEnabled();
         this.isAutoPickupBlacklist = plugin.isAutoPickupBlacklist();
         this.blackList = plugin.getBlackList();
@@ -35,6 +35,14 @@ public class AutoPickup implements Listener {
         Player p = e.getPlayer();
 
         if (!(e.getBlock().getType().name().endsWith("LEAVES"))) {
+
+            String isTool = p.getInventory().getItemInHand().getType().name();
+
+            if (!isTool.endsWith("_PICKAXE") ||
+                    !isTool.endsWith("_SWORD") ||
+                    !isTool.endsWith("_AXE") ||
+                    !isTool.endsWith("_SHOVEL") ||
+                    !isTool.endsWith("_HOE")) return;
             ItemStack item = p.getInventory().getItemInHand();
             short durability = item.getDurability();
             int durabilityLevel = item.getEnchantmentLevel(Enchantment.DURABILITY);

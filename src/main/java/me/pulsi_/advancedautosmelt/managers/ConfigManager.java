@@ -1,5 +1,6 @@
 package me.pulsi_.advancedautosmelt.managers;
 
+import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,16 +12,16 @@ import java.io.IOException;
 
 public class ConfigManager {
 
-    private final JavaPlugin plugin;
+    private final AdvancedAutoSmelt plugin;
     private final String name;
     private File file;
     private FileConfiguration configuration;
 
-    public ConfigManager(JavaPlugin plugin, String name) {
+    public ConfigManager(AdvancedAutoSmelt plugin, String name) {
         this(plugin, new File(plugin.getDataFolder(), name));
     }
 
-    public ConfigManager(JavaPlugin plugin, File file) {
+    public ConfigManager(AdvancedAutoSmelt plugin, File file) {
         this.plugin = plugin;
         this.name = file.getName();
         this.file = file;
