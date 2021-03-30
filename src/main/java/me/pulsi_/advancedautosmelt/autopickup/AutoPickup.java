@@ -37,14 +37,11 @@ public class AutoPickup implements Listener {
 
         if (!(e.getBlock().getType().name().endsWith("LEAVES"))) {
 
-            String isTool = p.getInventory().getItemInHand().getType().name();
-
-            if (!isTool.endsWith("_PICKAXE") ||
-                    !isTool.endsWith("_SWORD") ||
-                    !isTool.endsWith("_AXE") ||
-                    !isTool.endsWith("_SHOVEL") ||
-                    !isTool.endsWith("_HOE")) return;
             ItemStack item = p.getInventory().getItemInHand();
+            Material itemType = p.getInventory().getItemInHand().getType();
+
+            if (itemType.getMaxDurability() == 0) return;
+
             short durability = item.getDurability();
             int durabilityLevel = item.getEnchantmentLevel(Enchantment.DURABILITY);
             boolean shouldDamage = ((Math.random()) < (1 / (durabilityLevel + 1)));
@@ -54,7 +51,7 @@ public class AutoPickup implements Listener {
             p.setItemInHand(item.getDurability() > item.getType().getMaxDurability() ? null : item);
         }
 
-        if (isAutoSmeltDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }
+        if (isAutoSmeltDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
         if (autoPickupOFF.contains(p.getName())) return;
         if (!p.hasPermission("advancedautosmelt.autopickup")) return;
         if (!isAutoPickupEnabled) return;
@@ -69,15 +66,15 @@ public class AutoPickup implements Listener {
             for (ItemStack drops : e.getBlock().getDrops()) {
                 if (!p.getInventory().addItem(drops).isEmpty()) {
                     p.getWorld().dropItem(p.getLocation(), drops);
+                    e.getBlock().setType(Material.AIR);
                 }
-                e.getBlock().setType(Material.AIR);
             }
         } else {
             for (ItemStack drops : e.getBlock().getDrops()) {
                 if (!p.getInventory().addItem(drops).isEmpty()) {
                     p.getWorld().dropItem(p.getLocation(), drops);
+                    e.getBlock().setType(Material.AIR);
                 }
-                e.getBlock().setType(Material.AIR);
             }
         }
     }

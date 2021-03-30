@@ -47,8 +47,8 @@ public class AutoSmelt implements Listener {
             if (!(e.getBlock().getType() == block)) return;
             if (!p.getInventory().addItem(smelt).isEmpty()) {
                 p.getWorld().dropItem(p.getLocation(), smelt);
+                e.getBlock().setType(air);
             }
-            e.getBlock().setType(air);
 
         } else if (cantPickup && cantSmelt) {
             return;
@@ -62,8 +62,8 @@ public class AutoSmelt implements Listener {
             if (!(e.getBlock().getType() == block)) return;
             if (!p.getInventory().addItem(notSmelt).isEmpty()) {
                 p.getWorld().dropItem(p.getLocation(), notSmelt);
+                e.getBlock().setType(air);
             }
-            e.getBlock().setType(air);
         }
     }
 
@@ -71,8 +71,8 @@ public class AutoSmelt implements Listener {
         if (!Commands.autoSmeltOFF.contains(p.getName())) {
             if (e.getBlock().getType() == block) {
                 e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), i);
+                e.getBlock().setType(air);
             }
-            e.getBlock().setType(air);
         }
     }
 
@@ -81,8 +81,8 @@ public class AutoSmelt implements Listener {
             if (e.getBlock().getType() == block) {
                 if (!p.getInventory().addItem(i).isEmpty()) {
                     p.getWorld().dropItem(p.getLocation(), i);
+                    e.getBlock().setType(air);
                 }
-                e.getBlock().setType(air);
             }
         }
     }
