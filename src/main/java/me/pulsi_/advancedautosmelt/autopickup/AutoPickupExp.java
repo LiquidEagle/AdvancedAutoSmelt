@@ -14,11 +14,11 @@ public class AutoPickupExp implements Listener {
 
     Set<String> autoPickupOFF = Commands.autoPickupOFF;
 
-    private boolean isAutoSmeltDCM;
-    private boolean isAutoPickupExp;
+    private final boolean isDCM;
+    private final boolean isAutoPickupExp;
 
     public AutoPickupExp(AdvancedAutoSmelt plugin) {
-        this.isAutoSmeltDCM = plugin.isDCM();
+        this.isDCM = plugin.isDCM();
         this.isAutoPickupExp = plugin.isAutoPickupExp();
     }
 
@@ -27,7 +27,7 @@ public class AutoPickupExp implements Listener {
 
         Player p = e.getPlayer();
 
-        if (isAutoSmeltDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }
+        if (isDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }
         if (!isAutoPickupExp) return;
         if (autoPickupOFF.contains(p.getName())) return;
         int exp = e.getExpToDrop();

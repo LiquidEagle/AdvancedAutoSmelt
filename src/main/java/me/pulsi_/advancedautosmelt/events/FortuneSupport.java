@@ -18,6 +18,7 @@ import java.util.Set;
 
 public class FortuneSupport implements Listener {
 
+    private AdvancedAutoSmelt plugin;
     private boolean isEFS;
     private boolean useWhitelist;
     private boolean isDCM;
@@ -28,6 +29,7 @@ public class FortuneSupport implements Listener {
     private List<String> whitelist;
 
     public FortuneSupport(AdvancedAutoSmelt plugin) {
+        this.plugin = plugin;
         this.isEFS = plugin.isEFS();
         this.useWhitelist = plugin.useWhitelist();
         this.isDCM = plugin.isDCM();
@@ -38,15 +40,15 @@ public class FortuneSupport implements Listener {
         this.whitelist = plugin.getWhiteList();
     }
 
-    private Set<String> autoPickupOFF = Commands.autoPickupOFF;
-    private Set<String> autoSmeltOFF = Commands.autoSmeltOFF;
+    private final Set<String> autoPickupOFF = Commands.autoPickupOFF;
+    private final Set<String> autoSmeltOFF = Commands.autoSmeltOFF;
 
-    private ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT);
-    private ItemStack goldOre = new ItemStack(Material.GOLD_ORE);
-    private ItemStack ironIngot = new ItemStack(Material.IRON_INGOT);
-    private ItemStack ironOre = new ItemStack(Material.IRON_ORE);
-    private ItemStack stone = new ItemStack(Material.STONE);
-    private ItemStack cobblestone = new ItemStack(Material.COBBLESTONE);
+    private final ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT);
+    private final ItemStack goldOre = new ItemStack(Material.GOLD_ORE);
+    private final ItemStack ironIngot = new ItemStack(Material.IRON_INGOT);
+    private final ItemStack ironOre = new ItemStack(Material.IRON_ORE);
+    private final ItemStack stone = new ItemStack(Material.STONE);
+    private final ItemStack cobblestone = new ItemStack(Material.COBBLESTONE);
 
     public void smelt(Player p, Material block, ItemStack smelt, ItemStack notSmelt, Material air, BlockBreakEvent e) {
 
@@ -107,8 +109,7 @@ public class FortuneSupport implements Listener {
         if (e.getBlock().getType() == Material.STONE || e.getBlock().getType() == Material.IRON_ORE || e.getBlock().getType() == Material.GOLD_ORE) return;
 
         if (useWhitelist) {
-            for (String whitelist : whitelist)
-                if (!whitelist.contains(e.getBlock().getType().toString())) {
+                if (whitelist.contains(e.getBlock().getType().toString())) {
 
                     if (!p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) return;
                     int fortuneLevel = p.getInventory().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
@@ -129,9 +130,24 @@ public class FortuneSupport implements Listener {
                             e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
                         }
                     }
+                } else {
+
+                    for (ItemStack drops : e.getBlock().getDrops()) {
+                        if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
+                        if (!autoPickupOFF.contains(p.getName())) {
+                            if (!p.getInventory().addItem(drops).isEmpty()) {
+                                p.getWorld().dropItem(p.getLocation(), drops);
+                            }
+                        } else {
+                            e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                        }
+                        e.getBlock().setType(Material.AIR);
+                    }
                 }
 
         } else {
+
+            if (e.getBlock().getType() == Material.STONE || e.getBlock().getType() == Material.IRON_ORE || e.getBlock().getType() == Material.GOLD_ORE) return;
 
             if (!p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) return;
             int fortuneLevel = p.getInventory().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
@@ -139,7 +155,7 @@ public class FortuneSupport implements Listener {
             Random r = new Random();
             int randomDrop = r.nextInt(fortuneLevel);
             for (ItemStack drops : e.getBlock().getDrops()) {
-                int dropsAmount = drops.getAmount() * randomDrop - 1;
+                int dropsAmount = drops.getAmount() * randomDrop;
 
                 drops.setAmount(dropsAmount);
 
@@ -162,18 +178,22 @@ public class FortuneSupport implements Listener {
 
         if (!isEFS) return;
 
+        System.out.println(e.getBlock().getType() == Material.STONE);
+        if (!(e.getBlock().getType() == Material.STONE)) return;
+
+        System.out.println(useWhitelist);
         if (useWhitelist) {
-            if (whitelist.stream().map(Material::valueOf).anyMatch(it -> it.equals(Material.STONE))) {
+            System.out.println(whitelist.contains(Material.STONE.toString()));
+            if (whitelist.contains(Material.STONE.toString())) {
 
                 if (!p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) return;
                 int fortuneLevel = p.getInventory().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
 
                 Random r = new Random();
                 int randomDrop = r.nextInt(fortuneLevel);
-                int dropsAmount = 1 * randomDrop - 1;
 
-                stone.setAmount(dropsAmount);
-                cobblestone.setAmount(dropsAmount);
+                stone.setAmount(randomDrop);
+                cobblestone.setAmount(randomDrop);
 
                 if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
                 if (isSmeltStone) {
@@ -188,8 +208,6 @@ public class FortuneSupport implements Listener {
                     if (!isAutoPickupEnabled) return;
                     pickNoSmelt(p, Material.STONE, Material.AIR, cobblestone, e);
                 }
-            } else {
-                return;
             }
 
         } else {
@@ -200,10 +218,9 @@ public class FortuneSupport implements Listener {
 
             Random r = new Random();
             int randomDrop = r.nextInt(fortuneLevel);
-            int dropsAmount = 1 * randomDrop;
 
-            stone.setAmount(dropsAmount);
-            cobblestone.setAmount(dropsAmount);
+            stone.setAmount(randomDrop);
+            cobblestone.setAmount(randomDrop);
 
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
             if (isSmeltStone) {
@@ -228,24 +245,25 @@ public class FortuneSupport implements Listener {
 
         if (!isEFS) return;
 
+        if (!(e.getBlock().getType() == Material.IRON_ORE)) return;
+
         if (useWhitelist) {
-            if (whitelist.stream().map(Material::valueOf).anyMatch(it -> it.equals(Material.IRON_ORE))) {
+            if (whitelist.contains(Material.IRON_ORE.toString())) {
 
                 if (!p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) return;
                 int fortuneLevel = p.getInventory().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
 
                 Random r = new Random();
                 int randomDrop = r.nextInt(fortuneLevel);
-                int dropsAmount = 1 * randomDrop;
 
-                ironIngot.setAmount(dropsAmount);
-                ironOre.setAmount(dropsAmount);
+                ironIngot.setAmount(randomDrop);
+                ironOre.setAmount(randomDrop);
 
                 if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
                 if (isSmeltIron) {
                     if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
                     if (isAutoPickupEnabled) {
-                        smelt(p, Material.STONE, ironIngot, ironOre, Material.AIR, e);
+                        smelt(p, Material.IRON_ORE, ironIngot, ironOre, Material.AIR, e);
                     } else {
                         if (!isSmeltIron) return;
                         smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
@@ -254,8 +272,6 @@ public class FortuneSupport implements Listener {
                     if (!isAutoPickupEnabled) return;
                     pickNoSmelt(p, Material.IRON_ORE, Material.AIR, ironOre, e);
                 }
-            } else {
-                return;
             }
 
         } else {
@@ -266,16 +282,15 @@ public class FortuneSupport implements Listener {
 
             Random r = new Random();
             int randomDrop = r.nextInt(fortuneLevel);
-            int dropsAmount = 1 * randomDrop;
 
-            ironIngot.setAmount(dropsAmount);
-            ironOre.setAmount(dropsAmount);
+            ironIngot.setAmount(randomDrop);
+            ironOre.setAmount(randomDrop);
 
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
             if (isSmeltIron) {
                 if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
                 if (isAutoPickupEnabled) {
-                    smelt(p, Material.STONE, ironIngot, ironOre, Material.AIR, e);
+                    smelt(p, Material.IRON_ORE, ironIngot, ironOre, Material.AIR, e);
                 } else {
                     if (!isSmeltIron) return;
                     smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
@@ -294,18 +309,19 @@ public class FortuneSupport implements Listener {
 
         if (!isEFS) return;
 
+        if (!(e.getBlock().getType() == Material.GOLD_ORE)) return;
+
         if (useWhitelist) {
-            if (whitelist.stream().map(Material::valueOf).anyMatch(it -> it.equals(Material.GOLD_ORE))) {
+            if (whitelist.contains(Material.GOLD_ORE.toString())) {
 
                 if (!p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) return;
                 int fortuneLevel = p.getInventory().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
 
                 Random r = new Random();
                 int randomDrop = r.nextInt(fortuneLevel);
-                int dropsAmount = 1 * randomDrop;
 
-                goldIngot.setAmount(dropsAmount);
-                goldOre.setAmount(dropsAmount);
+                goldIngot.setAmount(randomDrop);
+                goldOre.setAmount(randomDrop);
 
                 if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
                 if (isSmeltGold) {
@@ -320,8 +336,6 @@ public class FortuneSupport implements Listener {
                     if (!isAutoPickupEnabled) return;
                     pickNoSmelt(p, Material.GOLD_ORE, Material.AIR, goldOre, e);
                 }
-            } else {
-                return;
             }
 
         } else {
@@ -332,10 +346,9 @@ public class FortuneSupport implements Listener {
 
             Random r = new Random();
             int randomDrop = r.nextInt(fortuneLevel);
-            int dropsAmount = 1 * randomDrop - 1;
 
-            goldIngot.setAmount(dropsAmount);
-            goldOre.setAmount(dropsAmount);
+            goldIngot.setAmount(randomDrop);
+            goldOre.setAmount(randomDrop);
 
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
             if (isSmeltGold) {

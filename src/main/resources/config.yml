@@ -6,7 +6,7 @@
 #   / ____ \  / ____ \ |_| | || (_) |___) | | | | | |  __/ | |_  #
 #  /_/    \_\/_/    \_\__,_|\__\___/_____/|_| |_| |_|\___|_|\__| #
 #                                                                #
-# Version: 2.5.3                                                 #
+# Version: 2.6.4                                                 #
 # Author: Pulsi_                                                 #
 # Thanks for using this plugin!                                  #
 #                                                                #
@@ -83,3 +83,18 @@ Fortune: #Please, if you run into some problems like Fortune section not save pa
     - EMERALD_ORE
     - GOLD_ORE
     - REDSTONE_ORE
+
+
+#######################################################
+#                  < MESSAGES PART >                  #
+#######################################################
+
+reload-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &aPlugin reloaded!"
+
+no-permission-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cYou don't have the permission!"
+
+unknown-command: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cUnknown Command!"
+
+toggled-on-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Your %toggled_ability% has been toggled &2On&7!"
+
+toggled-off-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Your %toggled_ability% has been toggled &cOff&7!"

@@ -15,13 +15,13 @@ import java.util.Set;
 
 public class AutoPickupExpCustom implements Listener {
 
-    private int goldExp;
-    private int ironExp;
-    private Set autoPickupOFF;
-    private boolean isAutoPickupExp;
-    private boolean isGivingGoldExp;
-    private boolean isGivingIronExp;
-    private boolean isAutoSmeltDCM;
+    private final int goldExp;
+    private final int ironExp;
+    private final Set<String> autoPickupOFF;
+    private final boolean isAutoPickupExp;
+    private final boolean isGivingGoldExp;
+    private final boolean isGivingIronExp;
+    private final boolean isAutoSmeltDCM;
 
     public AutoPickupExpCustom(AdvancedAutoSmelt plugin) {
         this.isAutoSmeltDCM = plugin.isDCM();

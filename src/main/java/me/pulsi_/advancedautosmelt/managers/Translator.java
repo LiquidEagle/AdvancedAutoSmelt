@@ -1,6 +1,6 @@
 package me.pulsi_.advancedautosmelt.managers;
 
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 public class Translator {
 

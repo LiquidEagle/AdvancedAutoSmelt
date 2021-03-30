@@ -14,11 +14,11 @@ import java.util.Set;
 
 public class AutoSmelt implements Listener {
 
-    private boolean isSmeltGold;
-    private boolean isSmeltIron;
-    private boolean isSmeltStone;
-    private boolean isAutoSmeltDCM;
-    private boolean isAutoPickupEnabled;
+    private final boolean isSmeltGold;
+    private final boolean isSmeltIron;
+    private final boolean isSmeltStone;
+    private final boolean isAutoSmeltDCM;
+    private final boolean isAutoPickupEnabled;
 
     public AutoSmelt(AdvancedAutoSmelt plugin) {
         this.isAutoSmeltDCM = plugin.isDCM();
@@ -28,15 +28,15 @@ public class AutoSmelt implements Listener {
         this.isSmeltStone = plugin.isSmeltStone();
     }
 
-    private ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT);
-    private ItemStack goldOre = new ItemStack(Material.GOLD_ORE);
-    private ItemStack ironIngot = new ItemStack(Material.IRON_INGOT);
-    private ItemStack ironOre = new ItemStack(Material.IRON_ORE);
-    private ItemStack stone = new ItemStack(Material.STONE);
-    private ItemStack cobblestone = new ItemStack(Material.COBBLESTONE);
+    private final ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT);
+    private final ItemStack goldOre = new ItemStack(Material.GOLD_ORE);
+    private final ItemStack ironIngot = new ItemStack(Material.IRON_INGOT);
+    private final ItemStack ironOre = new ItemStack(Material.IRON_ORE);
+    private final ItemStack stone = new ItemStack(Material.STONE);
+    private final ItemStack cobblestone = new ItemStack(Material.COBBLESTONE);
 
-    private Set<String> autoPickupOFF = Commands.autoPickupOFF;
-    private Set<String> autoSmeltOFF = Commands.autoPickupOFF;
+    private final Set<String> autoPickupOFF = Commands.autoPickupOFF;
+    private final Set<String> autoSmeltOFF = Commands.autoPickupOFF;
 
     public void smelt(Player p, Material block, ItemStack smelt, ItemStack notSmelt, Material air, BlockBreakEvent e) {
 

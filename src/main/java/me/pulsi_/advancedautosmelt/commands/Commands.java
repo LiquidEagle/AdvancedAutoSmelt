@@ -1,8 +1,6 @@
 package me.pulsi_.advancedautosmelt.commands;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
-import me.pulsi_.advancedautosmelt.managers.ConfigManager;
-import me.pulsi_.advancedautosmelt.managers.ConfigValues;
 import me.pulsi_.advancedautosmelt.managers.Translator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Commands implements CommandExecutor {
@@ -21,21 +20,63 @@ public class Commands implements CommandExecutor {
     private String toggleOn;
     private String toggleOff;
     private String unknownCommand;
-    private ConfigManager messages;
 
     public Commands(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
-        this.noPerm = ConfigValues.getNoPerm();
+        this.noPerm = plugin.getNoPerm();
         this.reload = plugin.getReload();
         this.version = plugin.getVersion();
         this.toggleOn = plugin.getToggleOn();
         this.toggleOff = plugin.getToggleOff();
         this.unknownCommand = plugin.getUnknownCommand();
-        this.messages = plugin.getMessagesConfig();
     }
 
     public static Set<String> autoPickupOFF = new HashSet<>();
     public static Set<String> autoSmeltOFF = new HashSet<>();
+
+    private List<String> blackList;
+    private List<String> whiteList;
+
+    private boolean isDCM;
+    private boolean isAutoPickupEnabled;
+    private boolean isAutoPickupBlacklist;
+    private boolean isSmeltInv;
+    private boolean isSmeltGold;
+    private boolean isSmeltIron;
+    private boolean isSmeltStone;
+    private boolean isAutoPickupExp;
+    private boolean isGivingGoldExp;
+    private boolean isGivingIronExp;
+    private boolean isEFS;
+    private boolean useWhitelist;
+
+    private int goldExp;
+    private int ironExp;
+
+    public void reloadValues() {
+        version = plugin.getDescription().getVersion();
+        noPerm = plugin.getConfig().getString("no-permission-message");
+        reload = plugin.getConfig().getString("reload-message");
+        unknownCommand = plugin.getConfig().getString("unknown-command");
+        toggleOn = plugin.getConfig().getString("toggled-on-message");
+        toggleOff = plugin.getConfig().getString("toggled-off-message");
+        goldExp = plugin.getConfig().getInt("AutoSmelt.gold-exp");
+        ironExp = plugin.getConfig().getInt("AutoSmelt.iron-exp");
+        isDCM = plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode");
+        isAutoPickupEnabled = plugin.getConfig().getBoolean("AutoPickup.enable-autopickup");
+        isAutoPickupBlacklist = plugin.getConfig().getBoolean("AutoPickup.use-blacklist");
+        blackList = plugin.getConfig().getStringList("AutoPickup.blacklist");
+        isSmeltInv = plugin.getConfig().getBoolean("AutoSmelt.smelt-ores-in-inventory");
+        isSmeltGold = plugin.getConfig().getBoolean("AutoSmelt.smelt-gold");
+        isSmeltIron = plugin.getConfig().getBoolean("AutoSmelt.smelt-iron");
+        isSmeltStone = plugin.getConfig().getBoolean("AutoSmelt.smelt-stone");
+        isAutoPickupExp = plugin.getConfig().getBoolean("AutoPickup.autopickup-experience");
+        isGivingGoldExp = plugin.getConfig().getBoolean("AutoSmelt.give-exp-gold");
+        isGivingIronExp = plugin.getConfig().getBoolean("AutoSmelt.give-exp-iron");
+        isEFS = plugin.getConfig().getBoolean("Fortune.enable-fortune-support");
+        useWhitelist = plugin.getConfig().getBoolean("Fortune.use-whitelist");
+        whiteList = plugin.getConfig().getStringList("Fortune.whitelist");
+    }
 
     @Override
     public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
@@ -64,8 +105,7 @@ public class Commands implements CommandExecutor {
             if (s.hasPermission("advancedautosmelt.reload")) {
                 s.sendMessage(Translator.c(reload));
                 plugin.reloadConfig();
-                plugin.loadValues();
-                messages.reloadConfig();
+                reloadValues();
             } else {
                 s.sendMessage(Translator.c(noPerm));
             }
@@ -118,6 +158,7 @@ public class Commands implements CommandExecutor {
                 s.sendMessage(Translator.c("&7advancedautosmelt.pickup / advancedautosmelt.toggle.autopickup"));
                 s.sendMessage(Translator.c("&7advancedautosmelt.pickupexp / advancedautosmelt.toggle.autosmelt"));
                 s.sendMessage(Translator.c("&7advancedautosmelt.notify / advancedautosmelt.smeltinv"));
+                s.sendMessage(Translator.c("&7advancedautosmelt.fortune"));
             } else {
                 s.sendMessage(Translator.c(noPerm));
             }
@@ -130,18 +171,18 @@ public class Commands implements CommandExecutor {
                 if (s instanceof Player) {
                     if (!autoPickupOFF.contains(p.getName())) {
                         autoPickupOFF.add(p.getName());
-                        s.sendMessage(Translator.c(toggleOn)
-                        .replace("%toggled_ability%","AutoPickup"));
+                        s.sendMessage(Translator.c(toggleOff)
+                                .replace("%toggled_ability%", "AutoPickup"));
                     } else {
                         autoPickupOFF.remove(p.getName());
-                        s.sendMessage(Translator.c(toggleOff)
-                        .replace("%toggled_ability%","AutoPickup"));
+                        s.sendMessage(Translator.c(toggleOn)
+                                .replace("%toggled_ability%", "AutoPickup"));
                     }
                 } else {
                     s.sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cOnly players can execute this command!"));
                 }
             } else {
-                s.sendMessage(Translator.c(plugin.getNoPerm()));
+                s.sendMessage(Translator.c(noPerm));
             }
 
         } else if (args.length == 2 && args[0].equalsIgnoreCase("toggle") && args[1].equalsIgnoreCase("autosmelt")) {
@@ -151,11 +192,11 @@ public class Commands implements CommandExecutor {
                     if (!autoSmeltOFF.contains(p.getName())) {
                         autoSmeltOFF.add(p.getName());
                         s.sendMessage(Translator.c(toggleOff)
-                        .replace("%toggled_ability%","AutoSmelt"));
+                                .replace("%toggled_ability%", "AutoSmelt"));
                     } else {
                         autoSmeltOFF.remove(p.getName());
                         s.sendMessage(Translator.c(toggleOn)
-                        .replace("%toggled_ability%","AutoSmelt"));
+                                .replace("%toggled_ability%", "AutoSmelt"));
                     }
                 } else {
                     s.sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cOnly players can execute this command!"));

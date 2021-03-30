@@ -5,7 +5,7 @@ api-version: 1.13
 prefix: < AdvancedAutoSmelt >
 load: STARTUP
 authors: [ Pulsi_ ]
-description: Allow you to smelt ores simply mining! It has an autopick up support to! And much more!!
+description: Allow you to smelt ores simply mining! It has an autopickup support to! And much more!!
 commands:
-  AdvancedAutoSmelt:
+  advancedautosmelt:
     aliases: [aautosmelt, autosmelt, asmelt, smelt, as]

@@ -1,4 +1,5 @@
 package me.pulsi_.advancedautosmelt.autopickup;
+
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
 import org.bukkit.GameMode;

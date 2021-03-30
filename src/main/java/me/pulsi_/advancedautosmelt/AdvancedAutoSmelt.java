@@ -6,7 +6,6 @@ import me.pulsi_.advancedautosmelt.autosmelt.AutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
 import me.pulsi_.advancedautosmelt.events.BlockBreakSmeltInv;
 import me.pulsi_.advancedautosmelt.events.FortuneSupport;
-import me.pulsi_.advancedautosmelt.managers.ConfigManager;
 import me.pulsi_.advancedautosmelt.managers.Translator;
 import me.pulsi_.advancedautosmelt.managers.UpdateChecker;
 import me.pulsi_.advancedautosmelt.autopickup.AutoPickup;
@@ -17,42 +16,59 @@ import java.util.List;
 
 public final class AdvancedAutoSmelt extends JavaPlugin {
 
-    ConfigManager messagesConfig;
+    private String noPerm;
+    private String reload;
+    private String version;
+    private String toggleOn;
+    private String toggleOff;
+    private String unknownCommand;
 
-    public void loadValues() {
+    private List<String> blackList;
+    private List<String> whiteList;
 
-        ConfigManager messages = new ConfigManager(this, "messages.yml");
+    private boolean isDCM;
+    private boolean isAutoPickupEnabled;
+    private boolean isAutoPickupBlacklist;
+    private boolean isSmeltInv;
+    private boolean isSmeltGold;
+    private boolean isSmeltIron;
+    private boolean isSmeltStone;
+    private boolean isAutoPickupExp;
+    private boolean isGivingGoldExp;
+    private boolean isGivingIronExp;
+    private boolean isEFS;
+    private boolean useWhitelist;
 
-        this.version = plugin.getDescription().getVersion();
-        this.noPerm = messages.getConfig().getString("no-permission-message");
-        this.reload = messages.getConfig().getString("reload-message");
-        this.unknownCommand = messages.getConfig().getString("unknown-command");
-        this.toggleOn = messages.getConfig().getString("toggled-on-message");
-        this.toggleOff = messages.getConfig().getString("toggled-off-message");
-        this.goldExp = plugin.getConfig().getInt("AutoSmelt.gold-exp");
-        this.ironExp = plugin.getConfig().getInt("AutoSmelt.iron-exp");
-        this.isDCM = plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode");
-        this.isAutoPickupEnabled = plugin.getConfig().getBoolean("AutoPickup.enable-autopickup");
-        this.isAutoPickupBlacklist = plugin.getConfig().getBoolean("AutoPickup.use-blacklist");
-        this.blackList = plugin.getConfig().getStringList("AutoPickup.blacklist");
-        this.isSmeltInv = plugin.getConfig().getBoolean("AutoSmelt.smelt-ores-in-inventory");
-        this.isSmeltGold = plugin.getConfig().getBoolean("AutoSmelt.smelt-gold");
-        this.isSmeltIron = plugin.getConfig().getBoolean("AutoSmelt.smelt-iron");
-        this.isSmeltStone = plugin.getConfig().getBoolean("AutoSmelt.smelt-stone");
-        this.isAutoPickupExp = plugin.getConfig().getBoolean("AutoPickup.autopickup-experience");
-        this.isGivingGoldExp = plugin.getConfig().getBoolean("AutoSmelt.give-exp-gold");
-        this.isGivingIronExp = plugin.getConfig().getBoolean("AutoSmelt.give-exp-iron");
-        this.isEFS = plugin.getConfig().getBoolean("Fortune.enable-fortune-support");
-        this.useWhitelist = plugin.getConfig().getBoolean("Fortune.use-whitelist");
-        this.whiteList = plugin.getConfig().getStringList("Fortune.whitelist");
-
-    }
+    private int goldExp;
+    private int ironExp;
 
     @Override
     public void onEnable() {
 
+        version = this.getDescription().getVersion();
+        noPerm = this.getConfig().getString("no-permission-message");
+        reload = this.getConfig().getString("reload-message");
+        unknownCommand = this.getConfig().getString("unknown-command");
+        toggleOn = this.getConfig().getString("toggled-on-message");
+        toggleOff = this.getConfig().getString("toggled-off-message");
+        goldExp = this.getConfig().getInt("AutoSmelt.gold-exp");
+        ironExp = this.getConfig().getInt("AutoSmelt.iron-exp");
+        isDCM = this.getConfig().getBoolean("AutoSmelt.disable-creative-mode");
+        isAutoPickupEnabled = this.getConfig().getBoolean("AutoPickup.enable-autopickup");
+        isAutoPickupBlacklist = this.getConfig().getBoolean("AutoPickup.use-blacklist");
+        blackList = this.getConfig().getStringList("AutoPickup.blacklist");
+        isSmeltInv = this.getConfig().getBoolean("AutoSmelt.smelt-ores-in-inventory");
+        isSmeltGold = this.getConfig().getBoolean("AutoSmelt.smelt-gold");
+        isSmeltIron = this.getConfig().getBoolean("AutoSmelt.smelt-iron");
+        isSmeltStone = this.getConfig().getBoolean("AutoSmelt.smelt-stone");
+        isAutoPickupExp = this.getConfig().getBoolean("AutoPickup.autopickup-experience");
+        isGivingGoldExp = this.getConfig().getBoolean("AutoSmelt.give-exp-gold");
+        isGivingIronExp = this.getConfig().getBoolean("AutoSmelt.give-exp-iron");
+        isEFS = this.getConfig().getBoolean("Fortune.enable-fortune-support");
+        useWhitelist = this.getConfig().getBoolean("Fortune.use-whitelist");
+        whiteList = this.getConfig().getStringList("Fortune.whitelist");
+
         saveDefaultConfig();
-        this.messagesConfig = new ConfigManager(this, "messages.yml");
 
         getCommand("advancedautosmelt").setExecutor(new Commands(this));
         getCommand("advancedautosmelt").setTabCompleter(new TabCompletion());
@@ -73,7 +89,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(Translator.c("&d  / ____ \\  &a/ ____ \\ |_| | || (_) |&c___) | | | | | |  __/ | |_ "));
         getServer().getConsoleSender().sendMessage(Translator.c("&d /_/    \\_\\&a/_/    \\_\\__,_|\\__\\___/&c_____/|_| |_| |_|\\___|_|\\__|"));
         getServer().getConsoleSender().sendMessage(Translator.c(""));
-        getServer().getConsoleSender().sendMessage(Translator.c("&2Enabling Plugin! &bv%v%").replace("%v%", version));
+        getServer().getConsoleSender().sendMessage(Translator.c("&2Enabling Plugin! &bv%v%").replace("%v%", this.getVersion()));
         getServer().getConsoleSender().sendMessage(Translator.c("&fAuthor: Pulsi_"));
         getServer().getConsoleSender().sendMessage(Translator.c(""));
     }
@@ -94,11 +110,8 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     }
 
-    public ConfigManager getMessagesConfig() {
-        return messagesConfig;
-    }
 
-    public static String getNoPerm() {
+    public String getNoPerm() {
         return noPerm;
     }
 
