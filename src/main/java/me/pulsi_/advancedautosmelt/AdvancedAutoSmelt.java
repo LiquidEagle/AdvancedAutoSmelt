@@ -25,11 +25,17 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     private List<String> blackList;
     private List<String> whiteList;
+    private List<String> autoSmeltDisabledWorlds;
+    private List<String> autoPickupDisabledWorlds;
+    private List<String> fortuneDisabledWorlds;
 
     private boolean isDCM;
     private boolean isAutoPickupEnabled;
     private boolean isAutoPickupBlacklist;
     private boolean isSmeltInv;
+    private boolean isSmeltStoneInv;
+    private boolean isSmeltGoldInv;
+    private boolean isSmeltIronInv;
     private boolean isSmeltGold;
     private boolean isSmeltIron;
     private boolean isSmeltStone;
@@ -67,6 +73,12 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         isEFS = this.getConfig().getBoolean("Fortune.enable-fortune-support");
         useWhitelist = this.getConfig().getBoolean("Fortune.use-whitelist");
         whiteList = this.getConfig().getStringList("Fortune.whitelist");
+        isSmeltStoneInv = this.getConfig().getBoolean("AutoSmelt.inv-smelt.cobblestone");
+        isSmeltGoldInv = this.getConfig().getBoolean("AutoSmelt.inv-smelt.gold-ore");
+        isSmeltIronInv = this.getConfig().getBoolean("AutoSmelt.inv-smelt.iron-ore");
+        autoSmeltDisabledWorlds = this.getConfig().getStringList("AutoSmelt.disabled-worlds");
+        autoPickupDisabledWorlds = this.getConfig().getStringList("AutoPickup.disabled-worlds");
+        fortuneDisabledWorlds = this.getConfig().getStringList("Fortune.disabled-worlds");
 
         saveDefaultConfig();
 
@@ -110,7 +122,6 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     }
 
-
     public String getNoPerm() {
         return noPerm;
     }
@@ -143,24 +154,40 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         return ironExp;
     }
 
-    public boolean isDCM() {
-        return isDCM;
-    }
-
-    public boolean isAutoPickupEnabled() {
-        return isAutoPickupEnabled;
-    }
-
-    public boolean isAutoPickupBlacklist() {
-        return isAutoPickupBlacklist;
-    }
-
     public List<String> getBlackList() {
         return blackList;
     }
 
+    public List<String> getAutoSmeltDisabledWorlds() {
+        return autoSmeltDisabledWorlds;
+    }
+
+    public List<String> getAutoPickupDisabledWorlds() {
+        return autoPickupDisabledWorlds;
+    }
+
+    public List<String> getFortuneDisabledWorlds() {
+        return fortuneDisabledWorlds;
+    }
+
+    public List<String> getWhiteList() {
+        return whiteList;
+    }
+
     public boolean isSmeltInv() {
         return isSmeltInv;
+    }
+
+    public boolean isSmeltStoneInv() {
+        return isSmeltStoneInv;
+    }
+
+    public boolean isSmeltIronInv() {
+        return isSmeltIronInv;
+    }
+
+    public boolean isSmeltGoldInv() {
+        return isSmeltGoldInv;
     }
 
     public boolean isSmeltGold() {
@@ -195,7 +222,15 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         return useWhitelist;
     }
 
-    public List<String> getWhiteList() {
-        return whiteList;
+    public boolean isDCM() {
+        return isDCM;
+    }
+
+    public boolean isAutoPickupEnabled() {
+        return isAutoPickupEnabled;
+    }
+
+    public boolean isAutoPickupBlacklist() {
+        return isAutoPickupBlacklist;
     }
 }

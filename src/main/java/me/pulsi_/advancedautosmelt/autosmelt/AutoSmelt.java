@@ -10,22 +10,29 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Set;
 
 public class AutoSmelt implements Listener {
 
+    private boolean isEFS;
     private final boolean isSmeltGold;
     private final boolean isSmeltIron;
     private final boolean isSmeltStone;
     private final boolean isAutoSmeltDCM;
     private final boolean isAutoPickupEnabled;
+    private List<String> autoSmeltDisabledWorlds;
+    private List<String> autoPickupDisabledWorlds;
 
     public AutoSmelt(AdvancedAutoSmelt plugin) {
+        this.isEFS = plugin.isEFS();
         this.isAutoSmeltDCM = plugin.isDCM();
         this.isAutoPickupEnabled = plugin.isAutoPickupEnabled();
         this.isSmeltGold = plugin.isSmeltGold();
         this.isSmeltIron = plugin.isSmeltIron();
         this.isSmeltStone = plugin.isSmeltStone();
+        this.autoSmeltDisabledWorlds = plugin.getAutoSmeltDisabledWorlds();
+        this.autoPickupDisabledWorlds = plugin.getAutoPickupDisabledWorlds();
     }
 
     private final ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT);
@@ -38,17 +45,21 @@ public class AutoSmelt implements Listener {
     private final Set<String> autoPickupOFF = Commands.autoPickupOFF;
     private final Set<String> autoSmeltOFF = Commands.autoPickupOFF;
 
-    public void smelt(Player p, Material block, ItemStack smelt, ItemStack notSmelt, Material air, BlockBreakEvent e) {
+    public void smelt(Player p, Material block, ItemStack smelt, ItemStack notSmelt, BlockBreakEvent e) {
 
         boolean cantPickup = autoPickupOFF.contains(p.getName());
         boolean cantSmelt = autoSmeltOFF.contains(p.getName());
 
         if (!cantPickup && !cantSmelt) {
             if (!(e.getBlock().getType() == block)) return;
-            if (!p.getInventory().addItem(smelt).isEmpty()) {
-                p.getWorld().dropItem(p.getLocation(), smelt);
-                e.getBlock().setType(air);
-            }
+            for (String noPickupWorlds : autoPickupDisabledWorlds)
+                if (!noPickupWorlds.contains(p.getWorld().getName())) {
+                    if (!p.getInventory().addItem(smelt).isEmpty()) {
+                        p.getWorld().dropItem(p.getLocation(), smelt);
+                    }
+                } else {
+                    e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), smelt);
+                }
 
         } else if (cantPickup && cantSmelt) {
             return;
@@ -56,33 +67,39 @@ public class AutoSmelt implements Listener {
         } else if (cantPickup) {
             if (!(e.getBlock().getType() == block)) return;
             e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), smelt);
-            e.getBlock().setType(air);
 
         } else if (cantSmelt) {
             if (!(e.getBlock().getType() == block)) return;
-            if (!p.getInventory().addItem(notSmelt).isEmpty()) {
-                p.getWorld().dropItem(p.getLocation(), notSmelt);
-                e.getBlock().setType(air);
-            }
+            for (String noPickupWorlds : autoPickupDisabledWorlds)
+                if (!noPickupWorlds.contains(p.getWorld().getName())) {
+                    if (!p.getInventory().addItem(notSmelt).isEmpty()) {
+                        p.getWorld().dropItem(p.getLocation(), notSmelt);
+                    }
+                } else {
+                    e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), notSmelt);
+                }
         }
     }
 
-    public void smeltNoPickup(Player p, Material block, Material air, ItemStack i, BlockBreakEvent e) {
+    public void smeltNoPickup(Player p, Material block, ItemStack notSmelt, BlockBreakEvent e) {
         if (!Commands.autoSmeltOFF.contains(p.getName())) {
             if (e.getBlock().getType() == block) {
-                e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), i);
-                e.getBlock().setType(air);
+                e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), notSmelt);
             }
         }
     }
 
-    public void pickNoSmelt(Player p, Material block, Material air, ItemStack i, BlockBreakEvent e) {
+    public void pickNoSmelt(Player p, Material block, ItemStack notSmelt, BlockBreakEvent e) {
         if (!autoPickupOFF.contains(p.getName())) {
             if (e.getBlock().getType() == block) {
-                if (!p.getInventory().addItem(i).isEmpty()) {
-                    p.getWorld().dropItem(p.getLocation(), i);
-                    e.getBlock().setType(air);
-                }
+                for (String noPickupWorlds : autoPickupDisabledWorlds)
+                    if (!noPickupWorlds.contains(p.getWorld().getName())) {
+                        if (!p.getInventory().addItem(notSmelt).isEmpty()) {
+                            p.getWorld().dropItem(p.getLocation(), notSmelt);
+                        }
+                    } else {
+                        e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), notSmelt);
+                    }
             }
         }
     }
@@ -92,18 +109,26 @@ public class AutoSmelt implements Listener {
 
         Player p = e.getPlayer();
 
+        if (isEFS) return;
+        if (!(p.hasPermission("advancedautosmelt.smelt.gold"))) return;
         if (isAutoSmeltDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }
+
+        for (String noSmeltWorlds : autoSmeltDisabledWorlds)
+            if (noSmeltWorlds.contains(p.getWorld().getName())) return;
+
         if (isSmeltGold) {
-            if (!(p.hasPermission("advancedautosmelt.smelt.gold"))) return;
             if (isAutoPickupEnabled) {
-                smelt(p, Material.GOLD_ORE, goldIngot, goldOre, Material.AIR, e);
+                smelt(p, Material.GOLD_ORE, goldIngot, goldOre, e);
+                e.getBlock().setType(Material.AIR);
             } else {
-                if (!isSmeltGold) return;
-                smeltNoPickup(p, Material.GOLD_ORE, Material.AIR, goldIngot, e);
+                if (autoSmeltOFF.contains(p.getName())) return;
+                smeltNoPickup(p, Material.GOLD_ORE, goldIngot, e);
             }
+            e.getBlock().setType(Material.AIR);
         } else {
             if (isAutoPickupEnabled) {
-                pickNoSmelt(p, Material.GOLD_ORE, Material.AIR, goldOre, e);
+                pickNoSmelt(p, Material.GOLD_ORE, goldOre, e);
+                e.getBlock().setType(Material.AIR);
             }
         }
     }
@@ -113,18 +138,26 @@ public class AutoSmelt implements Listener {
 
         Player p = e.getPlayer();
 
+        if (isEFS) return;
+        if (!(p.hasPermission("advancedautosmelt.smelt.iron"))) return;
         if (isAutoSmeltDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }
+
+        for (String noSmeltWorlds : autoSmeltDisabledWorlds)
+            if (noSmeltWorlds.contains(p.getWorld().getName())) return;
+
         if (isSmeltIron) {
-            if (!(p.hasPermission("advancedautosmelt.smelt.iron"))) return;
             if (isAutoPickupEnabled) {
-                smelt(p, Material.IRON_ORE, ironIngot, ironOre, Material.AIR, e);
+                smelt(p, Material.IRON_ORE, ironIngot, ironOre, e);
+                e.getBlock().setType(Material.AIR);
             } else {
-                if (!isSmeltIron) return;
-                smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
+                if (autoSmeltOFF.contains(p.getName())) return;
+                smeltNoPickup(p, Material.IRON_ORE, ironIngot, e);
             }
+            e.getBlock().setType(Material.AIR);
         } else {
             if (isAutoPickupEnabled) {
-                pickNoSmelt(p, Material.IRON_ORE, Material.AIR, ironOre, e);
+                pickNoSmelt(p, Material.IRON_ORE, ironOre, e);
+                e.getBlock().setType(Material.AIR);
             }
         }
     }
@@ -134,18 +167,27 @@ public class AutoSmelt implements Listener {
 
         Player p = e.getPlayer();
 
+        if (isEFS) return;
+
         if (isAutoSmeltDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }
+
+        for (String noSmeltWorlds : autoSmeltDisabledWorlds)
+            if (noSmeltWorlds.contains(p.getWorld().getName())) return;
+
         if (isSmeltStone) {
             if (!(p.hasPermission("advancedautosmelt.smelt.stone"))) return;
             if (isAutoPickupEnabled) {
-                smelt(p, Material.STONE, stone, cobblestone, Material.AIR, e);
+                smelt(p, Material.STONE, stone, cobblestone, e);
+                e.getBlock().setType(Material.AIR);
             } else {
-                if (!isSmeltStone) return;
-                smeltNoPickup(p, Material.STONE, Material.AIR, stone, e);
+                if (autoSmeltOFF.contains(p.getName())) return;
+                smeltNoPickup(p, Material.STONE, stone, e);
             }
+            e.getBlock().setType(Material.AIR);
         } else {
             if (isAutoPickupEnabled) {
-                pickNoSmelt(p, Material.STONE, Material.AIR, cobblestone, e);
+                pickNoSmelt(p, Material.STONE, cobblestone, e);
+                e.getBlock().setType(Material.AIR);
             }
         }
     }

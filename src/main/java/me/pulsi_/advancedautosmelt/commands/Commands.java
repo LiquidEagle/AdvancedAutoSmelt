@@ -2,13 +2,13 @@ package me.pulsi_.advancedautosmelt.commands;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.managers.Translator;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class Commands implements CommandExecutor {
@@ -33,50 +33,6 @@ public class Commands implements CommandExecutor {
 
     public static Set<String> autoPickupOFF = new HashSet<>();
     public static Set<String> autoSmeltOFF = new HashSet<>();
-
-    private List<String> blackList;
-    private List<String> whiteList;
-
-    private boolean isDCM;
-    private boolean isAutoPickupEnabled;
-    private boolean isAutoPickupBlacklist;
-    private boolean isSmeltInv;
-    private boolean isSmeltGold;
-    private boolean isSmeltIron;
-    private boolean isSmeltStone;
-    private boolean isAutoPickupExp;
-    private boolean isGivingGoldExp;
-    private boolean isGivingIronExp;
-    private boolean isEFS;
-    private boolean useWhitelist;
-
-    private int goldExp;
-    private int ironExp;
-
-    public void reloadValues() {
-        version = plugin.getDescription().getVersion();
-        noPerm = plugin.getConfig().getString("no-permission-message");
-        reload = plugin.getConfig().getString("reload-message");
-        unknownCommand = plugin.getConfig().getString("unknown-command");
-        toggleOn = plugin.getConfig().getString("toggled-on-message");
-        toggleOff = plugin.getConfig().getString("toggled-off-message");
-        goldExp = plugin.getConfig().getInt("AutoSmelt.gold-exp");
-        ironExp = plugin.getConfig().getInt("AutoSmelt.iron-exp");
-        isDCM = plugin.getConfig().getBoolean("AutoSmelt.disable-creative-mode");
-        isAutoPickupEnabled = plugin.getConfig().getBoolean("AutoPickup.enable-autopickup");
-        isAutoPickupBlacklist = plugin.getConfig().getBoolean("AutoPickup.use-blacklist");
-        blackList = plugin.getConfig().getStringList("AutoPickup.blacklist");
-        isSmeltInv = plugin.getConfig().getBoolean("AutoSmelt.smelt-ores-in-inventory");
-        isSmeltGold = plugin.getConfig().getBoolean("AutoSmelt.smelt-gold");
-        isSmeltIron = plugin.getConfig().getBoolean("AutoSmelt.smelt-iron");
-        isSmeltStone = plugin.getConfig().getBoolean("AutoSmelt.smelt-stone");
-        isAutoPickupExp = plugin.getConfig().getBoolean("AutoPickup.autopickup-experience");
-        isGivingGoldExp = plugin.getConfig().getBoolean("AutoSmelt.give-exp-gold");
-        isGivingIronExp = plugin.getConfig().getBoolean("AutoSmelt.give-exp-iron");
-        isEFS = plugin.getConfig().getBoolean("Fortune.enable-fortune-support");
-        useWhitelist = plugin.getConfig().getBoolean("Fortune.use-whitelist");
-        whiteList = plugin.getConfig().getStringList("Fortune.whitelist");
-    }
 
     @Override
     public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
@@ -105,7 +61,8 @@ public class Commands implements CommandExecutor {
             if (s.hasPermission("advancedautosmelt.reload")) {
                 s.sendMessage(Translator.c(reload));
                 plugin.reloadConfig();
-                reloadValues();
+                Bukkit.getPluginManager().disablePlugin(plugin);
+                Bukkit.getPluginManager().enablePlugin(plugin);
             } else {
                 s.sendMessage(Translator.c(noPerm));
             }

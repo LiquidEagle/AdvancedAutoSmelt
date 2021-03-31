@@ -6,7 +6,7 @@
 #   / ____ \  / ____ \ |_| | || (_) |___) | | | | | |  __/ | |_  #
 #  /_/    \_\/_/    \_\__,_|\__\___/_____/|_| |_| |_|\___|_|\__| #
 #                                                                #
-# Version: 2.6.7                                                 #
+# Version: 2.7.0                                                 #
 # Author: Pulsi_                                                 #
 # Thanks for using this plugin!                                  #
 #                                                                #
@@ -43,6 +43,20 @@ AutoSmelt:
 
   #This will smelt ores not smelted in the Inventory
   smelt-ores-in-inventory: true
+  inv-smelt:
+    #Smelt Iron Ores in the Inventory
+    iron-ore: true
+
+    #Smelt Gold Ores in the Inventory
+    gold-ore: true
+
+    #Smelt Cobblestone in the Inventory
+    cobblestone: true
+
+  #The worlds where the AutoSmelt won't work
+  disabled-worlds:
+    - example1
+    - example2
 
 
 ######################################################
@@ -61,6 +75,11 @@ AutoPickup:
   blacklist:
     - SAND
     - DIRT
+
+  #The worlds where the AutoPickup won't work
+  disabled-worlds:
+    - example1
+    - example2
 
 
 ######################################################
@@ -83,6 +102,11 @@ Fortune: #Please, if you run into some problems like Fortune section not save pa
     - EMERALD_ORE
     - GOLD_ORE
     - REDSTONE_ORE
+
+  #The worlds where the Fortune won't work
+  disabled-worlds:
+    - example1
+    - example2
 
 
 #######################################################

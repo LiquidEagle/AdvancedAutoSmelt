@@ -26,6 +26,7 @@ public class FortuneSupport implements Listener {
     private boolean isSmeltStone;
     private boolean isAutoPickupEnabled;
     private List<String> whitelist;
+    private List<String> disabledWorlds;
 
     public FortuneSupport(AdvancedAutoSmelt plugin) {
         this.isEFS = plugin.isEFS();
@@ -36,6 +37,7 @@ public class FortuneSupport implements Listener {
         this.isSmeltStone = plugin.isSmeltStone();
         this.isAutoPickupEnabled = plugin.isAutoPickupEnabled();
         this.whitelist = plugin.getWhiteList();
+        this.disabledWorlds = plugin.getFortuneDisabledWorlds();
     }
 
     private final Set<String> autoPickupOFF = Commands.autoPickupOFF;
@@ -48,7 +50,7 @@ public class FortuneSupport implements Listener {
     private final ItemStack stone = new ItemStack(Material.STONE);
     private final ItemStack cobblestone = new ItemStack(Material.COBBLESTONE);
 
-    public void smelt(Player p, Material block, ItemStack smelt, ItemStack notSmelt, Material air, BlockBreakEvent e) {
+    public void smelt(Player p, Material block, ItemStack smelt, ItemStack notSmelt, BlockBreakEvent e) {
 
         boolean cantPickup = autoPickupOFF.contains(p.getName());
         boolean cantSmelt = autoSmeltOFF.contains(p.getName());
@@ -58,7 +60,6 @@ public class FortuneSupport implements Listener {
             if (!p.getInventory().addItem(smelt).isEmpty()) {
                 p.getWorld().dropItem(p.getLocation(), smelt);
             }
-            e.getBlock().setType(air);
 
         } else if (cantPickup && cantSmelt) {
             e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), notSmelt);
@@ -66,33 +67,29 @@ public class FortuneSupport implements Listener {
         } else if (cantPickup) {
             if (!(e.getBlock().getType() == block)) return;
             e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), smelt);
-            e.getBlock().setType(air);
 
         } else if (cantSmelt) {
             if (!(e.getBlock().getType() == block)) return;
             if (!p.getInventory().addItem(notSmelt).isEmpty()) {
                 p.getWorld().dropItem(p.getLocation(), notSmelt);
             }
-            e.getBlock().setType(air);
         }
     }
 
-    public void smeltNoPickup(Player p, Material block, Material air, ItemStack smelt, BlockBreakEvent e) {
+    public void smeltNoPickup(Player p, Material block, ItemStack smelt, BlockBreakEvent e) {
         if (!Commands.autoSmeltOFF.contains(p.getName())) {
             if (e.getBlock().getType() == block) {
                 e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), smelt);
             }
-            e.getBlock().setType(air);
         }
     }
 
-    public void pickNoSmelt(Player p, Material block, Material air, ItemStack noSmelt, BlockBreakEvent e) {
+    public void pickNoSmelt(Player p, Material block, ItemStack noSmelt, BlockBreakEvent e) {
         if (!autoPickupOFF.contains(p.getName())) {
             if (e.getBlock().getType() == block) {
                 if (!p.getInventory().addItem(noSmelt).isEmpty()) {
                     p.getWorld().dropItem(p.getLocation(), noSmelt);
                 }
-                e.getBlock().setType(air);
             }
         }
     }
@@ -103,11 +100,12 @@ public class FortuneSupport implements Listener {
         Player p = e.getPlayer();
 
         if (!isEFS) return;
-
-        if (e.getBlock().getType() == Material.STONE || e.getBlock().getType() == Material.IRON_ORE || e.getBlock().getType() == Material.GOLD_ORE)
-            return;
-
+        if (e.getBlock().getType() == Material.STONE || e.getBlock().getType() == Material.IRON_ORE || e.getBlock().getType() == Material.GOLD_ORE) return;
+        if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
         if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
+
+        for (String worlds : disabledWorlds)
+            if (worlds.contains(p.getWorld().getName())) return;
 
         if (useWhitelist) {
             if (whitelist.contains(e.getBlock().getType().toString())) {
@@ -125,54 +123,62 @@ public class FortuneSupport implements Listener {
 
                         drops.setAmount(dropsAmount);
 
-                        if (isDCM) {
-                            if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-                        }
-                        if (!autoPickupOFF.contains(p.getName())) {
-                            if (!p.getInventory().addItem(drops).isEmpty()) {
-                                p.getWorld().dropItem(p.getLocation(), drops);
+                        if (isAutoPickupEnabled) {
+                            if (!autoPickupOFF.contains(p.getName())) {
+                                if (!p.getInventory().addItem(drops).isEmpty()) {
+                                    p.getWorld().dropItem(p.getLocation(), drops);
+                                }
+                                e.getBlock().setType(Material.AIR);
+                            } else {
+                                e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                                e.getBlock().setType(Material.AIR);
                             }
                         } else {
                             e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                            e.getBlock().setType(Material.AIR);
                         }
-                        e.getBlock().setType(Material.AIR);
                     }
+
                 } else {
+
                     for (ItemStack drops : e.getBlock().getDrops()) {
 
-                        if (isDCM) {
-                            if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-                        }
-                        if (!autoPickupOFF.contains(p.getName())) {
-                            if (!p.getInventory().addItem(drops).isEmpty()) {
-                                p.getWorld().dropItem(p.getLocation(), drops);
+                        if (isAutoPickupEnabled) {
+                            if (!autoPickupOFF.contains(p.getName())) {
+                                if (!p.getInventory().addItem(drops).isEmpty()) {
+                                    p.getWorld().dropItem(p.getLocation(), drops);
+                                }
+                                e.getBlock().setType(Material.AIR);
+                            } else {
+                                e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                                e.getBlock().setType(Material.AIR);
                             }
                         } else {
                             e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                            e.getBlock().setType(Material.AIR);
                         }
-                        e.getBlock().setType(Material.AIR);
                     }
                 }
             } else {
                 for (ItemStack drops : e.getBlock().getDrops()) {
-                    if (isDCM) {
-                        if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-                    }
-                    if (!autoPickupOFF.contains(p.getName())) {
-                        if (!p.getInventory().addItem(drops).isEmpty()) {
-                            p.getWorld().dropItem(p.getLocation(), drops);
+                    if (isAutoPickupEnabled) {
+                        if (!autoPickupOFF.contains(p.getName())) {
+                            if (!p.getInventory().addItem(drops).isEmpty()) {
+                                p.getWorld().dropItem(p.getLocation(), drops);
+                            }
+                            e.getBlock().setType(Material.AIR);
+                        } else {
+                            e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                            e.getBlock().setType(Material.AIR);
                         }
                     } else {
                         e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                        e.getBlock().setType(Material.AIR);
                     }
-                    e.getBlock().setType(Material.AIR);
                 }
             }
 
         } else {
-
-            if (e.getBlock().getType() == Material.STONE || e.getBlock().getType() == Material.IRON_ORE || e.getBlock().getType() == Material.GOLD_ORE)
-                return;
 
             if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
                 int fortuneLevel = p.getInventory().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
@@ -184,31 +190,38 @@ public class FortuneSupport implements Listener {
 
                     drops.setAmount(dropsAmount);
 
-                    if (isDCM) {
-                        if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-                    }
-                    if (!autoPickupOFF.contains(p.getName())) {
-                        if (!p.getInventory().addItem(drops).isEmpty()) {
-                            p.getWorld().dropItem(p.getLocation(), drops);
+                    if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
+                    if (isAutoPickupEnabled) {
+                        if (!autoPickupOFF.contains(p.getName())) {
+                            if (!p.getInventory().addItem(drops).isEmpty()) {
+                                p.getWorld().dropItem(p.getLocation(), drops);
+                            }
+                            e.getBlock().setType(Material.AIR);
+                        } else {
+                            e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                            e.getBlock().setType(Material.AIR);
                         }
                     } else {
                         e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                        e.getBlock().setType(Material.AIR);
                     }
-                    e.getBlock().setType(Material.AIR);
                 }
             } else {
                 for (ItemStack drops : e.getBlock().getDrops()) {
-                    if (isDCM) {
-                        if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-                    }
-                    if (!autoPickupOFF.contains(p.getName())) {
-                        if (!p.getInventory().addItem(drops).isEmpty()) {
-                            p.getWorld().dropItem(p.getLocation(), drops);
+                    if (isAutoPickupEnabled) {
+                        if (!autoPickupOFF.contains(p.getName())) {
+                            if (!p.getInventory().addItem(drops).isEmpty()) {
+                                p.getWorld().dropItem(p.getLocation(), drops);
+                            }
+                            e.getBlock().setType(Material.AIR);
+                        } else {
+                            e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                            e.getBlock().setType(Material.AIR);
                         }
                     } else {
                         e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), drops);
+                        e.getBlock().setType(Material.AIR);
                     }
-                    e.getBlock().setType(Material.AIR);
                 }
             }
         }
@@ -220,10 +233,12 @@ public class FortuneSupport implements Listener {
         Player p = e.getPlayer();
 
         if (!isEFS) return;
-
         if (!(e.getBlock().getType() == Material.STONE)) return;
-
         if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
+        if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
+
+        for (String worlds : disabledWorlds)
+            if (worlds.contains(p.getWorld().getName())) return;
 
         if (useWhitelist) {
             if (whitelist.contains(Material.STONE.toString())) {
@@ -235,57 +250,75 @@ public class FortuneSupport implements Listener {
                     int min = 1;
                     int max = fortuneLevel;
                     int multiply = r.nextInt((max - min) + 1) + min;
-
                     stone.setAmount(multiply);
                     cobblestone.setAmount(multiply);
 
-                    if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-                    if (isSmeltStone) {
-                        if (isAutoPickupEnabled) {
-                            smelt(p, Material.STONE, stone, cobblestone, Material.AIR, e);
-                        } else {
-                            if (!isSmeltStone) return;
-                            smeltNoPickup(p, Material.STONE, Material.AIR, stone, e);
-                        }
-                    } else {
-                        if (!isAutoPickupEnabled) return;
-                        pickNoSmelt(p, Material.STONE, Material.AIR, cobblestone, e);
-                    }
-                    e.getBlock().setType(Material.AIR);
                 } else {
-                    if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-                    if (isSmeltStone) {
-                        if (isAutoPickupEnabled) {
-                            smelt(p, Material.STONE, stone, cobblestone, Material.AIR, e);
-                        } else {
-                            if (!isSmeltStone) return;
-                            smeltNoPickup(p, Material.STONE, Material.AIR, stone, e);
-                        }
-                    } else {
-                        if (!isAutoPickupEnabled) return;
-                        pickNoSmelt(p, Material.STONE, Material.AIR, cobblestone, e);
-                    }
-                    e.getBlock().setType(Material.AIR);
+                    stone.setAmount(1);
+                    cobblestone.setAmount(1);
                 }
-            } else {
-                if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
+
                 if (isSmeltStone) {
                     if (isAutoPickupEnabled) {
-                        smelt(p, Material.STONE, stone, cobblestone, Material.AIR, e);
+                        if (!autoPickupOFF.contains(p.getName())) {
+                            if (!autoSmeltOFF.contains(p.getName())) {
+                                smelt(p, Material.STONE, stone, cobblestone, e);
+                                e.getBlock().setType(Material.AIR);
+                            } else {
+                                if (autoPickupOFF.contains(p.getName())) return;
+                                pickNoSmelt(p, Material.STONE, cobblestone, e);
+                                e.getBlock().setType(Material.AIR);
+                            }
+                        } else {
+                            if (autoSmeltOFF.contains(p.getName())) return;
+                            smeltNoPickup(p, Material.STONE, stone, e);
+                            e.getBlock().setType(Material.AIR);
+                        }
                     } else {
-                        if (!isSmeltStone) return;
-                        smeltNoPickup(p, Material.STONE, Material.AIR, stone, e);
+                        if (autoSmeltOFF.contains(p.getName())) return;
+                        smeltNoPickup(p, Material.STONE, stone, e);
+                        e.getBlock().setType(Material.AIR);
                     }
                 } else {
                     if (!isAutoPickupEnabled) return;
-                    pickNoSmelt(p, Material.STONE, Material.AIR, cobblestone, e);
+                    if (autoPickupOFF.contains(p.getName())) return;
+                    pickNoSmelt(p, Material.STONE, cobblestone, e);
+                    e.getBlock().setType(Material.AIR);
                 }
-                e.getBlock().setType(Material.AIR);
+
+            } else {
+
+                if (isSmeltStone) {
+                    if (isAutoPickupEnabled) {
+                        if (!autoPickupOFF.contains(p.getName())) {
+                            if (!autoSmeltOFF.contains(p.getName())) {
+                                smelt(p, Material.STONE, stone, cobblestone, e);
+                                e.getBlock().setType(Material.AIR);
+                            } else {
+                                if (autoPickupOFF.contains(p.getName())) return;
+                                pickNoSmelt(p, Material.STONE, cobblestone, e);
+                                e.getBlock().setType(Material.AIR);
+                            }
+                        } else {
+                            if (autoSmeltOFF.contains(p.getName())) return;
+                            smeltNoPickup(p, Material.STONE, stone, e);
+                            e.getBlock().setType(Material.AIR);
+                        }
+                    } else {
+                        if (autoSmeltOFF.contains(p.getName())) return;
+                        smeltNoPickup(p, Material.STONE, stone, e);
+                        e.getBlock().setType(Material.AIR);
+                    }
+                } else {
+                    if (!isAutoPickupEnabled) return;
+                    if (autoPickupOFF.contains(p.getName())) return;
+                    pickNoSmelt(p, Material.STONE, cobblestone, e);
+                    e.getBlock().setType(Material.AIR);
+                }
             }
 
         } else {
 
-            if (!(e.getBlock().getType() == Material.STONE)) return;
             if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
                 int fortuneLevel = p.getInventory().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
 
@@ -297,35 +330,36 @@ public class FortuneSupport implements Listener {
                 stone.setAmount(multiply);
                 cobblestone.setAmount(multiply);
 
-                if (isDCM) {
-                    if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-                }
-                if (isSmeltStone) {
-                    if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
-                    if (isAutoPickupEnabled) {
-                        smelt(p, Material.STONE, stone, cobblestone, Material.AIR, e);
-                    } else {
-                        if (!isSmeltStone) return;
-                        smeltNoPickup(p, Material.STONE, Material.AIR, stone, e);
-                    }
-                } else {
-                    if (!isAutoPickupEnabled) return;
-                    pickNoSmelt(p, Material.STONE, Material.AIR, cobblestone, e);
-                }
-                e.getBlock().setType(Material.AIR);
             } else {
-                if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-                if (isSmeltStone) {
-                    if (isAutoPickupEnabled) {
-                        smelt(p, Material.STONE, stone, cobblestone, Material.AIR, e);
+                stone.setAmount(1);
+                cobblestone.setAmount(1);
+            }
+
+            if (isSmeltStone) {
+                if (isAutoPickupEnabled) {
+                    if (!autoPickupOFF.contains(p.getName())) {
+                        if (!autoSmeltOFF.contains(p.getName())) {
+                            smelt(p, Material.STONE, stone, cobblestone, e);
+                            e.getBlock().setType(Material.AIR);
+                        } else {
+                            if (autoPickupOFF.contains(p.getName())) return;
+                            pickNoSmelt(p, Material.STONE, cobblestone, e);
+                            e.getBlock().setType(Material.AIR);
+                        }
                     } else {
-                        if (!isSmeltStone) return;
-                        smeltNoPickup(p, Material.STONE, Material.AIR, stone, e);
+                        if (autoSmeltOFF.contains(p.getName())) return;
+                        smeltNoPickup(p, Material.STONE, stone, e);
+                        e.getBlock().setType(Material.AIR);
                     }
                 } else {
-                    if (!isAutoPickupEnabled) return;
-                    pickNoSmelt(p, Material.STONE, Material.AIR, cobblestone, e);
+                    if (autoSmeltOFF.contains(p.getName())) return;
+                    smeltNoPickup(p, Material.STONE, stone, e);
+                    e.getBlock().setType(Material.AIR);
                 }
+            } else {
+                if (!isAutoPickupEnabled) return;
+                if (autoPickupOFF.contains(p.getName())) return;
+                pickNoSmelt(p, Material.STONE, cobblestone, e);
                 e.getBlock().setType(Material.AIR);
             }
         }
@@ -337,10 +371,12 @@ public class FortuneSupport implements Listener {
         Player p = e.getPlayer();
 
         if (!isEFS) return;
-
         if (!(e.getBlock().getType() == Material.IRON_ORE)) return;
-
         if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
+        if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
+
+        for (String worlds : disabledWorlds)
+            if (worlds.contains(p.getWorld().getName())) return;
 
         if (useWhitelist) {
             if (whitelist.contains(Material.IRON_ORE.toString())) {
@@ -351,97 +387,116 @@ public class FortuneSupport implements Listener {
                     Random r = new Random();
                     int min = 1;
                     int max = fortuneLevel;
-                    int multiply = r.nextInt((max - min) + 1) + min;
+                    int randomDrop = r.nextInt((max - min) + 1) + min;
 
-                    ironIngot.setAmount(multiply);
-                    ironOre.setAmount(multiply);
+                    ironIngot.setAmount(randomDrop);
+                    ironOre.setAmount(randomDrop);
 
-                    if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-                    if (isSmeltIron) {
-                        if (isAutoPickupEnabled) {
-                            smelt(p, Material.IRON_ORE, ironIngot, ironOre, Material.AIR, e);
-                        } else {
-                            if (!isSmeltIron) return;
-                            smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
-                        }
-                    } else {
-                        if (!isAutoPickupEnabled) return;
-                        pickNoSmelt(p, Material.IRON_ORE, Material.AIR, ironOre, e);
-                    }
-                    e.getBlock().setType(Material.AIR);
                 } else {
-                    if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-                    if (isSmeltIron) {
-                        if (isAutoPickupEnabled) {
-                            smelt(p, Material.IRON_ORE, ironIngot, ironOre, Material.AIR, e);
-                        } else {
-                            if (!isSmeltIron) return;
-                            smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
-                        }
-                    } else {
-                        if (!isAutoPickupEnabled) return;
-                        pickNoSmelt(p, Material.IRON_ORE, Material.AIR, ironOre, e);
-                    }
-                    e.getBlock().setType(Material.AIR);
+                    ironIngot.setAmount(1);
+                    ironOre.setAmount(1);
                 }
-            } else {
-                if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
+
                 if (isSmeltIron) {
                     if (isAutoPickupEnabled) {
-                        smelt(p, Material.IRON_ORE, ironIngot, ironOre, Material.AIR, e);
+                        if (!autoPickupOFF.contains(p.getName())) {
+                            if (!autoSmeltOFF.contains(p.getName())) {
+                                smelt(p, Material.IRON_ORE, ironIngot, ironOre, e);
+                                e.getBlock().setType(Material.AIR);
+                            } else {
+                                if (autoPickupOFF.contains(p.getName())) return;
+                                pickNoSmelt(p, Material.IRON_ORE, ironOre, e);
+                                e.getBlock().setType(Material.AIR);
+                            }
+                        } else {
+                            if (autoSmeltOFF.contains(p.getName())) return;
+                            smeltNoPickup(p, Material.IRON_ORE, ironIngot, e);
+                            e.getBlock().setType(Material.AIR);
+                        }
                     } else {
-                        if (!isSmeltIron) return;
-                        smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
+                        if (autoSmeltOFF.contains(p.getName())) return;
+                        smeltNoPickup(p, Material.IRON_ORE, ironIngot, e);
+                        e.getBlock().setType(Material.AIR);
                     }
                 } else {
                     if (!isAutoPickupEnabled) return;
-                    pickNoSmelt(p, Material.IRON_ORE, Material.AIR, ironOre, e);
+                    if (autoPickupOFF.contains(p.getName())) return;
+                    pickNoSmelt(p, Material.IRON_ORE, ironOre, e);
+                    e.getBlock().setType(Material.AIR);
                 }
-                e.getBlock().setType(Material.AIR);
+
+            } else {
+                if (isSmeltIron) {
+                    if (isAutoPickupEnabled) {
+                        if (!autoPickupOFF.contains(p.getName())) {
+                            if (!autoSmeltOFF.contains(p.getName())) {
+                                smelt(p, Material.IRON_ORE, ironIngot, ironOre, e);
+                                e.getBlock().setType(Material.AIR);
+                            } else {
+                                if (autoPickupOFF.contains(p.getName())) return;
+                                pickNoSmelt(p, Material.IRON_ORE, ironOre, e);
+                                e.getBlock().setType(Material.AIR);
+                            }
+                        } else {
+                            if (autoSmeltOFF.contains(p.getName())) return;
+                            smeltNoPickup(p, Material.IRON_ORE, ironIngot, e);
+                            e.getBlock().setType(Material.AIR);
+                        }
+                    } else {
+                        if (autoSmeltOFF.contains(p.getName())) return;
+                        smeltNoPickup(p, Material.IRON_ORE, ironIngot, e);
+                        e.getBlock().setType(Material.AIR);
+                    }
+                } else {
+                    if (!isAutoPickupEnabled) return;
+                    if (autoPickupOFF.contains(p.getName())) return;
+                    pickNoSmelt(p, Material.IRON_ORE, ironOre, e);
+                    e.getBlock().setType(Material.AIR);
+                }
             }
 
         } else {
 
-            if (!(e.getBlock().getType() == Material.IRON_ORE)) return;
             if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
                 int fortuneLevel = p.getInventory().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
 
                 Random r = new Random();
                 int min = 1;
                 int max = fortuneLevel;
-                int multiply = r.nextInt((max - min) + 1) + min;
+                int randomDrop = r.nextInt((max - min) + 1) + min;
+                ironIngot.setAmount(randomDrop);
+                ironOre.setAmount(randomDrop);
 
-                ironIngot.setAmount(multiply);
-                ironOre.setAmount(multiply);
-
-                if (isDCM) {
-                    if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-                }
-                if (isSmeltIron) {
-                    if (isAutoPickupEnabled) {
-                        smelt(p, Material.IRON_ORE, ironIngot, ironOre, Material.AIR, e);
-                    } else {
-                        if (!isSmeltIron) return;
-                        smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
-                    }
-                } else {
-                    if (!isAutoPickupEnabled) return;
-                    pickNoSmelt(p, Material.IRON_ORE, Material.AIR, ironOre, e);
-                }
-                e.getBlock().setType(Material.AIR);
             } else {
-                if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-                if (isSmeltIron) {
-                    if (isAutoPickupEnabled) {
-                        smelt(p, Material.IRON_ORE, ironIngot, ironOre, Material.AIR, e);
+                ironIngot.setAmount(1);
+                ironOre.setAmount(1);
+            }
+
+            if (isSmeltIron) {
+                if (isAutoPickupEnabled) {
+                    if (!autoPickupOFF.contains(p.getName())) {
+                        if (!autoSmeltOFF.contains(p.getName())) {
+                            smelt(p, Material.IRON_ORE, ironIngot, ironOre, e);
+                            e.getBlock().setType(Material.AIR);
+                        } else {
+                            if (autoPickupOFF.contains(p.getName())) return;
+                            pickNoSmelt(p, Material.IRON_ORE, ironOre, e);
+                            e.getBlock().setType(Material.AIR);
+                        }
                     } else {
-                        if (!isSmeltIron) return;
-                        smeltNoPickup(p, Material.IRON_ORE, Material.AIR, ironIngot, e);
+                        if (autoSmeltOFF.contains(p.getName())) return;
+                        smeltNoPickup(p, Material.IRON_ORE, ironIngot, e);
+                        e.getBlock().setType(Material.AIR);
                     }
                 } else {
-                    if (!isAutoPickupEnabled) return;
-                    pickNoSmelt(p, Material.IRON_ORE, Material.AIR, ironOre, e);
+                    if (autoSmeltOFF.contains(p.getName())) return;
+                    smeltNoPickup(p, Material.IRON_ORE, ironIngot, e);
+                    e.getBlock().setType(Material.AIR);
                 }
+            } else {
+                if (!isAutoPickupEnabled) return;
+                if (autoPickupOFF.contains(p.getName())) return;
+                pickNoSmelt(p, Material.IRON_ORE, ironOre, e);
                 e.getBlock().setType(Material.AIR);
             }
         }
@@ -453,10 +508,12 @@ public class FortuneSupport implements Listener {
         Player p = e.getPlayer();
 
         if (!isEFS) return;
-
         if (!(e.getBlock().getType() == Material.GOLD_ORE)) return;
-
         if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
+        if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
+
+        for (String worlds : disabledWorlds)
+            if (worlds.contains(p.getWorld().getName())) return;
 
         if (useWhitelist) {
             if (whitelist.contains(Material.GOLD_ORE.toString())) {
@@ -472,53 +529,72 @@ public class FortuneSupport implements Listener {
                     goldIngot.setAmount(multiply);
                     goldOre.setAmount(multiply);
 
-                    if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-                    if (isSmeltGold) {
-                        if (isAutoPickupEnabled) {
-                            smelt(p, Material.GOLD_ORE, goldIngot, goldOre, Material.AIR, e);
-                        } else {
-                            if (!isSmeltGold) return;
-                            smeltNoPickup(p, Material.GOLD_ORE, Material.AIR, goldIngot, e);
-                        }
-                    } else {
-                        if (!isAutoPickupEnabled) return;
-                        pickNoSmelt(p, Material.GOLD_ORE, Material.AIR, goldOre, e);
-                    }
-                    e.getBlock().setType(Material.AIR);
                 } else {
-                    if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-                    if (isSmeltGold) {
-                        if (isAutoPickupEnabled) {
-                            smelt(p, Material.GOLD_ORE, goldIngot, goldOre, Material.AIR, e);
-                        } else {
-                            if (!isSmeltGold) return;
-                            smeltNoPickup(p, Material.GOLD_ORE, Material.AIR, goldIngot, e);
-                        }
-                    } else {
-                        if (!isAutoPickupEnabled) return;
-                        pickNoSmelt(p, Material.GOLD_ORE, Material.AIR, goldOre, e);
-                    }
-                    e.getBlock().setType(Material.AIR);
+                    goldIngot.setAmount(1);
+                    goldOre.setAmount(1);
                 }
-            } else {
-                if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
+
                 if (isSmeltGold) {
                     if (isAutoPickupEnabled) {
-                        smelt(p, Material.GOLD_ORE, goldIngot, goldOre, Material.AIR, e);
+                        if (!autoPickupOFF.contains(p.getName())) {
+                            if (!autoSmeltOFF.contains(p.getName())) {
+                                smelt(p, Material.GOLD_ORE, goldIngot, goldOre, e);
+                                e.getBlock().setType(Material.AIR);
+                            } else {
+                                if (autoPickupOFF.contains(p.getName())) return;
+                                pickNoSmelt(p, Material.GOLD_ORE, goldOre, e);
+                                e.getBlock().setType(Material.AIR);
+                            }
+                        } else {
+                            if (autoSmeltOFF.contains(p.getName())) return;
+                            smeltNoPickup(p, Material.GOLD_ORE, goldIngot, e);
+                            e.getBlock().setType(Material.AIR);
+                        }
                     } else {
-                        if (!isSmeltGold) return;
-                        smeltNoPickup(p, Material.GOLD_ORE, Material.AIR, goldIngot, e);
+                        if (autoSmeltOFF.contains(p.getName())) return;
+                        smeltNoPickup(p, Material.GOLD_ORE, goldIngot, e);
+                        e.getBlock().setType(Material.AIR);
                     }
                 } else {
                     if (!isAutoPickupEnabled) return;
-                    pickNoSmelt(p, Material.GOLD_ORE, Material.AIR, goldOre, e);
+                    if (autoPickupOFF.contains(p.getName())) return;
+                    pickNoSmelt(p, Material.GOLD_ORE, goldOre, e);
+                    e.getBlock().setType(Material.AIR);
                 }
-                e.getBlock().setType(Material.AIR);
+
+            } else {
+
+                if (isSmeltGold) {
+                    if (isAutoPickupEnabled) {
+                        if (!autoPickupOFF.contains(p.getName())) {
+                            if (!autoSmeltOFF.contains(p.getName())) {
+                                smelt(p, Material.GOLD_ORE, goldIngot, goldOre, e);
+                                e.getBlock().setType(Material.AIR);
+                            } else {
+                                if (autoPickupOFF.contains(p.getName())) return;
+                                pickNoSmelt(p, Material.GOLD_ORE, goldOre, e);
+                                e.getBlock().setType(Material.AIR);
+                            }
+                        } else {
+                            if (autoSmeltOFF.contains(p.getName())) return;
+                            smeltNoPickup(p, Material.GOLD_ORE, goldIngot, e);
+                            e.getBlock().setType(Material.AIR);
+                        }
+                    } else {
+                        if (autoSmeltOFF.contains(p.getName())) return;
+                        smeltNoPickup(p, Material.GOLD_ORE, goldIngot, e);
+                        e.getBlock().setType(Material.AIR);
+                    }
+                } else {
+                    if (!isAutoPickupEnabled) return;
+                    if (autoPickupOFF.contains(p.getName())) return;
+                    pickNoSmelt(p, Material.GOLD_ORE, goldOre, e);
+                    e.getBlock().setType(Material.AIR);
+                }
             }
 
         } else {
 
-            if (!(e.getBlock().getType() == Material.GOLD_ORE)) return;
             if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
                 int fortuneLevel = p.getInventory().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
 
@@ -530,32 +606,35 @@ public class FortuneSupport implements Listener {
                 goldIngot.setAmount(multiply);
                 goldOre.setAmount(multiply);
 
-                if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-                if (isSmeltGold) {
-                    if (isAutoPickupEnabled) {
-                        smelt(p, Material.GOLD_ORE, goldIngot, goldOre, Material.AIR, e);
-                    } else {
-                        if (!isSmeltGold) return;
-                        smeltNoPickup(p, Material.GOLD_ORE, Material.AIR, goldIngot, e);
-                    }
-                } else {
-                    if (!isAutoPickupEnabled) return;
-                    pickNoSmelt(p, Material.GOLD_ORE, Material.AIR, goldOre, e);
-                }
-                e.getBlock().setType(Material.AIR);
             } else {
-                if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-                if (isSmeltGold) {
-                    if (isAutoPickupEnabled) {
-                        smelt(p, Material.GOLD_ORE, goldIngot, goldOre, Material.AIR, e);
+                goldIngot.setAmount(1);
+                goldOre.setAmount(1);
+            }
+            if (isSmeltGold) {
+                if (isAutoPickupEnabled) {
+                    if (!autoPickupOFF.contains(p.getName())) {
+                        if (!autoSmeltOFF.contains(p.getName())) {
+                            smelt(p, Material.GOLD_ORE, goldIngot, goldOre, e);
+                            e.getBlock().setType(Material.AIR);
+                        } else {
+                            if (autoPickupOFF.contains(p.getName())) return;
+                            pickNoSmelt(p, Material.GOLD_ORE, goldOre, e);
+                            e.getBlock().setType(Material.AIR);
+                        }
                     } else {
-                        if (!isSmeltGold) return;
-                        smeltNoPickup(p, Material.GOLD_ORE, Material.AIR, goldIngot, e);
+                        if (autoSmeltOFF.contains(p.getName())) return;
+                        smeltNoPickup(p, Material.GOLD_ORE, goldIngot, e);
+                        e.getBlock().setType(Material.AIR);
                     }
                 } else {
-                    if (!isAutoPickupEnabled) return;
-                    pickNoSmelt(p, Material.GOLD_ORE, Material.AIR, goldOre, e);
+                    if (autoSmeltOFF.contains(p.getName())) return;
+                    smeltNoPickup(p, Material.GOLD_ORE, goldIngot, e);
+                    e.getBlock().setType(Material.AIR);
                 }
+            } else {
+                if (!isAutoPickupEnabled) return;
+                if (autoPickupOFF.contains(p.getName())) return;
+                pickNoSmelt(p, Material.GOLD_ORE, goldOre, e);
                 e.getBlock().setType(Material.AIR);
             }
         }

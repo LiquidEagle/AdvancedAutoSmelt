@@ -20,12 +20,14 @@ public class AutoPickup implements Listener {
     private boolean isAutoPickupEnabled;
     private boolean isAutoPickupBlacklist;
     private List<String> blackList;
+    private List<String> autoPickupDisabledWorlds;
 
     public AutoPickup(AdvancedAutoSmelt plugin) {
         this.isAutoSmeltDCM = plugin.isDCM();
         this.isAutoPickupEnabled = plugin.isAutoPickupEnabled();
         this.isAutoPickupBlacklist = plugin.isAutoPickupBlacklist();
         this.blackList = plugin.getBlackList();
+        this.autoPickupDisabledWorlds = plugin.getAutoPickupDisabledWorlds();
     }
 
     Set<String> autoPickupOFF = Commands.autoPickupOFF;
@@ -34,6 +36,9 @@ public class AutoPickup implements Listener {
     public void autoPickup(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
+
+        for (String worlds : autoPickupDisabledWorlds)
+            if (worlds.contains(p.getWorld().getName())) return;
 
         if (!(e.getBlock().getType().name().endsWith("LEAVES"))) {
 
