@@ -5,6 +5,7 @@ import me.pulsi_.advancedautosmelt.autopickup.AutoPickupExpCustom;
 import me.pulsi_.advancedautosmelt.autosmelt.AutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
 import me.pulsi_.advancedautosmelt.events.BlockBreakSmeltInv;
+import me.pulsi_.advancedautosmelt.events.ChestBreak;
 import me.pulsi_.advancedautosmelt.events.FortuneSupport;
 import me.pulsi_.advancedautosmelt.managers.Translator;
 import me.pulsi_.advancedautosmelt.managers.UpdateChecker;
@@ -44,6 +45,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
     private boolean isGivingIronExp;
     private boolean isEFS;
     private boolean useWhitelist;
+    private boolean useLegacySupp;
 
     private int goldExp;
     private int ironExp;
@@ -79,6 +81,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         autoSmeltDisabledWorlds = this.getConfig().getStringList("AutoSmelt.disabled-worlds");
         autoPickupDisabledWorlds = this.getConfig().getStringList("AutoPickup.disabled-worlds");
         fortuneDisabledWorlds = this.getConfig().getStringList("Fortune.disabled-worlds");
+        useLegacySupp = this.getConfig().getBoolean("enable-legacy-support");
 
         saveDefaultConfig();
 
@@ -87,6 +90,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new AutoPickup(this), this);
         getServer().getPluginManager().registerEvents(new FortuneSupport(this), this);
+        getServer().getPluginManager().registerEvents(new ChestBreak(this), this);
         getServer().getPluginManager().registerEvents(new AutoPickupExp(this), this);
         getServer().getPluginManager().registerEvents(new AutoSmelt(this), this);
         getServer().getPluginManager().registerEvents(new BlockBreakSmeltInv(this), this);
@@ -232,5 +236,9 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     public boolean isAutoPickupBlacklist() {
         return isAutoPickupBlacklist;
+    }
+
+    public boolean isUseLegacySupp() {
+        return useLegacySupp;
     }
 }

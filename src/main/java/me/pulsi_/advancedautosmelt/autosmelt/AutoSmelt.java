@@ -21,6 +21,7 @@ public class AutoSmelt implements Listener {
     private final boolean isSmeltStone;
     private final boolean isAutoSmeltDCM;
     private final boolean isAutoPickupEnabled;
+    private final boolean useLegacySupp;
     private List<String> autoSmeltDisabledWorlds;
     private List<String> autoPickupDisabledWorlds;
 
@@ -33,6 +34,7 @@ public class AutoSmelt implements Listener {
         this.isSmeltStone = plugin.isSmeltStone();
         this.autoSmeltDisabledWorlds = plugin.getAutoSmeltDisabledWorlds();
         this.autoPickupDisabledWorlds = plugin.getAutoPickupDisabledWorlds();
+        this.useLegacySupp = plugin.isUseLegacySupp();
     }
 
     private final ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT);
@@ -44,6 +46,14 @@ public class AutoSmelt implements Listener {
 
     private final Set<String> autoPickupOFF = Commands.autoPickupOFF;
     private final Set<String> autoSmeltOFF = Commands.autoPickupOFF;
+
+    public void removeDrops(BlockBreakEvent e) {
+        if (useLegacySupp) {
+            e.getBlock().setType(Material.AIR);
+        } else {
+            e.setDropItems(false);
+        }
+    }
 
     public void smelt(Player p, Material block, ItemStack smelt, ItemStack notSmelt, BlockBreakEvent e) {
 
@@ -119,18 +129,16 @@ public class AutoSmelt implements Listener {
         if (isSmeltGold) {
             if (isAutoPickupEnabled) {
                 smelt(p, Material.GOLD_ORE, goldIngot, goldOre, e);
-                e.getBlock().setType(Material.AIR);
             } else {
                 if (autoSmeltOFF.contains(p.getName())) return;
                 smeltNoPickup(p, Material.GOLD_ORE, goldIngot, e);
             }
-            e.getBlock().setType(Material.AIR);
         } else {
             if (isAutoPickupEnabled) {
                 pickNoSmelt(p, Material.GOLD_ORE, goldOre, e);
-                e.getBlock().setType(Material.AIR);
             }
         }
+        removeDrops(e);
     }
 
     @EventHandler
@@ -148,18 +156,16 @@ public class AutoSmelt implements Listener {
         if (isSmeltIron) {
             if (isAutoPickupEnabled) {
                 smelt(p, Material.IRON_ORE, ironIngot, ironOre, e);
-                e.getBlock().setType(Material.AIR);
             } else {
                 if (autoSmeltOFF.contains(p.getName())) return;
                 smeltNoPickup(p, Material.IRON_ORE, ironIngot, e);
             }
-            e.getBlock().setType(Material.AIR);
         } else {
             if (isAutoPickupEnabled) {
                 pickNoSmelt(p, Material.IRON_ORE, ironOre, e);
-                e.getBlock().setType(Material.AIR);
             }
         }
+        removeDrops(e);
     }
 
     @EventHandler
@@ -178,17 +184,15 @@ public class AutoSmelt implements Listener {
             if (!(p.hasPermission("advancedautosmelt.smelt.stone"))) return;
             if (isAutoPickupEnabled) {
                 smelt(p, Material.STONE, stone, cobblestone, e);
-                e.getBlock().setType(Material.AIR);
             } else {
                 if (autoSmeltOFF.contains(p.getName())) return;
                 smeltNoPickup(p, Material.STONE, stone, e);
             }
-            e.getBlock().setType(Material.AIR);
         } else {
             if (isAutoPickupEnabled) {
                 pickNoSmelt(p, Material.STONE, cobblestone, e);
-                e.getBlock().setType(Material.AIR);
             }
         }
+        removeDrops(e);
     }
 }

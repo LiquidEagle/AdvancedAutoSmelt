@@ -10,10 +10,10 @@ import org.bukkit.inventory.ItemStack;
 
 public class BlockBreakSmeltInv implements Listener {
 
-    private boolean isSmeltInv;
-    private boolean isSmeltStoneInv;
-    private boolean isSmeltIronInv;
-    private boolean isSmeltGoldInv;
+    private final boolean isSmeltInv;
+    private final boolean isSmeltStoneInv;
+    private final boolean isSmeltIronInv;
+    private final boolean isSmeltGoldInv;
 
     public BlockBreakSmeltInv(AdvancedAutoSmelt plugin) {
         this.isSmeltInv = plugin.isSmeltInv();
@@ -22,13 +22,13 @@ public class BlockBreakSmeltInv implements Listener {
         this.isSmeltGoldInv = plugin.isSmeltGoldInv();
     }
 
-    public static int getAmount(Player arg0, ItemStack arg1) {
-        if (arg1 == null)
+    public static int getAmount(Player p, ItemStack items) {
+        if (items == null)
             return 0;
         int amount = 0;
         for (int i = 0; i < 36; i++) {
-            ItemStack slot = arg0.getInventory().getItem(i);
-            if (slot == null || !slot.isSimilar(arg1))
+            ItemStack slot = p.getInventory().getItem(i);
+            if (slot == null || !slot.isSimilar(items))
                 continue;
             amount += slot.getAmount();
         }
