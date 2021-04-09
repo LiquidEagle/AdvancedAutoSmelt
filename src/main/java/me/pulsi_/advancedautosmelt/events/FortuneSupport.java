@@ -111,8 +111,8 @@ public class FortuneSupport implements Listener {
 
         if (!isEFS) return;
         if (e.getBlock().getType() == Material.STONE || e.getBlock().getType() == Material.IRON_ORE
-                || e.getBlock().getType() == Material.GOLD_ORE || e.getBlock().getType() == Material.CHEST)
-            return;
+                || e.getBlock().getType() == Material.GOLD_ORE || e.getBlock().getType() == Material.CHEST
+                || e.getBlock().getType() == Material.FURNACE || e.getBlock().getType() == Material.ENDER_CHEST) return;
         if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
         if (isDCM) {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;

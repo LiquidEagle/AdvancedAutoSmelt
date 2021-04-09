@@ -1,22 +1,26 @@
 package me.pulsi_.advancedautosmelt;
 
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import me.pulsi_.advancedautosmelt.autopickup.AutoPickupExp;
 import me.pulsi_.advancedautosmelt.autopickup.AutoPickupExpCustom;
 import me.pulsi_.advancedautosmelt.autosmelt.AutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
-import me.pulsi_.advancedautosmelt.events.BlockBreakSmeltInv;
-import me.pulsi_.advancedautosmelt.events.ChestBreak;
-import me.pulsi_.advancedautosmelt.events.FortuneSupport;
+import me.pulsi_.advancedautosmelt.events.*;
 import me.pulsi_.advancedautosmelt.managers.Translator;
 import me.pulsi_.advancedautosmelt.managers.UpdateChecker;
 import me.pulsi_.advancedautosmelt.autopickup.AutoPickup;
 import me.pulsi_.advancedautosmelt.commands.TabCompletion;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
 public final class AdvancedAutoSmelt extends JavaPlugin {
 
+    public WorldGuardPlugin worldGuardPlugin;
+
+    private WorldGuardPlugin worldGuard;
     private String noPerm;
     private String reload;
     private String version;
@@ -46,13 +50,25 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
     private boolean isEFS;
     private boolean useWhitelist;
     private boolean useLegacySupp;
+    private boolean smeltEnderChest;
 
     private int goldExp;
     private int ironExp;
 
+    private WorldGuardPlugin getWorldGuard() {
+        Plugin worldGuard = this.getServer().getPluginManager().getPlugin("WorldGuard");
+
+        if (worldGuard == null || !(worldGuard instanceof WorldGuardPlugin)) {
+            return null;
+        }
+        return (WorldGuardPlugin) worldGuard;
+    }
+
     @Override
     public void onEnable() {
 
+        //Values
+        this.worldGuard = worldGuardPlugin;
         version = this.getDescription().getVersion();
         noPerm = this.getConfig().getString("no-permission-message");
         reload = this.getConfig().getString("reload-message");
@@ -82,21 +98,45 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         autoPickupDisabledWorlds = this.getConfig().getStringList("AutoPickup.disabled-worlds");
         fortuneDisabledWorlds = this.getConfig().getStringList("Fortune.disabled-worlds");
         useLegacySupp = this.getConfig().getBoolean("enable-legacy-support");
+        smeltEnderChest = this.getConfig().getBoolean("AutoSmelt.smelt-enderchest");
+        //Values
 
+        //Create Config
         saveDefaultConfig();
+        //Create Config
 
+        //WorldGuard
+        worldGuardPlugin = getWorldGuard();
+        //WorldGuard
+
+        //Commands
         getCommand("advancedautosmelt").setExecutor(new Commands(this));
         getCommand("advancedautosmelt").setTabCompleter(new TabCompletion());
+        //Commands
 
+        //AutoPickup
         getServer().getPluginManager().registerEvents(new AutoPickup(this), this);
-        getServer().getPluginManager().registerEvents(new FortuneSupport(this), this);
-        getServer().getPluginManager().registerEvents(new ChestBreak(this), this);
         getServer().getPluginManager().registerEvents(new AutoPickupExp(this), this);
+        getServer().getPluginManager().registerEvents(new AutoPickupExpCustom(this), this);
+        //AutoPickup
+
+        //AutoSmelt
         getServer().getPluginManager().registerEvents(new AutoSmelt(this), this);
         getServer().getPluginManager().registerEvents(new BlockBreakSmeltInv(this), this);
-        getServer().getPluginManager().registerEvents(new AutoPickupExpCustom(this), this);
-        getServer().getPluginManager().registerEvents(new UpdateChecker(this, 90587), this);
+        //AutoSmelt
 
+        //Events / Supports
+        getServer().getPluginManager().registerEvents(new FortuneSupport(this), this);
+        getServer().getPluginManager().registerEvents(new ChestBreak(this), this);
+        getServer().getPluginManager().registerEvents(new FurnaceBreak(this), this);
+        getServer().getPluginManager().registerEvents(new EnderChestBreak(this), this);
+        //Events / Supports
+
+        //Update Checker
+        getServer().getPluginManager().registerEvents(new UpdateChecker(this, 90587), this);
+        //Update Checker
+
+        //Startup Message
         getServer().getConsoleSender().sendMessage(Translator.c(""));
         getServer().getConsoleSender().sendMessage(Translator.c("&d             &a             _        &c_____                _ _   "));
         getServer().getConsoleSender().sendMessage(Translator.c("&d     /\\     &a   /\\        | |      &c/ ____|              | | |  "));
@@ -106,13 +146,18 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(Translator.c("&d /_/    \\_\\&a/_/    \\_\\__,_|\\__\\___/&c_____/|_| |_| |_|\\___|_|\\__|"));
         getServer().getConsoleSender().sendMessage(Translator.c(""));
         getServer().getConsoleSender().sendMessage(Translator.c("&2Enabling Plugin! &bv%v%").replace("%v%", this.getVersion()));
+        if (worldGuardPlugin != null) {
+            getServer().getConsoleSender().sendMessage(Translator.c("&9WorldGuard Hooked Up!"));
+        }
         getServer().getConsoleSender().sendMessage(Translator.c("&fAuthor: Pulsi_"));
         getServer().getConsoleSender().sendMessage(Translator.c(""));
+        //Startup Message
     }
 
     @Override
     public void onDisable() {
 
+        //Shutdown Message
         getServer().getConsoleSender().sendMessage(Translator.c(""));
         getServer().getConsoleSender().sendMessage(Translator.c("&d             &a             _        &c_____                _ _   "));
         getServer().getConsoleSender().sendMessage(Translator.c("&d     /\\     &a   /\\        | |      &c/ ____|              | | |  "));
@@ -123,122 +168,114 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(Translator.c(""));
         getServer().getConsoleSender().sendMessage(Translator.c("&cDisabling Plugin"));
         getServer().getConsoleSender().sendMessage(Translator.c(""));
-
+        //Shutdown Message
     }
 
+    //Get WorldGuard
+    public WorldGuardPlugin getWorldGuardPlugin() {
+        return worldGuardPlugin;
+    }
+    //Get WorldGuard
+
+    //Strings
     public String getNoPerm() {
         return noPerm;
     }
-
     public String getReload() {
         return reload;
     }
-
     public String getToggleOff() {
         return toggleOff;
     }
-
     public String getToggleOn() {
         return toggleOn;
     }
-
     public String getUnknownCommand() {
         return unknownCommand;
     }
-
     public String getVersion() {
         return version;
     }
+    //Strings
 
+    //Ints
     public int getGoldExp() {
         return goldExp;
     }
-
     public int getIronExp() {
         return ironExp;
     }
+    //Ints
 
+    //Lists
     public List<String> getBlackList() {
         return blackList;
     }
-
     public List<String> getAutoSmeltDisabledWorlds() {
         return autoSmeltDisabledWorlds;
     }
-
     public List<String> getAutoPickupDisabledWorlds() {
         return autoPickupDisabledWorlds;
     }
-
     public List<String> getFortuneDisabledWorlds() {
         return fortuneDisabledWorlds;
     }
-
     public List<String> getWhiteList() {
         return whiteList;
     }
+    //Lists
 
+    //Booleans
     public boolean isSmeltInv() {
         return isSmeltInv;
     }
-
     public boolean isSmeltStoneInv() {
         return isSmeltStoneInv;
     }
-
     public boolean isSmeltIronInv() {
         return isSmeltIronInv;
     }
-
     public boolean isSmeltGoldInv() {
         return isSmeltGoldInv;
     }
-
     public boolean isSmeltGold() {
         return isSmeltGold;
     }
-
     public boolean isSmeltIron() {
         return isSmeltIron;
     }
-
     public boolean isSmeltStone() {
         return isSmeltStone;
     }
-
     public boolean isAutoPickupExp() {
         return isAutoPickupExp;
     }
-
     public boolean isGivingGoldExp() {
         return isGivingGoldExp;
     }
-
     public boolean isGivingIronExp() {
         return isGivingIronExp;
     }
-
     public boolean isEFS() {
         return isEFS;
     }
-
     public boolean useWhitelist() {
         return useWhitelist;
     }
-
     public boolean isDCM() {
         return isDCM;
     }
-
     public boolean isAutoPickupEnabled() {
         return isAutoPickupEnabled;
     }
-
     public boolean isAutoPickupBlacklist() {
         return isAutoPickupBlacklist;
     }
-
     public boolean isUseLegacySupp() {
         return useLegacySupp;
     }
+    public boolean isSmeltEnderChest() {
+        return smeltEnderChest;
+    }
+    //Booleans
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'me.Pulsi_'
-version = '2.7.1'
+version = '2.7.2'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -17,6 +17,9 @@ repositories {
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
     }
     maven {
+        url = "https://maven.enginehub.org/repo/"
+    }
+    maven {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
@@ -26,6 +29,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:20.1.0'
     implementation 'org.jetbrains:annotations:20.1.0'
     compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.4'
 }
 
 processResources {

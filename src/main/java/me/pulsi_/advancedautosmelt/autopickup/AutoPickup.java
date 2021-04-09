@@ -1,5 +1,6 @@
 package me.pulsi_.advancedautosmelt.autopickup;
 
+import com.sk89q.worldguard.WorldGuard;
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
 import org.bukkit.GameMode;
@@ -16,7 +17,8 @@ import java.util.Set;
 
 public class AutoPickup implements Listener {
 
-    private boolean isEFS;
+    private WorldGuard worldGuard = WorldGuard.getInstance();
+    private final boolean isEFS;
     private final boolean isAutoSmeltDCM;
     private final boolean isAutoPickupEnabled;
     private final boolean isAutoPickupBlacklist;
@@ -75,10 +77,12 @@ public class AutoPickup implements Listener {
         if (autoPickupOFF.contains(p.getName())) return;
         if (!p.hasPermission("advancedautosmelt.autopickup")) return;
         if (!isAutoPickupEnabled) return;
-        if (e.getBlock().getType().equals(Material.IRON_ORE) ||
-                e.getBlock().getType().equals(Material.GOLD_ORE) ||
-                e.getBlock().getType().equals(Material.STONE) ||
-                e.getBlock().getType().equals(Material.CHEST)) return;
+        if (e.getBlock().getType() == (Material.IRON_ORE) ||
+                e.getBlock().getType() == (Material.GOLD_ORE) ||
+                e.getBlock().getType() ==(Material.STONE) ||
+                e.getBlock().getType() == (Material.CHEST) ||
+                e.getBlock().getType() == (Material.FURNACE) ||
+                e.getBlock().getType() == (Material.ENDER_CHEST)) return;
 
         if (isAutoPickupBlacklist) {
             for (String blacklist : blackList)
