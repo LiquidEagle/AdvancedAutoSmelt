@@ -5,15 +5,20 @@ import org.bukkit.Material;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class FurnaceBreak implements Listener {
 
+    private final List<String> worldsBlackList;
     private final boolean useLegacySupp;
     public FurnaceBreak(AdvancedAutoSmelt plugin) {
         this.useLegacySupp = plugin.isUseLegacySupp();
+        this.worldsBlackList = plugin.getWorldsBlackList();
     }
 
     private final ItemStack furnace = new ItemStack(Material.FURNACE, 1);
@@ -26,13 +31,16 @@ public class FurnaceBreak implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void furnaceBreak(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
 
-        if (!(e.getBlock().getType() == Material.FURNACE)) return;
+        for (String disabledWorlds : worldsBlackList)
+            if (disabledWorlds.contains(p.getWorld().getName())) return;
 
+        if (e.isCancelled()) return;
+        if (!(e.getBlock().getType() == Material.FURNACE)) return;
         p.getInventory().addItem(furnace);
         if (e.getBlock().getState() instanceof Furnace) {
             Furnace furnaceBlock = ((Furnace) e.getBlock().getState());

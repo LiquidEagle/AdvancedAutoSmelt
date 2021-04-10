@@ -58,11 +58,6 @@ AutoSmelt:
     #Smelt Cobblestone in the Inventory
     cobblestone: true
 
-  #The worlds where the AutoSmelt won't work
-  disabled-worlds:
-    - example1
-    - example2
-
 
 ######################################################
 #                   < AUTOPICKUP >                   #
@@ -80,11 +75,6 @@ AutoPickup:
   blacklist:
     - SAND
     - DIRT
-
-  #The worlds where the AutoPickup won't work
-  disabled-worlds:
-    - example1
-    - example2
 
 
 ######################################################
@@ -108,10 +98,13 @@ Fortune: #Please, if you run into some problems like Fortune section not save pa
     - GOLD_ORE
     - REDSTONE_ORE
 
-  #The worlds where the Fortune won't work
-  disabled-worlds:
-    - example1
-    - example2
+
+######################################################
+#                   < BLACKLIST >                    #
+######################################################
+Disabled-Worlds:
+  - example1
+  - example2
 
 
 #######################################################

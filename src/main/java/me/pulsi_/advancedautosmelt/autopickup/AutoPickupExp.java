@@ -6,28 +6,36 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import java.util.List;
 import java.util.Set;
 
 public class AutoPickupExp implements Listener {
 
-    Set<String> autoPickupOFF = Commands.autoPickupOFF;
-
+    private final List<String> worldsBlackList;
+    private final Set<String> autoPickupOFF;
     private final boolean isDCM;
     private final boolean isAutoPickupExp;
 
     public AutoPickupExp(AdvancedAutoSmelt plugin) {
         this.isDCM = plugin.isDCM();
         this.isAutoPickupExp = plugin.isAutoPickupExp();
+        this.worldsBlackList = plugin.getWorldsBlackList();
+        this.autoPickupOFF = Commands.autoPickupOFF;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void blockEXP(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
 
+        for (String disabledWorlds : worldsBlackList)
+            if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        if (e.isCancelled()) return;
         int exp = e.getExpToDrop();
         if (exp == 0) return;
 

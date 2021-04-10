@@ -1,6 +1,5 @@
 package me.pulsi_.advancedautosmelt.events;
 
-import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -38,7 +37,7 @@ public class FortuneSupport implements Listener {
         this.isSmeltStone = plugin.isSmeltStone();
         this.isAutoPickupEnabled = plugin.isAutoPickupEnabled();
         this.whitelist = plugin.getWhiteList();
-        this.disabledWorlds = plugin.getFortuneDisabledWorlds();
+        this.disabledWorlds = plugin.getWorldsBlackList();
         this.useLegacySupp = plugin.isUseLegacySupp();
     }
 
@@ -60,13 +59,12 @@ public class FortuneSupport implements Listener {
         }
     }
 
-    public void smelt(Player p, Material block, ItemStack smelt, ItemStack notSmelt, BlockBreakEvent e) {
+    public void smelt(Player p, ItemStack smelt, ItemStack notSmelt, BlockBreakEvent e) {
 
         boolean cantPickup = autoPickupOFF.contains(p.getName());
         boolean cantSmelt = autoSmeltOFF.contains(p.getName());
 
         if (!cantPickup && !cantSmelt) {
-            if (!(e.getBlock().getType() == block)) return;
             if (!p.getInventory().addItem(smelt).isEmpty()) {
                 p.getWorld().dropItem(p.getLocation(), smelt);
             }
@@ -75,51 +73,44 @@ public class FortuneSupport implements Listener {
             return;
 
         } else if (cantPickup) {
-            if (!(e.getBlock().getType() == block)) return;
             e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), smelt);
 
         } else if (cantSmelt) {
-            if (!(e.getBlock().getType() == block)) return;
             if (!p.getInventory().addItem(notSmelt).isEmpty()) {
                 p.getWorld().dropItem(p.getLocation(), notSmelt);
             }
         }
     }
 
-    public void smeltNoPickup(Player p, Material block, ItemStack smelt, BlockBreakEvent e) {
+    public void smeltNoPickup(Player p, ItemStack smelt, BlockBreakEvent e) {
         if (!Commands.autoSmeltOFF.contains(p.getName())) {
-            if (e.getBlock().getType() == block) {
-                e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), smelt);
-            }
+            e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), smelt);
         }
     }
 
-    public void pickNoSmelt(Player p, Material block, ItemStack noSmelt, BlockBreakEvent e) {
+    public void pickNoSmelt(Player p, ItemStack noSmelt, BlockBreakEvent e) {
         if (!autoPickupOFF.contains(p.getName())) {
-            if (e.getBlock().getType() == block) {
-                if (!p.getInventory().addItem(noSmelt).isEmpty()) {
-                    p.getWorld().dropItem(p.getLocation(), noSmelt);
-                }
+            if (!p.getInventory().addItem(noSmelt).isEmpty()) {
+                p.getWorld().dropItem(p.getLocation(), noSmelt);
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockBreakFortune(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
 
+        for (String disabledWorlds : disabledWorlds)
+            if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        if (e.isCancelled()) return;
         if (!isEFS) return;
         if (e.getBlock().getType() == Material.STONE || e.getBlock().getType() == Material.IRON_ORE
                 || e.getBlock().getType() == Material.GOLD_ORE || e.getBlock().getType() == Material.CHEST
                 || e.getBlock().getType() == Material.FURNACE || e.getBlock().getType() == Material.ENDER_CHEST) return;
         if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
-        if (isDCM) {
-            if (p.getGameMode().equals(GameMode.CREATIVE)) return;
-        }
-
-        for (String worlds : disabledWorlds)
-            if (worlds.contains(p.getWorld().getName())) return;
+        if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
         if (useWhitelist) {
             if (whitelist.contains(e.getBlock().getType().toString())) {
@@ -223,18 +214,19 @@ public class FortuneSupport implements Listener {
         removeDrops(e);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onStoneBreakFortune(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
 
+        for (String disabledWorlds : disabledWorlds)
+            if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        if (e.isCancelled()) return;
         if (!isEFS) return;
         if (!(e.getBlock().getType() == Material.STONE)) return;
         if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
         if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-
-        for (String worlds : disabledWorlds)
-            if (worlds.contains(p.getWorld().getName())) return;
 
         if (useWhitelist) {
             if (whitelist.contains(Material.STONE.toString())) {
@@ -296,18 +288,19 @@ public class FortuneSupport implements Listener {
         removeDrops(e);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onIronOreBreakFortune(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
 
+        for (String disabledWorlds : disabledWorlds)
+            if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        if (e.isCancelled()) return;
         if (!isEFS) return;
         if (!(e.getBlock().getType() == Material.IRON_ORE)) return;
         if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
         if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-
-        for (String worlds : disabledWorlds)
-            if (worlds.contains(p.getWorld().getName())) return;
 
         if (useWhitelist) {
             if (whitelist.contains(Material.IRON_ORE.toString())) {
@@ -370,18 +363,19 @@ public class FortuneSupport implements Listener {
         removeDrops(e);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onGoldOreBreakFortune(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
 
+        for (String disabledWorlds : disabledWorlds)
+            if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        if (e.isCancelled()) return;
         if (!isEFS) return;
         if (!(e.getBlock().getType() == Material.GOLD_ORE)) return;
         if (!(p.hasPermission("advancedautosmelt.fortune"))) return;
         if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
-
-        for (String worlds : disabledWorlds)
-            if (worlds.contains(p.getWorld().getName())) return;
 
         if (useWhitelist) {
             if (whitelist.contains(Material.GOLD_ORE.toString())) {

@@ -1,15 +1,11 @@
 package me.pulsi_.advancedautosmelt;
 
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import me.pulsi_.advancedautosmelt.autopickup.AutoPickupExp;
-import me.pulsi_.advancedautosmelt.autopickup.AutoPickupExpCustom;
-import me.pulsi_.advancedautosmelt.autosmelt.AutoSmelt;
+import me.pulsi_.advancedautosmelt.events.AutoPickSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
 import me.pulsi_.advancedautosmelt.events.*;
 import me.pulsi_.advancedautosmelt.managers.Translator;
 import me.pulsi_.advancedautosmelt.managers.UpdateChecker;
-import me.pulsi_.advancedautosmelt.autopickup.AutoPickup;
 import me.pulsi_.advancedautosmelt.commands.TabCompletion;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,9 +14,8 @@ import java.util.List;
 
 public final class AdvancedAutoSmelt extends JavaPlugin {
 
-    public WorldGuardPlugin worldGuardPlugin;
+    private Plugin worldGuard = this.getServer().getPluginManager().getPlugin("WorldGuard");
 
-    private WorldGuardPlugin worldGuard;
     private String noPerm;
     private String reload;
     private String version;
@@ -30,9 +25,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     private List<String> blackList;
     private List<String> whiteList;
-    private List<String> autoSmeltDisabledWorlds;
-    private List<String> autoPickupDisabledWorlds;
-    private List<String> fortuneDisabledWorlds;
+    private List<String> worldsBlackList;
 
     private boolean isDCM;
     private boolean isAutoPickupEnabled;
@@ -55,20 +48,10 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
     private int goldExp;
     private int ironExp;
 
-    private WorldGuardPlugin getWorldGuard() {
-        Plugin worldGuard = this.getServer().getPluginManager().getPlugin("WorldGuard");
-
-        if (worldGuard == null || !(worldGuard instanceof WorldGuardPlugin)) {
-            return null;
-        }
-        return (WorldGuardPlugin) worldGuard;
-    }
-
     @Override
     public void onEnable() {
 
         //Values
-        this.worldGuard = worldGuardPlugin;
         version = this.getDescription().getVersion();
         noPerm = this.getConfig().getString("no-permission-message");
         reload = this.getConfig().getString("reload-message");
@@ -94,9 +77,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         isSmeltStoneInv = this.getConfig().getBoolean("AutoSmelt.inv-smelt.cobblestone");
         isSmeltGoldInv = this.getConfig().getBoolean("AutoSmelt.inv-smelt.gold-ore");
         isSmeltIronInv = this.getConfig().getBoolean("AutoSmelt.inv-smelt.iron-ore");
-        autoSmeltDisabledWorlds = this.getConfig().getStringList("AutoSmelt.disabled-worlds");
-        autoPickupDisabledWorlds = this.getConfig().getStringList("AutoPickup.disabled-worlds");
-        fortuneDisabledWorlds = this.getConfig().getStringList("Fortune.disabled-worlds");
+        worldsBlackList = this.getConfig().getStringList("Disabled-Worlds");
         useLegacySupp = this.getConfig().getBoolean("enable-legacy-support");
         smeltEnderChest = this.getConfig().getBoolean("AutoSmelt.smelt-enderchest");
         //Values
@@ -105,27 +86,23 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         saveDefaultConfig();
         //Create Config
 
-        //WorldGuard
-        worldGuardPlugin = getWorldGuard();
-        //WorldGuard
-
         //Commands
         getCommand("advancedautosmelt").setExecutor(new Commands(this));
         getCommand("advancedautosmelt").setTabCompleter(new TabCompletion());
         //Commands
 
         //AutoPickup
-        getServer().getPluginManager().registerEvents(new AutoPickup(this), this);
         getServer().getPluginManager().registerEvents(new AutoPickupExp(this), this);
         getServer().getPluginManager().registerEvents(new AutoPickupExpCustom(this), this);
         //AutoPickup
 
         //AutoSmelt
-        getServer().getPluginManager().registerEvents(new AutoSmelt(this), this);
+        getServer().getPluginManager().registerEvents(new AutoPickSmelt(this), this);
         getServer().getPluginManager().registerEvents(new BlockBreakSmeltInv(this), this);
         //AutoSmelt
 
         //Events / Supports
+        getServer().getPluginManager().registerEvents(new AutoPickSmelt(this), this);
         getServer().getPluginManager().registerEvents(new FortuneSupport(this), this);
         getServer().getPluginManager().registerEvents(new ChestBreak(this), this);
         getServer().getPluginManager().registerEvents(new FurnaceBreak(this), this);
@@ -146,7 +123,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(Translator.c("&d /_/    \\_\\&a/_/    \\_\\__,_|\\__\\___/&c_____/|_| |_| |_|\\___|_|\\__|"));
         getServer().getConsoleSender().sendMessage(Translator.c(""));
         getServer().getConsoleSender().sendMessage(Translator.c("&2Enabling Plugin! &bv%v%").replace("%v%", this.getVersion()));
-        if (worldGuardPlugin != null) {
+        if (worldGuard != null) {
             getServer().getConsoleSender().sendMessage(Translator.c("&9WorldGuard Hooked Up!"));
         }
         getServer().getConsoleSender().sendMessage(Translator.c("&fAuthor: Pulsi_"));
@@ -170,12 +147,6 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         getServer().getConsoleSender().sendMessage(Translator.c(""));
         //Shutdown Message
     }
-
-    //Get WorldGuard
-    public WorldGuardPlugin getWorldGuardPlugin() {
-        return worldGuardPlugin;
-    }
-    //Get WorldGuard
 
     //Strings
     public String getNoPerm() {
@@ -211,14 +182,8 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
     public List<String> getBlackList() {
         return blackList;
     }
-    public List<String> getAutoSmeltDisabledWorlds() {
-        return autoSmeltDisabledWorlds;
-    }
-    public List<String> getAutoPickupDisabledWorlds() {
-        return autoPickupDisabledWorlds;
-    }
-    public List<String> getFortuneDisabledWorlds() {
-        return fortuneDisabledWorlds;
+    public List<String> getWorldsBlackList() {
+        return worldsBlackList;
     }
     public List<String> getWhiteList() {
         return whiteList;

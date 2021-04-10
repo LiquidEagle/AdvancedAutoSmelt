@@ -11,10 +11,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import java.util.List;
 import java.util.Set;
 
 public class AutoPickupExpCustom implements Listener {
 
+    private final List<String> worldsBlackList;
     private final int goldExp;
     private final int ironExp;
     private final Set<String> autoPickupOFF;
@@ -31,13 +33,18 @@ public class AutoPickupExpCustom implements Listener {
         this.isAutoPickupExp = plugin.isAutoPickupExp();
         this.isGivingGoldExp = plugin.isGivingGoldExp();
         this.isGivingIronExp = plugin.isGivingIronExp();
+        this.worldsBlackList = plugin.getWorldsBlackList();
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler
     public void pickupGoldExp(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
 
+        for (String disabledWorlds : worldsBlackList)
+            if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        if (e.isCancelled()) return;
         if (!(e.getBlock().getType() == Material.GOLD_ORE)) return;
         if (!isGivingGoldExp) return;
         if (isAutoSmeltDCM) {
@@ -54,11 +61,15 @@ public class AutoPickupExpCustom implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler
     public void pickupIronExp(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
 
+        for (String disabledWorlds : worldsBlackList)
+            if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        if (e.isCancelled()) return;
         if (!(e.getBlock().getType() == Material.IRON_ORE)) return;
         if (!isGivingIronExp) return;
         if (isAutoSmeltDCM) { if (p.getGameMode().equals(GameMode.CREATIVE)) return; }

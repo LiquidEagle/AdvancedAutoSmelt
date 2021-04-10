@@ -4,7 +4,6 @@ main: me.pulsi_.advancedautosmelt.AdvancedAutoSmelt
 api-version: 1.13
 prefix: < AdvancedAutoSmelt >
 load: STARTUP
-softdepend: [WorldGuard]
 authors: [ Pulsi_ ]
 description: Allow you to smelt ores simply mining! It has an autopickup support to! And much more!!
 commands:

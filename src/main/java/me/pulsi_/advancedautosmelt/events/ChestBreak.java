@@ -11,11 +11,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class ChestBreak implements Listener {
 
+    private final List<String> worldsBlackList;
     private final boolean useLegacySupp;
     public ChestBreak(AdvancedAutoSmelt plugin) {
         this.useLegacySupp = plugin.isUseLegacySupp();
+        this.worldsBlackList = plugin.getWorldsBlackList();
     }
 
     private final ItemStack chest = new ItemStack(Material.CHEST, 1);
@@ -28,13 +32,16 @@ public class ChestBreak implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void chestBreak(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
 
-        if (!(e.getBlock().getType() == Material.CHEST)) return;
+        for (String disabledWorlds : worldsBlackList)
+            if (disabledWorlds.contains(p.getWorld().getName())) return;
 
+        if (e.isCancelled()) return;
+        if (!(e.getBlock().getType() == Material.CHEST)) return;
         p.getInventory().addItem(chest);
         if (e.getBlock().getState() instanceof Chest || e.getBlock().getState() instanceof DoubleChest) {
             Chest chestBlock = ((Chest) e.getBlock().getState());
