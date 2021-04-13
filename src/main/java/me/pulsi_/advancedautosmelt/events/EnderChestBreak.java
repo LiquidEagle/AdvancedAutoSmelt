@@ -1,6 +1,6 @@
 package me.pulsi_.advancedautosmelt.events;
 
-import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,10 +16,10 @@ public class EnderChestBreak implements Listener {
     private final List<String> worldsBlackList;
     private final boolean useLegacySupp;
     private final boolean smeltEnderChest;
-    public EnderChestBreak(AdvancedAutoSmelt plugin) {
-        this.useLegacySupp = plugin.isUseLegacySupp();
-        this.smeltEnderChest = plugin.isSmeltEnderChest();
-        this.worldsBlackList = plugin.getWorldsBlackList();
+    public EnderChestBreak(DataManager dm) {
+        this.useLegacySupp = dm.isUseLegacySupp();
+        this.smeltEnderChest = dm.isSmeltEnderChest();
+        this.worldsBlackList = dm.getWorldsBlackList();
     }
 
     private final ItemStack enderChest = new ItemStack(Material.ENDER_CHEST, 1);

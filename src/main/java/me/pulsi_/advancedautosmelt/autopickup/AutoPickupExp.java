@@ -1,7 +1,7 @@
 package me.pulsi_.advancedautosmelt.autopickup;
 
-import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
+import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.GameMode;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
@@ -20,10 +20,10 @@ public class AutoPickupExp implements Listener {
     private final boolean isDCM;
     private final boolean isAutoPickupExp;
 
-    public AutoPickupExp(AdvancedAutoSmelt plugin) {
-        this.isDCM = plugin.isDCM();
-        this.isAutoPickupExp = plugin.isAutoPickupExp();
-        this.worldsBlackList = plugin.getWorldsBlackList();
+    public AutoPickupExp(DataManager dm) {
+        this.isDCM = dm.isDCM();
+        this.isAutoPickupExp = dm.isAutoPickupExp();
+        this.worldsBlackList = dm.getWorldsBlackList();
         this.autoPickupOFF = Commands.autoPickupOFF;
     }
 

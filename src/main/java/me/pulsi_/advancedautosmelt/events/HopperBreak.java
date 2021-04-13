@@ -2,27 +2,25 @@ package me.pulsi_.advancedautosmelt.events;
 
 import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.Material;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
+import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class ChestBreak implements Listener {
+public class HopperBreak {
 
     private final List<String> worldsBlackList;
     private final boolean useLegacySupp;
-    public ChestBreak(DataManager dm) {
+    public HopperBreak(DataManager dm) {
         this.useLegacySupp = dm.isUseLegacySupp();
         this.worldsBlackList = dm.getWorldsBlackList();
     }
 
-    private final ItemStack chest = new ItemStack(Material.CHEST, 1);
+    private final ItemStack hopper = new ItemStack(Material.HOPPER, 1);
 
     public void removeDrops(BlockBreakEvent e) {
         if (useLegacySupp) {
@@ -33,7 +31,7 @@ public class ChestBreak implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void chestBreak(BlockBreakEvent e) {
+    public void hopperBreak(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
 
@@ -41,14 +39,16 @@ public class ChestBreak implements Listener {
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
         if (e.isCancelled()) return;
-        if (!(e.getBlock().getType() == Material.CHEST)) return;
-        p.getInventory().addItem(chest);
-        if (e.getBlock().getState() instanceof Chest || e.getBlock().getState() instanceof DoubleChest) {
-            Chest chestBlock = ((Chest) e.getBlock().getState());
-            for (ItemStack itemsInTheChest : chestBlock.getInventory().getContents()) {
-                if (itemsInTheChest != null) {
-                    p.getLocation().getWorld().dropItem(p.getLocation(), itemsInTheChest).setPickupDelay(0);
-                    itemsInTheChest.setAmount(0);
+        if (!(e.getBlock().getType() == Material.FURNACE)) return;
+        p.getInventory().addItem(hopper);
+        if (e.getBlock().getState() instanceof Hopper) {
+            Hopper hopperBlock = ((Hopper) e.getBlock().getState());
+            for (ItemStack itemsInTheHopper : hopperBlock.getInventory().getContents()) {
+                if (itemsInTheHopper != null) {
+                    if (!p.getInventory().addItem(itemsInTheHopper).isEmpty()) {
+                        p.getWorld().dropItem(p.getLocation(), itemsInTheHopper);
+                    }
+                    itemsInTheHopper.setAmount(0);
                 }
             }
             removeDrops(e);

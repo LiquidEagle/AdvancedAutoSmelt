@@ -1,6 +1,7 @@
 package me.pulsi_.advancedautosmelt.commands;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import me.pulsi_.advancedautosmelt.managers.DataManager;
 import me.pulsi_.advancedautosmelt.managers.Translator;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -21,14 +22,14 @@ public class Commands implements CommandExecutor {
     private String toggleOff;
     private String unknownCommand;
 
-    public Commands(AdvancedAutoSmelt plugin) {
+    public Commands(AdvancedAutoSmelt plugin, DataManager dm) {
         this.plugin = plugin;
-        this.noPerm = plugin.getNoPerm();
-        this.reload = plugin.getReload();
-        this.version = plugin.getVersion();
-        this.toggleOn = plugin.getToggleOn();
-        this.toggleOff = plugin.getToggleOff();
-        this.unknownCommand = plugin.getUnknownCommand();
+        this.noPerm = dm.getNoPerm();
+        this.reload = dm.getReload();
+        this.version = dm.getVersion();
+        this.toggleOn = dm.getToggleOn();
+        this.toggleOff = dm.getToggleOff();
+        this.unknownCommand = dm.getUnknownCommand();
     }
 
     public static Set<String> autoPickupOFF = new HashSet<>();

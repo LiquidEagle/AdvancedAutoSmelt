@@ -1,6 +1,7 @@
 package me.pulsi_.advancedautosmelt.events;
 
 import me.pulsi_.advancedautosmelt.commands.Commands;
+import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -28,17 +29,17 @@ public class FortuneSupport implements Listener {
     private final List<String> whitelist;
     private final List<String> disabledWorlds;
 
-    public FortuneSupport(AdvancedAutoSmelt plugin) {
-        this.isEFS = plugin.isEFS();
-        this.useWhitelist = plugin.useWhitelist();
-        this.isDCM = plugin.isDCM();
-        this.isSmeltGold = plugin.isSmeltGold();
-        this.isSmeltIron = plugin.isSmeltIron();
-        this.isSmeltStone = plugin.isSmeltStone();
-        this.isAutoPickupEnabled = plugin.isAutoPickupEnabled();
-        this.whitelist = plugin.getWhiteList();
-        this.disabledWorlds = plugin.getWorldsBlackList();
-        this.useLegacySupp = plugin.isUseLegacySupp();
+    public FortuneSupport(DataManager dm) {
+        this.isEFS = dm.isEFS();
+        this.useWhitelist = dm.useWhitelist();
+        this.isDCM = dm.isDCM();
+        this.isSmeltGold = dm.isSmeltGold();
+        this.isSmeltIron =  dm.isSmeltIron();
+        this.isSmeltStone = dm.isSmeltStone();
+        this.isAutoPickupEnabled = dm.isAutoPickupEnabled();
+        this.whitelist = dm.getWhiteList();
+        this.disabledWorlds = dm.getWorldsBlackList();
+        this.useLegacySupp = dm.isUseLegacySupp();
     }
 
     private final Set<String> autoPickupOFF = Commands.autoPickupOFF;
@@ -88,7 +89,7 @@ public class FortuneSupport implements Listener {
         }
     }
 
-    public void pickNoSmelt(Player p, ItemStack noSmelt, BlockBreakEvent e) {
+    public void pickNoSmelt(Player p, ItemStack noSmelt) {
         if (!autoPickupOFF.contains(p.getName())) {
             if (!p.getInventory().addItem(noSmelt).isEmpty()) {
                 p.getWorld().dropItem(p.getLocation(), noSmelt);
@@ -267,23 +268,23 @@ public class FortuneSupport implements Listener {
             if (isAutoPickupEnabled) {
                 if (!autoPickupOFF.contains(p.getName())) {
                     if (!autoSmeltOFF.contains(p.getName())) {
-                        smelt(p, Material.STONE, stone, cobblestone, e);
+                        smelt(p, stone, cobblestone, e);
                     } else {
                         if (autoPickupOFF.contains(p.getName())) return;
-                        pickNoSmelt(p, Material.STONE, cobblestone, e);
+                        pickNoSmelt(p, cobblestone);
                     }
                 } else {
                     if (autoSmeltOFF.contains(p.getName())) return;
-                    smeltNoPickup(p, Material.STONE, stone, e);
+                    smeltNoPickup(p, stone, e);
                 }
             } else {
                 if (autoSmeltOFF.contains(p.getName())) return;
-                smeltNoPickup(p, Material.STONE, stone, e);
+                smeltNoPickup(p, stone, e);
             }
         } else {
             if (!isAutoPickupEnabled) return;
             if (autoPickupOFF.contains(p.getName())) return;
-            pickNoSmelt(p, Material.STONE, cobblestone, e);
+            pickNoSmelt(p, cobblestone);
         }
         removeDrops(e);
     }
@@ -342,23 +343,23 @@ public class FortuneSupport implements Listener {
             if (isAutoPickupEnabled) {
                 if (!autoPickupOFF.contains(p.getName())) {
                     if (!autoSmeltOFF.contains(p.getName())) {
-                        smelt(p, Material.IRON_ORE, ironIngot, ironOre, e);
+                        smelt(p, ironIngot, ironOre, e);
                     } else {
                         if (autoPickupOFF.contains(p.getName())) return;
-                        pickNoSmelt(p, Material.IRON_ORE, ironOre, e);
+                        pickNoSmelt(p, ironOre);
                     }
                 } else {
                     if (autoSmeltOFF.contains(p.getName())) return;
-                    smeltNoPickup(p, Material.IRON_ORE, ironIngot, e);
+                    smeltNoPickup(p, ironIngot, e);
                 }
             } else {
                 if (autoSmeltOFF.contains(p.getName())) return;
-                smeltNoPickup(p, Material.IRON_ORE, ironIngot, e);
+                smeltNoPickup(p, ironIngot, e);
             }
         } else {
             if (!isAutoPickupEnabled) return;
             if (autoPickupOFF.contains(p.getName())) return;
-            pickNoSmelt(p, Material.IRON_ORE, ironOre, e);
+            pickNoSmelt(p, ironOre);
         }
         removeDrops(e);
     }
@@ -416,23 +417,23 @@ public class FortuneSupport implements Listener {
             if (isAutoPickupEnabled) {
                 if (!autoPickupOFF.contains(p.getName())) {
                     if (!autoSmeltOFF.contains(p.getName())) {
-                        smelt(p, Material.GOLD_ORE, goldIngot, goldOre, e);
+                        smelt(p, goldIngot, goldOre, e);
                     } else {
                         if (autoPickupOFF.contains(p.getName())) return;
-                        pickNoSmelt(p, Material.GOLD_ORE, goldOre, e);
+                        pickNoSmelt(p, goldOre);
                     }
                 } else {
                     if (autoSmeltOFF.contains(p.getName())) return;
-                    smeltNoPickup(p, Material.GOLD_ORE, goldIngot, e);
+                    smeltNoPickup(p, goldIngot, e);
                 }
             } else {
                 if (autoSmeltOFF.contains(p.getName())) return;
-                smeltNoPickup(p, Material.GOLD_ORE, goldIngot, e);
+                smeltNoPickup(p, goldIngot, e);
             }
         } else {
             if (!isAutoPickupEnabled) return;
             if (autoPickupOFF.contains(p.getName())) return;
-            pickNoSmelt(p, Material.GOLD_ORE, goldOre, e);
+            pickNoSmelt(p, goldOre);
         }
         removeDrops(e);
     }

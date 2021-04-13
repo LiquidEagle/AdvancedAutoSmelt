@@ -1,13 +1,12 @@
 package me.pulsi_.advancedautosmelt.autopickup;
 
-import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
+import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -25,15 +24,15 @@ public class AutoPickupExpCustom implements Listener {
     private final boolean isGivingIronExp;
     private final boolean isAutoSmeltDCM;
 
-    public AutoPickupExpCustom(AdvancedAutoSmelt plugin) {
-        this.isAutoSmeltDCM = plugin.isDCM();
-        this.goldExp = plugin.getGoldExp();
-        this.ironExp = plugin.getIronExp();
+    public AutoPickupExpCustom(DataManager dm) {
+        this.isAutoSmeltDCM = dm.isDCM();
+        this.goldExp = dm.getGoldExp();
+        this.ironExp = dm.getIronExp();
         this.autoPickupOFF = Commands.autoPickupOFF;
-        this.isAutoPickupExp = plugin.isAutoPickupExp();
-        this.isGivingGoldExp = plugin.isGivingGoldExp();
-        this.isGivingIronExp = plugin.isGivingIronExp();
-        this.worldsBlackList = plugin.getWorldsBlackList();
+        this.isAutoPickupExp = dm.isAutoPickupExp();
+        this.isGivingGoldExp = dm.isGivingGoldExp();
+        this.isGivingIronExp = dm.isGivingIronExp();
+        this.worldsBlackList = dm.getWorldsBlackList();
     }
 
     @EventHandler

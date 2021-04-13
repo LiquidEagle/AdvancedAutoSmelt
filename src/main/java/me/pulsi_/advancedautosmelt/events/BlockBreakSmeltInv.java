@@ -1,6 +1,6 @@
 package me.pulsi_.advancedautosmelt.events;
 
-import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,11 +15,11 @@ public class BlockBreakSmeltInv implements Listener {
     private final boolean isSmeltIronInv;
     private final boolean isSmeltGoldInv;
 
-    public BlockBreakSmeltInv(AdvancedAutoSmelt plugin) {
-        this.isSmeltInv = plugin.isSmeltInv();
-        this.isSmeltStoneInv = plugin.isSmeltStoneInv();
-        this.isSmeltIronInv = plugin.isSmeltIronInv();
-        this.isSmeltGoldInv = plugin.isSmeltGoldInv();
+    public BlockBreakSmeltInv(DataManager dm) {
+        this.isSmeltInv = dm.isSmeltInv();
+        this.isSmeltStoneInv = dm.isSmeltStoneInv();
+        this.isSmeltIronInv = dm.isSmeltIronInv();
+        this.isSmeltGoldInv = dm.isSmeltGoldInv();
     }
 
     public static int getAmount(Player p, ItemStack items) {

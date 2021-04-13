@@ -1,6 +1,6 @@
 package me.pulsi_.advancedautosmelt.events;
 
-import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.Material;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.Player;
@@ -16,9 +16,9 @@ public class FurnaceBreak implements Listener {
 
     private final List<String> worldsBlackList;
     private final boolean useLegacySupp;
-    public FurnaceBreak(AdvancedAutoSmelt plugin) {
-        this.useLegacySupp = plugin.isUseLegacySupp();
-        this.worldsBlackList = plugin.getWorldsBlackList();
+    public FurnaceBreak(DataManager dm) {
+        this.useLegacySupp = dm.isUseLegacySupp();
+        this.worldsBlackList = dm.getWorldsBlackList();
     }
 
     private final ItemStack furnace = new ItemStack(Material.FURNACE, 1);

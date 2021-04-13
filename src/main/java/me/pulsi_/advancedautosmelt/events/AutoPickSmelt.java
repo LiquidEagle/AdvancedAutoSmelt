@@ -1,7 +1,7 @@
 package me.pulsi_.advancedautosmelt.events;
 
-import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
+import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -28,18 +28,18 @@ public class AutoPickSmelt implements Listener {
     private final boolean isAutoPickupBlacklist;
     private final List<String> blackList;
 
-    public AutoPickSmelt(AdvancedAutoSmelt plugin) {
-        this.isEFS = plugin.isEFS();
-        this.isAutoSmeltDCM = plugin.isDCM();
-        this.isAutoPickupEnabled = plugin.isAutoPickupEnabled();
-        this.isSmeltGold = plugin.isSmeltGold();
-        this.isSmeltIron = plugin.isSmeltIron();
-        this.isSmeltStone = plugin.isSmeltStone();
-        this.worldsBlackList = plugin.getWorldsBlackList();
-        this.useLegacySupp = plugin.isUseLegacySupp();
-        this.isAutoPickupBlacklist = plugin.isAutoPickupBlacklist();
-        this.blackList = plugin.getBlackList();
-        this.isEFS = plugin.isEFS();
+    public AutoPickSmelt(DataManager dm) {
+        this.isEFS = dm.isEFS();
+        this.isAutoSmeltDCM = dm.isDCM();
+        this.isAutoPickupEnabled = dm.isAutoPickupEnabled();
+        this.isSmeltGold = dm.isSmeltGold();
+        this.isSmeltIron = dm.isSmeltIron();
+        this.isSmeltStone = dm.isSmeltStone();
+        this.worldsBlackList = dm.getWorldsBlackList();
+        this.useLegacySupp = dm.isUseLegacySupp();
+        this.isAutoPickupBlacklist = dm.isAutoPickupBlacklist();
+        this.blackList = dm.getBlackList();
+        this.isEFS = dm.isEFS();
     }
 
     private final ItemStack goldIngot = new ItemStack(Material.GOLD_INGOT);
