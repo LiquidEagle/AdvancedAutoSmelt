@@ -12,10 +12,15 @@ public class DataManager {
     private String toggleOn;
     private String toggleOff;
     private String unknownCommand;
+    private String titleTitle;
+    private String titleSubTitle;
+    private String actionbarMessage;
+    private String sound;
 
     private List<String> blackList;
     private List<String> whiteList;
     private List<String> worldsBlackList;
+    private List<String> invFullMessages;
 
     private boolean isDCM;
     private boolean isAutoPickupEnabled;
@@ -34,9 +39,21 @@ public class DataManager {
     private boolean useWhitelist;
     private boolean useLegacySupp;
     private boolean smeltEnderChest;
+    private boolean isFSS;
+    private boolean useInvAlert;
+    private boolean useTitle;
+    private boolean useActionBar;
+    private boolean useMessages;
+    private boolean useSound;
+    private boolean dropsItemsInvFull;
 
     private int goldExp;
     private int ironExp;
+    private int titleFadeIn;
+    private int titleStay;
+    private int titleFadeOut;
+    private int volume;
+    private int pitch;
 
     private AdvancedAutoSmelt plugin;
     public DataManager(AdvancedAutoSmelt plugin) {
@@ -72,6 +89,23 @@ public class DataManager {
         worldsBlackList = plugin.getConfig().getStringList("Disabled-Worlds");
         useLegacySupp = plugin.getConfig().getBoolean("enable-legacy-support");
         smeltEnderChest = plugin.getConfig().getBoolean("AutoSmelt.smelt-enderchest");
+        isFSS = plugin.getConfig().getBoolean("Fortune.fortune-support-silktouch");
+        useInvAlert = plugin.getConfig().getBoolean("InventoryFull.inventory-full-alert");
+        useTitle = plugin.getConfig().getBoolean("InventoryFull.title.use-title");
+        useActionBar = plugin.getConfig().getBoolean("InventoryFull.actionbar.use-actionbar");
+        useMessages = plugin.getConfig().getBoolean("InventoryFull.messages.use-messages");
+        useSound = plugin.getConfig().getBoolean("InventoryFull.sound.use-sound");
+        titleTitle = plugin.getConfig().getString("InventoryFull.title.title");
+        titleSubTitle = plugin.getConfig().getString("InventoryFull.title.sub-title");
+        titleFadeIn = plugin.getConfig().getInt("InventoryFull.title.fadein-delay");
+        titleStay = plugin.getConfig().getInt("InventoryFull.title.stay-delay");
+        titleFadeOut = plugin.getConfig().getInt("InventoryFull.title.fadeout-delay");
+        actionbarMessage = plugin.getConfig().getString("InventoryFull.actionbar.message");
+        invFullMessages = plugin.getConfig().getStringList("InventoryFull.messages.messages");
+        sound = plugin.getConfig().getString("InventoryFull.sound.sound-type");
+        volume = plugin.getConfig().getInt("InventoryFull.sound.volume");
+        pitch = plugin.getConfig().getInt("InventoryFull.sound.pitch");
+        dropsItemsInvFull = plugin.getConfig().getBoolean("AutoPickup.inv-full-drop-items");
     }
 
     public void startupMessage() {
@@ -123,6 +157,18 @@ public class DataManager {
     public String getVersion() {
         return version;
     }
+    public String getTitleTitle() {
+        return titleTitle;
+    }
+    public String getTitleSubTitle() {
+        return titleSubTitle;
+    }
+    public String getActionbarMessage() {
+        return actionbarMessage;
+    }
+    public String getSound() {
+        return sound;
+    }
     //Strings
 
     //Ints
@@ -131,6 +177,21 @@ public class DataManager {
     }
     public int getIronExp() {
         return ironExp;
+    }
+    public int getTitleFadeIn() {
+        return titleFadeIn;
+    }
+    public int getTitleStay() {
+        return titleStay;
+    }
+    public int getTitleFadeOut() {
+        return titleFadeOut;
+    }
+    public int getVolume() {
+        return volume;
+    }
+    public int getPitch() {
+        return pitch;
     }
     //Ints
 
@@ -143,6 +204,9 @@ public class DataManager {
     }
     public List<String> getWhiteList() {
         return whiteList;
+    }
+    public List<String> getInvFullMessages() {
+        return invFullMessages;
     }
     //Lists
 
@@ -197,6 +261,27 @@ public class DataManager {
     }
     public boolean isSmeltEnderChest() {
         return smeltEnderChest;
+    }
+    public boolean isFSS() {
+        return isFSS;
+    }
+    public boolean isUseInvAlert() {
+        return useInvAlert;
+    }
+    public boolean isUseTitle() {
+        return useTitle;
+    }
+    public boolean isUseActionBar() {
+        return useActionBar;
+    }
+    public boolean isUseMessages() {
+        return useMessages;
+    }
+    public boolean isUseSound() {
+        return useSound;
+    }
+    public boolean isDropsItemsInvFull() {
+        return dropsItemsInvFull;
     }
     //Booleans
 }

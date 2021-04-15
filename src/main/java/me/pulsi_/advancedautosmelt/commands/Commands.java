@@ -99,7 +99,7 @@ public class Commands implements CommandExecutor {
                 s.sendMessage(Translator.c("&d    &lAdvanced&a&lAuto&c&lSmelt &aInfo"));
                 s.sendMessage(Translator.c(""));
                 s.sendMessage(Translator.c("&8- &cAuthor: &aPulsi_"));
-                s.sendMessage(Translator.c("&8- &cVersion: &av%v%").replace("%v%", plugin.getDescription().getVersion()));
+                s.sendMessage(Translator.c("&8- &cVersion: &av%v%").replace("%v%", version));
                 s.sendMessage(Translator.c("&8- &cPermissions: &a/AdvancedAutoSmelt Info Permissions"));
                 s.sendMessage(Translator.c("&8- &cAliases: &aaautosmelt, autosmelt, asmelt, smelt, as"));
                 s.sendMessage(Translator.c(""));

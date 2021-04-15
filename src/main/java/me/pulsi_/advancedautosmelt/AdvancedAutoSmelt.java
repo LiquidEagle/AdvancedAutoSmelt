@@ -2,9 +2,15 @@ package me.pulsi_.advancedautosmelt;
 
 import me.pulsi_.advancedautosmelt.autopickup.AutoPickupExp;
 import me.pulsi_.advancedautosmelt.autopickup.AutoPickupExpCustom;
-import me.pulsi_.advancedautosmelt.events.AutoPickSmelt;
+import me.pulsi_.advancedautosmelt.events.blocks.ChestBreak;
+import me.pulsi_.advancedautosmelt.events.blocks.EnderChestBreak;
+import me.pulsi_.advancedautosmelt.events.blocks.FurnaceBreak;
+import me.pulsi_.advancedautosmelt.events.features.AutoPickSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
-import me.pulsi_.advancedautosmelt.events.*;
+import me.pulsi_.advancedautosmelt.events.features.BlockBreakSmeltInv;
+import me.pulsi_.advancedautosmelt.events.features.InvFullAlert;
+import me.pulsi_.advancedautosmelt.events.supports.FortuneSupport;
+import me.pulsi_.advancedautosmelt.events.supports.SilkTouchSupport;
 import me.pulsi_.advancedautosmelt.managers.DataManager;
 import me.pulsi_.advancedautosmelt.managers.Metrics;
 import me.pulsi_.advancedautosmelt.managers.UpdateChecker;
@@ -34,6 +40,8 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         //Events / Supports
         getServer().getPluginManager().registerEvents(new AutoPickSmelt(dm), this);
         getServer().getPluginManager().registerEvents(new FortuneSupport(dm), this);
+        getServer().getPluginManager().registerEvents(new SilkTouchSupport(dm), this);
+        getServer().getPluginManager().registerEvents(new InvFullAlert(dm), this);
         getServer().getPluginManager().registerEvents(new ChestBreak(dm), this);
         getServer().getPluginManager().registerEvents(new FurnaceBreak(dm), this);
         getServer().getPluginManager().registerEvents(new EnderChestBreak(dm), this);
