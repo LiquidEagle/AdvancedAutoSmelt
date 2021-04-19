@@ -52,7 +52,7 @@ public class AutoPickSmelt implements Listener {
     private final ItemStack cobblestone = new ItemStack(Material.COBBLESTONE);
 
     private final Set<String> autoPickupOFF = Commands.autoPickupOFF;
-    private final Set<String> autoSmeltOFF = Commands.autoPickupOFF;
+    private final Set<String> autoSmeltOFF = Commands.autoSmeltOFF;
 
     public void dropsItems(Player p, ItemStack i) {
         if (!p.getInventory().addItem(i).isEmpty()) {

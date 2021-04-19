@@ -1,5 +1,6 @@
 package me.pulsi_.advancedautosmelt.events.blocks;
 
+import me.pulsi_.advancedautosmelt.commands.Commands;
 import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.Material;
 import org.bukkit.block.Hopper;
@@ -10,17 +11,33 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Set;
 
 public class HopperBreak {
 
     private final List<String> worldsBlackList;
     private final boolean useLegacySupp;
+    private final boolean isInvFullDrop;
+    private final boolean isAutoPickup;
+    private final Set<String> autoPickupOFF;
+
     public HopperBreak(DataManager dm) {
-        this.useLegacySupp = dm.isUseLegacySupp();
-        this.worldsBlackList = dm.getWorldsBlackList();
+        useLegacySupp = dm.isUseLegacySupp();
+        worldsBlackList = dm.getWorldsBlackList();
+        isInvFullDrop = dm.isDropsItemsInvFull();
+        isAutoPickup = dm.isAutoPickupEnabled();
+        autoPickupOFF = Commands.autoPickupOFF;
     }
 
     private final ItemStack hopper = new ItemStack(Material.HOPPER, 1);
+
+    public void dropsItems(Player p, ItemStack i) {
+        if (!p.getInventory().addItem(i).isEmpty()) {
+            if (isInvFullDrop) {
+                p.getWorld().dropItem(p.getLocation(), i);
+            }
+        }
+    }
 
     public void removeDrops(BlockBreakEvent e) {
         if (useLegacySupp) {
@@ -40,17 +57,17 @@ public class HopperBreak {
 
         if (e.isCancelled()) return;
         if (!(e.getBlock().getType() == Material.FURNACE)) return;
-        p.getInventory().addItem(hopper);
+        if (!isAutoPickup) return;
+        if (autoPickupOFF.contains(p.getName())) return;
         if (e.getBlock().getState() instanceof Hopper) {
             Hopper hopperBlock = ((Hopper) e.getBlock().getState());
             for (ItemStack itemsInTheHopper : hopperBlock.getInventory().getContents()) {
                 if (itemsInTheHopper != null) {
-                    if (!p.getInventory().addItem(itemsInTheHopper).isEmpty()) {
-                        p.getWorld().dropItem(p.getLocation(), itemsInTheHopper);
-                    }
-                    itemsInTheHopper.setAmount(0);
+                    dropsItems(p, itemsInTheHopper);
+                    hopperBlock.getInventory().clear();
                 }
             }
+            p.getInventory().addItem(hopper);
             removeDrops(e);
         }
     }

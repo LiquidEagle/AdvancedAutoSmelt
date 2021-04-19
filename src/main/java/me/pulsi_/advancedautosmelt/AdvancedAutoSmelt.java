@@ -41,7 +41,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AutoPickSmelt(dm), this);
         getServer().getPluginManager().registerEvents(new FortuneSupport(dm), this);
         getServer().getPluginManager().registerEvents(new SilkTouchSupport(dm), this);
-        getServer().getPluginManager().registerEvents(new InvFullAlert(dm), this);
+        getServer().getPluginManager().registerEvents(new InvFullAlert(this, dm), this);
         getServer().getPluginManager().registerEvents(new ChestBreak(dm), this);
         getServer().getPluginManager().registerEvents(new FurnaceBreak(dm), this);
         getServer().getPluginManager().registerEvents(new EnderChestBreak(dm), this);

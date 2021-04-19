@@ -54,6 +54,7 @@ public class DataManager {
     private int titleFadeOut;
     private int volume;
     private int pitch;
+    private int alertDelay;
 
     private AdvancedAutoSmelt plugin;
     public DataManager(AdvancedAutoSmelt plugin) {
@@ -106,6 +107,7 @@ public class DataManager {
         volume = plugin.getConfig().getInt("InventoryFull.sound.volume");
         pitch = plugin.getConfig().getInt("InventoryFull.sound.pitch");
         dropsItemsInvFull = plugin.getConfig().getBoolean("AutoPickup.inv-full-drop-items");
+        alertDelay = plugin.getConfig().getInt("InventoryFull.alert-delay");
     }
 
     public void startupMessage() {
@@ -192,6 +194,9 @@ public class DataManager {
     }
     public int getPitch() {
         return pitch;
+    }
+    public int getAlertDelay() {
+        return alertDelay;
     }
     //Ints
 

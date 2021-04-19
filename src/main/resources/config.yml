@@ -6,7 +6,7 @@
 #   / ____ \  / ____ \ |_| | || (_) |___) | | | | | |  __/ | |_  #
 #  /_/    \_\/_/    \_\__,_|\__\___/_____/|_| |_| |_|\___|_|\__| #
 #                                                                #
-# Version: 2.7.4                                                 #
+# Version: 2.7.6                                                 #
 # Author: Pulsi_                                                 #
 # Thanks for using this plugin!                                  #
 #                                                                #
@@ -118,10 +118,6 @@ InventoryFull:
     use-title: true
     title: "&c&lWarning!"
     sub-title: "&7Your inventory is full!"
-    #In ticks
-    fadein-delay: 16
-    stay-delay: 32
-    fadeout-delay: 16
 
   #Send the actionbar message on InventoryFull
   actionbar:
@@ -144,8 +140,8 @@ InventoryFull:
     volume: 2
     pitch: 1
 
-  #The delay between alerts, in seconds
-  alert-delay: 4
+  #The delay between alerts, in ticks
+  alert-delay: 50
 
 
 ######################################################
