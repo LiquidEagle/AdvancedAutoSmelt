@@ -9,26 +9,58 @@ import java.util.List;
 
 public class TabCompletion implements TabCompleter {
 
-    public List<String> args0 = new ArrayList<String>();
-
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(CommandSender s, Command command, String alias, String[] args) {
 
-        if (args0.isEmpty()) {
-            args0.add("reload");
-            args0.add("help");
-            args0.add("list");
-            args0.add("info");
-            args0.add("toggle");
+        List<String> args1 = new ArrayList<>();
+        if (args1.isEmpty()) {
+            args1.add("reload");
+            args1.add("restart");
+            args1.add("help");
+            args1.add("list");
+            args1.add("info");
+            args1.add("toggle");
         }
 
-        List<String> resultArgs0 = new ArrayList<String>();
+        List<String> infoArgs = new ArrayList<>();
+        if (infoArgs.isEmpty()) {
+            infoArgs.add("permissions");
+        }
+
+        List<String> permissionsArgs = new ArrayList<>();
+        if (permissionsArgs.isEmpty()) {
+            permissionsArgs.add("1");
+            permissionsArgs.add("2");
+            permissionsArgs.add("3");
+        }
+
+        List<String> toggleArgs = new ArrayList<>();
+        if (toggleArgs.isEmpty()) {
+            toggleArgs.add("autopickup");
+            toggleArgs.add("autosmelt");
+            toggleArgs.add("inventoryfull");
+        }
+
+        List<String> resultArgs1 = new ArrayList<>();
+
         if (args.length == 1) {
-            for (String a : args0) {
+            for (String a : args1) {
                 if (a.toLowerCase().startsWith(args[0].toLowerCase()))
-                    resultArgs0.add(a);
+                    resultArgs1.add(a);
             }
-            return resultArgs0;
+            return resultArgs1;
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("info")) {
+            return infoArgs;
+        }
+
+        if (args.length == 3 && args[1].equalsIgnoreCase("permissions")) {
+            return permissionsArgs;
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("toggle")) {
+            return toggleArgs;
         }
         return null;
     }

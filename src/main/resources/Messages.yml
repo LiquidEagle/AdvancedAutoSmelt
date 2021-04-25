@@ -1,0 +1,11 @@
+#######################################################
+#             < MESSAGES CONFIGURATION >              #
+#######################################################
+
+No-Permission: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cYou don't have the permission! (&f%permission%&c)"
+
+Unknown-Command: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cUnknown Command!"
+
+Toggled-On-Message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Your %toggled_ability% has been toggled &2On&7!"
+
+Toggled-Off-Message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Your %toggled_ability% has been toggled &cOff&7!"

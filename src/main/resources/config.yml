@@ -6,17 +6,17 @@
 #   / ____ \  / ____ \ |_| | || (_) |___) | | | | | |  __/ | |_  #
 #  /_/    \_\/_/    \_\__,_|\__\___/_____/|_| |_| |_|\___|_|\__| #
 #                                                                #
-# Version: 2.7.6                                                 #
+# Version: 2.7.7                                                 #
 # Author: Pulsi_                                                 #
 # Thanks for using this plugin!                                  #
 #                                                                #
 ##################################################################
 
 #Receive updates messages when there is a new Update available
-update-checker: true
+Update-Checker: true
 
-#If your server is on 1.13 or more, you should put this option on false
-enable-legacy-support: true
+#If your server is on 1.12.2 or more, you should put this option to false
+Enable-Legacy-Support: true
 
 ######################################################
 #                   < AUTOSMELT >                    #
@@ -24,39 +24,39 @@ enable-legacy-support: true
 AutoSmelt:
 
   #Disable the autosmelt in creative mode, this will avoid the possibility of dupe blocks
-  disable-creative-mode: true
+  Disable-Creative-Mode: true
 
   #Automatically smelt Iron Ore -> Permission: advancedautosmelt.smelt.iron
-  smelt-iron: true
+  Smelt-Iron: true
   #Give or not the experience when breaking an Iron Ore Block
-  give-exp-iron: true
+  Give-Exp-Iron: true
   #Give to the Player some Experience for Mining Iron Ores
-  iron-exp: 1
+  Iron-Exp: 1
 
   #Automatically smelt Gold Ore -> Permission: advancedautosmelt.smelt.gold
-  smelt-gold: true
+  Smelt-Gold: true
   #Give or not the experience when breaking an Iron Ore Block
-  give-exp_gold: true
+  Give-Exp_Gold: true
   #Give to the Player some Experience for Mining Gold Ores
-  gold-exp: 2
+  Gold-Exp: 2
 
   #The stone will be mined like silk touch -> advancedautosmelt.smelt.stone
-  smelt-stone: true
+  Smelt-Stone: true
 
   #Instead of give Obsidian, it will give the EnderChest when broken
-  smelt-enderchest: true
+  Smelt-Enderchest: true
 
   #This will smelt ores not smelted in the Inventory
-  smelt-ores-in-inventory: true
-  inv-smelt:
+  Smelt-Ores-In-Inventory: true
+  Inv-Smelt:
     #Smelt Iron Ores in the Inventory
-    iron-ore: true
+    Iron-Ore: true
 
     #Smelt Gold Ores in the Inventory
-    gold-ore: true
+    Gold-Ore: true
 
     #Smelt Cobblestone in the Inventory
-    cobblestone: true
+    Cobblestone: true
 
 
 ######################################################
@@ -65,19 +65,13 @@ AutoSmelt:
 AutoPickup:
 
   #Should the plugin enable this Option? -> Permission: advancedautosmelt.pickup
-  enable-autopickup: true
+  Enable-Autopickup: true
 
   #The player will directly receive Experience -> Permission: advancedautosmelt.pickupexp
-  autopickup-experience: true
-
-  #The list where autopickup won't work
-  use-blacklist: false
-  blacklist:
-    - SAND
-    - DIRT
+  Autopickup-Experience: true
 
   #Make the blocks broken don't drop in the ground when the inventory is full
-  inv-full-drop-items: true
+  Inv-Full-Drop-Items: true
 
 
 ######################################################
@@ -86,16 +80,16 @@ AutoPickup:
 Fortune:
 
   #Enable the fortune feature, this will give extra blocks based on your fortune level -> Permission: advancedautosmelt.fortune
-  enable-fortune-support: true
+  Enable-Fortune-Support: true
 
-  #Enable the fortune support for silktouch feature, this will give extra blocks based on
-  #your fortune level, but supporting Silk Touch -> Permission: advancedautosmelt.fortune
-  fortune-support-silktouch: false
+  #Enabling the fortune support for silktouch feature, this will give extra blocks based on
+  #your fortune level, but supporting Silk Touch
+  Fortune-Support-Silktouch: false
 
   #Use the block whitelist
-  use-whitelist: true
+  Use-Whitelist: true
   #This will work with blocks too
-  whitelist:
+  Whitelist:
     - IRON_ORE
     - COAL_ORE
     - LAPIS_ORE
@@ -111,57 +105,46 @@ Fortune:
 InventoryFull:
 
   #Enable this to activate the inventory full alerts!
-  inventory-full-alert: true
+  Inventory-Full-Alert: true
 
-  #Send the title on InventoryFull
-  title:
-    use-title: true
-    title: "&c&lWarning!"
-    sub-title: "&7Your inventory is full!"
+  #Send a title on InventoryFull
+  Title:
+    Use-Title: true
+    Title: "&c&lWarning!"
+    Sub-Title: "&7Your inventory is full!"
 
   #Send the actionbar message on InventoryFull
-  actionbar:
-    use-actionbar: true
-    message: "&c&lWarning! &7Your inventory is full!"
+  Actionbar:
+    Use-Actionbar: true
+    Message: "&c&lWarning! &7Your inventory is full!"
 
   #Send messages on InventoryFull
-  messages:
-    use-messages: true
-    messages:
+  Messages:
+    Use-Messages: true
+    Messages:
       - "&8&m----*----------------------*----"
       - "&c&lAlert! &7Your inventory is full!"
       - "     &cYou are losing Items!"
       - "&8&m----*----------------------*----"
 
   #Play a sound on Inventory Full
-  sound:
-    use-sound: true
-    sound-type: 'BLOCK_ANVIL_BREAK'
-    volume: 2
-    pitch: 1
+  Sound:
+    Use-Sound: true
+    Sound-Type: 'BLOCK_ANVIL_BREAK'
+    Volume: 2
+    Pitch: 1
 
   #The delay between alerts, in ticks
-  alert-delay: 50
+  Alert-Delay: 50
 
 
 ######################################################
-#                   < BLACKLIST >                    #
+#                  < BLACKLISTS >                    #
 ######################################################
 Disabled-Worlds:
   - example1
   - example2
 
-
-#######################################################
-#                  < MESSAGES PART >                  #
-#######################################################
-
-reload-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &aPlugin reloaded!"
-
-no-permission-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cYou don't have the permission!"
-
-unknown-command: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cUnknown Command!"
-
-toggled-on-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Your %toggled_ability% has been toggled &2On&7!"
-
-toggled-off-message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Your %toggled_ability% has been toggled &cOff&7!"
+#The blocks in this list won't work with anything, fortune, autopickup, etc..
+Disabled-Blocks:
+  - SKULL

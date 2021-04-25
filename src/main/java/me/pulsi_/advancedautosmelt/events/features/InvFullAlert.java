@@ -1,117 +1,88 @@
 package me.pulsi_.advancedautosmelt.events.features;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
-import me.pulsi_.advancedautosmelt.managers.DataManager;
-import me.pulsi_.advancedautosmelt.managers.Translator;
+import me.pulsi_.advancedautosmelt.commands.Commands;
+import me.pulsi_.advancedautosmelt.utils.ChatUtils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class InvFullAlert implements Listener {
 
-    private final AdvancedAutoSmelt plugin;
-    private final boolean useInventoryFullAlert;
-    private final boolean useTitle;
-    private final boolean useActionBar;
-    private final boolean useMessages;
-    private final boolean useSound;
-    private final String title;
-    private final String subTitle;
-    private final String actionbarMessage;
-    private final String sound;
-    private final List<String> invFullMessages;
-    private final int fadein;
-    private final int stay;
-    private final int fadeout;
-    private final int volume;
-    private final int pitch;
-    private final int alertDelay;
-    private final Set<String> noAlert = new HashSet<>();
-
-    public InvFullAlert(AdvancedAutoSmelt plugin, DataManager dm) {
+    private AdvancedAutoSmelt plugin;
+    private Set<String> noAlert;
+    public InvFullAlert(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
-        useInventoryFullAlert = dm.isUseInvAlert();
-        useTitle = dm.isUseTitle();
-        useActionBar = dm.isUseActionBar();
-        useMessages = dm.isUseMessages();
-        useSound = dm.isUseSound();
-        title = dm.getTitleTitle();
-        subTitle = dm.getTitleSubTitle();
-        fadein = dm.getTitleFadeIn();
-        stay = dm.getTitleStay();
-        fadeout = dm.getTitleFadeOut();
-        actionbarMessage = dm.getActionbarMessage();
-        invFullMessages = dm.getInvFullMessages();
-        sound = dm.getSound();
-        volume = dm.getVolume();
-        pitch = dm.getPitch();
-        alertDelay = dm.getAlertDelay();
+        this.noAlert = Commands.inventoryFullOFF;
     }
 
     @EventHandler
     public void invFullAlert(BlockBreakEvent e) {
 
+        FileConfiguration config = plugin.getConfiguration();
+
         Player p = e.getPlayer();
 
-        if (!useInventoryFullAlert) return;
-        if (noAlert.contains(p.getName())) return;
         if (p.getInventory().firstEmpty() >= 0) return;
+        if (!config.getBoolean("InventoryFull.Inventory-Full-Alert")) return;
+        if (noAlert.contains(p.getName())) return;
 
         //Title
-        if (useTitle) {
+        if (config.getBoolean("InventoryFull.Title.Use-Title")) {
             try {
-                p.sendTitle(Translator.c(title), Translator.c(subTitle), fadein, stay, fadeout);
+                p.sendTitle(ChatUtils.c(config.getString("InventoryFull.Title.Title")), ChatUtils.c(config.getString("InventoryFull.Title.Sub-Title")),
+                config.getInt("InventoryFull.Title.Fadein-Delay"), config.getInt("InventoryFull.Title.Stay-Delay"), config.getInt("InventoryFull.Title.Fadeout-Delay"));
             } catch (NoSuchMethodError err) {
-                p.sendTitle(Translator.c(title), Translator.c(subTitle));
+                p.sendTitle(ChatUtils.c(config.getString("InventoryFull.Title.Title")), ChatUtils.c(config.getString("InventoryFull.Title.Sub-Title")));
             }
-            //Title
+        }
+        //Title
 
-            //ActionBar
-            if (useActionBar) {
-                try {
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(Translator.c(actionbarMessage)));
-                } catch (NoSuchMethodError err) {
-                    Bukkit.getConsoleSender().sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cSorry! But the ActionBar doesn't work in " + plugin.getServer().getVersion()));
+        //ActionBar
+        if (config.getBoolean("InventoryFull.Actionbar.Use-Actionbar")) {
+            try {
+                p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatUtils.c(config.getString("InventoryFull.Actionbar.Message"))));
+            } catch (NoSuchMethodError err) {
+                Bukkit.getConsoleSender().sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cSorry! But the ActionBar doesn't work in " + plugin.getServer().getVersion()));
+            }
+        }
+        //ActionBar
+
+        //Messages
+        if (config.getBoolean("InventoryFull.Messages.Use-Messages")) {
+            for (String messages : config.getStringList("InventoryFull.Messages.Messages"))
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', messages));
+        }
+        //Messages
+
+        //Sound
+        if (config.getBoolean("InventoryFull.Sound.Use-Sound")) {
+            try {
+                p.playSound(p.getLocation(), Sound.valueOf(config.getString("InventoryFull.Sound.Sound-Type")), config.getInt("InventoryFull.Sound.Volume"),
+                        config.getInt("InventoryFull.Sound.Pitch"));
+            } catch (Exception exc) {
+                Bukkit.getConsoleSender().sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cThe sound for the InventoryFull Sound is invalid!"));
+            }
+        }
+        //Sound
+
+        if (config.getInt("InventoryFull.Alert-Delay") != 0) {
+            noAlert.add(p.getName());
+            new BukkitRunnable() {
+                public void run() {
+                    noAlert.remove(p.getName());
                 }
-            }
-            //ActionBar
-
-            //Messages
-            if (useMessages) {
-                for (String messages : invFullMessages)
-                    p.sendMessage(ChatColor.translateAlternateColorCodes('&', messages));
-            }
-            //Messages
-
-            //Sound
-            if (useSound) {
-                try {
-                    p.playSound(p.getLocation(), Sound.valueOf(sound), volume, pitch);
-                } catch (Exception exc) {
-                    Bukkit.getConsoleSender().sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cThe sound for the InventoryFull Sound is invalid!"));
-                }
-            }
-            //Sound
-
-            if (alertDelay != 0) {
-                noAlert.add(p.getName());
-                new BukkitRunnable() {
-                    public void run() {
-                        noAlert.remove(p.getName());
-                    }
-                }.runTaskLater(plugin, alertDelay);
-            }
+            }.runTaskLater(plugin, config.getInt("InventoryFull.Alert-Delay"));
         }
     }
 }

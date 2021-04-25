@@ -1,7 +1,8 @@
 package me.pulsi_.advancedautosmelt.events.blocks;
 
-import me.pulsi_.advancedautosmelt.managers.DataManager;
+import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -13,16 +14,28 @@ import java.util.List;
 
 public class EnderChestBreak implements Listener {
 
-    private final List<String> worldsBlackList;
-    private final boolean useLegacySupp;
-    private final boolean smeltEnderChest;
-    public EnderChestBreak(DataManager dm) {
-        this.useLegacySupp = dm.isUseLegacySupp();
-        this.smeltEnderChest = dm.isSmeltEnderChest();
-        this.worldsBlackList = dm.getWorldsBlackList();
+    private FileConfiguration config;
+    private List<String> worldsBlackList;
+    private boolean isInvFullDrop;
+    private boolean useLegacySupp;
+    private boolean smeltEnderChest;
+    public EnderChestBreak(AdvancedAutoSmelt plugin) {
+        this.config = plugin.getConfiguration();
+        this.useLegacySupp = config.getBoolean("Enable-Legacy-Support");
+        this.smeltEnderChest = config.getBoolean("AutoSmelt.Smelt-Enderchest");
+        this.worldsBlackList = config.getStringList("Disabled-Worlds");
+        this.isInvFullDrop = config.getBoolean("AutoPickup.Inv-Full-Drop-Items");
     }
 
     private final ItemStack enderChest = new ItemStack(Material.ENDER_CHEST, 1);
+
+    public void dropsItems(Player p, ItemStack i) {
+        if (!p.getInventory().addItem(i).isEmpty()) {
+            if (isInvFullDrop) {
+                p.getWorld().dropItem(p.getLocation(), i);
+            }
+        }
+    }
 
     public void removeDrops(BlockBreakEvent e) {
         if (useLegacySupp) {
@@ -43,9 +56,7 @@ public class EnderChestBreak implements Listener {
         if (e.isCancelled()) return;
         if (!(e.getBlock().getType() == Material.ENDER_CHEST)) return;
         if (smeltEnderChest) {
-            if (!p.getInventory().addItem(enderChest).isEmpty()) {
-                p.getWorld().dropItem(p.getLocation(), enderChest);
-            }
+            dropsItems(p, enderChest);
         } else {
             for (ItemStack drops : e.getBlock().getDrops()) {
                 if (!p.getInventory().addItem(drops).isEmpty()) {

@@ -1,9 +1,10 @@
 package me.pulsi_.advancedautosmelt.events.supports;
 
+import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
-import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,26 +19,22 @@ import java.util.Set;
 
 public class SilkTouchSupport implements Listener {
 
-    private final boolean isEFS;
-    private final boolean useWhitelist;
-    private final boolean isDCM;
-    private final boolean isAutoPickupEnabled;
-    private final boolean useLegacySupp;
-    private final boolean isFSS;
+    private FileConfiguration config;
+    private boolean isDCM;
+    private boolean isAutoPickupEnabled;
+    private boolean useLegacySupp;
     private final boolean isInvFullDrop;
-    private final List<String> whitelist;
-    private final List<String> disabledWorlds;
+    private List<String> whitelist;
+    private List<String> disabledWorlds;
 
-    public SilkTouchSupport(DataManager dm) {
-        isEFS = dm.isEFS();
-        useWhitelist = dm.useWhitelist();
-        isDCM = dm.isDCM();
-        isAutoPickupEnabled = dm.isAutoPickupEnabled();
-        whitelist = dm.getWhiteList();
-        disabledWorlds = dm.getWorldsBlackList();
-        useLegacySupp = dm.isUseLegacySupp();
-        isFSS = dm.isFSS();
-        isInvFullDrop = dm.isDropsItemsInvFull();
+    public SilkTouchSupport(AdvancedAutoSmelt plugin) {
+        this.config = plugin.getConfiguration();
+        this.isDCM = config.getBoolean("AutoSmelt.Disable-Creative-Mode");
+        this.isAutoPickupEnabled = config.getBoolean("AutoPickup.Enable-Autopickup");
+        this.whitelist = config.getStringList("Fortune.Whitelist");
+        this.disabledWorlds = config.getStringList("Disabled-Worlds");
+        this.useLegacySupp = config.getBoolean("Enable-Legacy-Support");
+        this.isInvFullDrop = config.getBoolean("AutoPickup.Inv-Full-Drop-Items");
     }
 
     private final Set<String> autoPickupOFF = Commands.autoPickupOFF;
@@ -115,16 +112,16 @@ public class SilkTouchSupport implements Listener {
         Player p = e.getPlayer();
 
         if (e.isCancelled()) return;
-        if (!isEFS) return;
+        if (!config.getBoolean("Fortune.Enable-Fortune-Support")) return;
         if (!p.getInventory().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) return;
         if (!(e.getBlock().getType() == Material.STONE)) return;
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.STONE.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
@@ -188,10 +185,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.COAL_ORE.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
@@ -255,10 +252,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.IRON_ORE.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
@@ -322,10 +319,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.GOLD_ORE.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
@@ -389,10 +386,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.REDSTONE_ORE.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
@@ -456,10 +453,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.LAPIS_ORE.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
@@ -523,10 +520,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.DIAMOND_ORE.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
@@ -590,10 +587,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.EMERALD_ORE.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
@@ -663,10 +660,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.ICE.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
@@ -730,10 +727,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.SNOW_BLOCK.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
@@ -797,10 +794,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.GLOWSTONE.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
@@ -864,10 +861,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.CLAY_BALL.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
@@ -931,10 +928,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.ENDER_CHEST.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
@@ -998,10 +995,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        if (isFSS) {
+        if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
 
-            if (useWhitelist) {
+            if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (whitelist.contains(Material.BOOKSHELF.toString())) {
 
                     if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {

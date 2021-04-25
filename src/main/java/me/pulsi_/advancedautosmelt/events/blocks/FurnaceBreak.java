@@ -1,9 +1,10 @@
 package me.pulsi_.advancedautosmelt.events.blocks;
 
+import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
-import me.pulsi_.advancedautosmelt.managers.DataManager;
 import org.bukkit.Material;
 import org.bukkit.block.Furnace;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,17 +17,19 @@ import java.util.Set;
 
 public class FurnaceBreak implements Listener {
 
-    private final List<String> worldsBlackList;
-    private final boolean useLegacySupp;
-    private final boolean isInvFullDrop;
-    private final boolean isAutoPickup;
-    private final Set<String> autoPickupOFF;
-    public FurnaceBreak(DataManager dm) {
-        useLegacySupp = dm.isUseLegacySupp();
-        worldsBlackList = dm.getWorldsBlackList();
-        isInvFullDrop = dm.isDropsItemsInvFull();
-        isAutoPickup = dm.isAutoPickupEnabled();
-        autoPickupOFF = Commands.autoPickupOFF;
+    private FileConfiguration config;
+    private List<String> worldsBlackList;
+    private boolean useLegacySupp;
+    private boolean isInvFullDrop;
+    private boolean isAutoPickup;
+    private Set<String> autoPickupOFF;
+    public FurnaceBreak(AdvancedAutoSmelt plugin) {
+        this.config = plugin.getConfiguration();
+        this.useLegacySupp = config.getBoolean("Enable-Legacy-Support");
+        this.worldsBlackList = config.getStringList("Disabled-Worlds");
+        this.isInvFullDrop = config.getBoolean("AutoPickup.Inv-Full-Drop-Items");
+        this.isAutoPickup = config.getBoolean("AutoPickup.Enable-Autopickup");
+        this.autoPickupOFF = Commands.autoPickupOFF;
     }
 
     private final ItemStack furnace = new ItemStack(Material.FURNACE, 1);

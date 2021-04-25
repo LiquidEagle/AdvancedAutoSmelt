@@ -1,7 +1,8 @@
 package me.pulsi_.advancedautosmelt.events.features;
 
-import me.pulsi_.advancedautosmelt.managers.DataManager;
+import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,16 +11,18 @@ import org.bukkit.inventory.ItemStack;
 
 public class BlockBreakSmeltInv implements Listener {
 
+    private FileConfiguration config;
     private final boolean isSmeltInv;
     private final boolean isSmeltStoneInv;
     private final boolean isSmeltIronInv;
     private final boolean isSmeltGoldInv;
 
-    public BlockBreakSmeltInv(DataManager dm) {
-        this.isSmeltInv = dm.isSmeltInv();
-        this.isSmeltStoneInv = dm.isSmeltStoneInv();
-        this.isSmeltIronInv = dm.isSmeltIronInv();
-        this.isSmeltGoldInv = dm.isSmeltGoldInv();
+    public BlockBreakSmeltInv(AdvancedAutoSmelt plugin) {
+        this.config = plugin.getConfiguration();
+        this.isSmeltInv = config.getBoolean("AutoSmelt.Smelt-Ores-In-Inventory");
+        this.isSmeltStoneInv = config.getBoolean("AutoSmelt.Inv-Smelt.Cobblestone");
+        this.isSmeltIronInv = config.getBoolean("AutoSmelt.Inv-Smelt.Iron-Ore");
+        this.isSmeltGoldInv = config.getBoolean("AutoSmelt.Inv-Smelt.Gold-Ore");
     }
 
     public static int getAmount(Player p, ItemStack items) {
@@ -37,9 +40,11 @@ public class BlockBreakSmeltInv implements Listener {
 
     @EventHandler
     public void smeltStoneInv(BlockBreakEvent e) {
+
+        Player p = e.getPlayer();
+
         if (!isSmeltInv) return;
         if (!isSmeltStoneInv) return;
-        Player p = e.getPlayer();
         if (!(p.hasPermission("advancedautosmelt.smeltinv"))) return;
 
         if (p.getInventory().containsAtLeast(new ItemStack(Material.COBBLESTONE), 1)) {
@@ -55,9 +60,11 @@ public class BlockBreakSmeltInv implements Listener {
 
     @EventHandler
     public void smeltIronInv(BlockBreakEvent e) {
+
+        Player p = e.getPlayer();
+
         if (!isSmeltInv) return;
         if (!isSmeltIronInv) return;
-        Player p = e.getPlayer();
         if (!(p.hasPermission("advancedautosmelt.smeltinv"))) return;
 
         if (p.getInventory().containsAtLeast(new ItemStack(Material.IRON_ORE), 1)) {
@@ -73,9 +80,11 @@ public class BlockBreakSmeltInv implements Listener {
 
     @EventHandler
     public void smeltGoldInv(BlockBreakEvent e) {
+
+        Player p = e.getPlayer();
+
         if (!isSmeltInv) return;
         if (!isSmeltGoldInv) return;
-        Player p = e.getPlayer();
         if (!(p.hasPermission("advancedautosmelt.smeltinv"))) return;
 
         if (p.getInventory().containsAtLeast(new ItemStack(Material.GOLD_ORE), 1)) {

@@ -1,6 +1,7 @@
 package me.pulsi_.advancedautosmelt.managers;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import me.pulsi_.advancedautosmelt.utils.ChatUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -45,14 +46,14 @@ public class UpdateChecker implements Listener {
                     @Override
                     public void run() {
                         p.sendMessage("");
-                        p.sendMessage(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2There are no updates!"));
+                        p.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2There are no updates!"));
                         p.sendMessage("");
                     }
                 }.runTaskLater(plugin, 60);
 
             } else {
 
-                TextComponent update = new TextComponent(Translator.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &b&lNew update available! Click here!"));
+                TextComponent update = new TextComponent(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &b&lNew update available! Click here!"));
                 update.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/advancedautosmelt-smelt-ores-autopickup-items-and-exp.90587/"));
                 update.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click here to download it!").color(ChatColor.LIGHT_PURPLE).create()));
 

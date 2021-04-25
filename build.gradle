@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'me.pulsi_'
-version = '2.7.4'
+version = '2.7.7'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
