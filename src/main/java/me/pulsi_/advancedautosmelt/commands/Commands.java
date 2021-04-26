@@ -172,7 +172,7 @@ public class Commands implements CommandExecutor {
             }
 
         } else if (args.length == 1 && args[0].equalsIgnoreCase("toggle")) {
-            s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &aAvailable options are: &7AutoPickup, AutoSmelt, InventoryFull"));
+            s.sendMessage(ChatUtils.c(messages.getString("Available-Options")));
 
         } else if (args.length == 2 && args[0].equalsIgnoreCase("toggle") && args[1].equalsIgnoreCase("autopickup")) {
             Player p = (Player) s;
@@ -212,7 +212,7 @@ public class Commands implements CommandExecutor {
 
         } else if (args.length == 2 && args[0].equalsIgnoreCase("toggle") && args[1].equalsIgnoreCase("inventoryfull")) {
             Player p = (Player) s;
-            if (p.hasPermission("advancedautosmelt.toggle.invfull")) {
+            if (p.hasPermission("advancedautosmelt.toggle.inventoryfull")) {
                 if (s instanceof Player) {
                     if (!inventoryFullOFF.contains(p.getName())) {
                         inventoryFullOFF.add(p.getName());

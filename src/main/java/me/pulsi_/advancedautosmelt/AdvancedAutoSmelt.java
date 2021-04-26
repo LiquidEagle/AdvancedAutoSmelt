@@ -39,15 +39,12 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         //Shutdown Message
         dm.shutdownMessage();
     }
-
     public FileConfiguration getConfiguration() {
         return cm.getConfig();
     }
-
     public FileConfiguration getMessages() {
         return cm.getMessages();
     }
-
     public void reloadConfigs() {
         cm.reloadConfigs();
     }

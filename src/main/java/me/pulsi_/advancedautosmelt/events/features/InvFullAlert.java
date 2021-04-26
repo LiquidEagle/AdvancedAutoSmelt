@@ -40,10 +40,9 @@ public class InvFullAlert implements Listener {
         //Title
         if (config.getBoolean("InventoryFull.Title.Use-Title")) {
             try {
-                p.sendTitle(ChatUtils.c(config.getString("InventoryFull.Title.Title")), ChatUtils.c(config.getString("InventoryFull.Title.Sub-Title")),
-                config.getInt("InventoryFull.Title.Fadein-Delay"), config.getInt("InventoryFull.Title.Stay-Delay"), config.getInt("InventoryFull.Title.Fadeout-Delay"));
-            } catch (NoSuchMethodError err) {
                 p.sendTitle(ChatUtils.c(config.getString("InventoryFull.Title.Title")), ChatUtils.c(config.getString("InventoryFull.Title.Sub-Title")));
+            } catch (NoSuchMethodError err) {
+                Bukkit.getConsoleSender().sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cAn error occurred while sending a title to %p").replace("%p", e.getPlayer().getName()));
             }
         }
         //Title
