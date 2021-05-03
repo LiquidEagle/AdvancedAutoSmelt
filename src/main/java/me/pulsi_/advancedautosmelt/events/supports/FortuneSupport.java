@@ -2,6 +2,7 @@ package me.pulsi_.advancedautosmelt.events.supports;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
+import me.pulsi_.advancedautosmelt.utils.ChatUtils;
 import me.pulsi_.advancedautosmelt.utils.MethodUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -78,6 +79,13 @@ public class FortuneSupport implements Listener {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
         }
 
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            System.out.println(p.getInventory().getItemInHand().hasItemMeta());
+            System.out.println(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))));
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
+
         if (p.hasPermission("advancedautosmelt.fortune")) {
             if (config.getBoolean("Fortune.Use-Whitelist")) {
                     if (!config.getStringList("Fortune.Whitelist").contains(e.getBlock().getType().toString())) {
@@ -105,7 +113,7 @@ public class FortuneSupport implements Listener {
 
             } else {
 
-                if (!p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
+                if (p.getInventory().getItemInHand().containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS)) {
                     int fortuneLevel = p.getInventory().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
                     Random r = new Random();
                     int min = 1;
@@ -129,12 +137,9 @@ public class FortuneSupport implements Listener {
                 if (disabledWorlds.equalsIgnoreCase(p.getWorld().getName())) return;
             for (String blockBlacklist : config.getStringList("Disabled-Blocks"))
                 if (blockBlacklist.contains(e.getBlock().getType().toString())) return;
-            if (e.getBlock().getType() == (Material.IRON_ORE) ||
-                    e.getBlock().getType() == (Material.GOLD_ORE) ||
-                    e.getBlock().getType() == (Material.STONE) ||
-                    e.getBlock().getType() == (Material.CHEST) ||
-                    e.getBlock().getType() == (Material.FURNACE) ||
-                    e.getBlock().getType() == (Material.ENDER_CHEST)) return;
+            if (e.getBlock().getType() == (Material.IRON_ORE) || e.getBlock().getType() == (Material.GOLD_ORE) ||
+                    e.getBlock().getType() == (Material.STONE) || e.getBlock().getType() == (Material.CHEST) ||
+                    e.getBlock().getType() == (Material.FURNACE) || e.getBlock().getType() == (Material.ENDER_CHEST)) return;
             if (config.getBoolean("AutoSmelt.Disable-Creative-Mode")) {
                 if (p.getGameMode().equals(GameMode.CREATIVE)) return;
             }
@@ -169,6 +174,8 @@ public class FortuneSupport implements Listener {
         if (config.getBoolean("AutoSmelt.Disable-Creative-Mode")) {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
         }
+
+        methodUtils.checkPickaxe(p);
 
         if (p.hasPermission("advancedautosmelt.fortune")) {
             if (config.getBoolean("Fortune.Use-Whitelist")) {
@@ -237,6 +244,8 @@ public class FortuneSupport implements Listener {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
         }
 
+        methodUtils.checkPickaxe(p);
+
         if (p.hasPermission("advancedautosmelt.fortune")) {
             if (config.getBoolean("Fortune.Use-Whitelist")) {
                 if (!config.getStringList("Fortune.Whitelist").contains(Material.IRON_ORE.toString())) {
@@ -300,6 +309,8 @@ public class FortuneSupport implements Listener {
         if (config.getBoolean("AutoSmelt.Disable-Creative-Mode")) {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
         }
+
+        methodUtils.checkPickaxe(p);
 
         if (p.hasPermission("advancedautosmelt.fortune")) {
             if (config.getBoolean("Fortune.Use-Whitelist")) {

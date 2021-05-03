@@ -1,6 +1,7 @@
 package me.pulsi_.advancedautosmelt.events.blocks;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import me.pulsi_.advancedautosmelt.utils.MethodUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -14,17 +15,20 @@ import java.util.List;
 
 public class EnderChestBreak implements Listener {
 
+    private MethodUtils methodUtils;
     private FileConfiguration config;
     private List<String> worldsBlackList;
     private boolean isInvFullDrop;
     private boolean useLegacySupp;
     private boolean smeltEnderChest;
+
     public EnderChestBreak(AdvancedAutoSmelt plugin) {
         this.config = plugin.getConfiguration();
         this.useLegacySupp = config.getBoolean("Enable-Legacy-Support");
         this.smeltEnderChest = config.getBoolean("AutoSmelt.Smelt-Enderchest");
         this.worldsBlackList = config.getStringList("Disabled-Worlds");
         this.isInvFullDrop = config.getBoolean("AutoPickup.Inv-Full-Drop-Items");
+        this.methodUtils = new MethodUtils(plugin);
     }
 
     private final ItemStack enderChest = new ItemStack(Material.ENDER_CHEST, 1);
@@ -52,6 +56,8 @@ public class EnderChestBreak implements Listener {
 
         for (String disabledWorlds : worldsBlackList)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        methodUtils.checkPickaxe(p);
 
         if (e.isCancelled()) return;
         if (!(e.getBlock().getType() == Material.ENDER_CHEST)) return;

@@ -2,6 +2,7 @@ package me.pulsi_.advancedautosmelt.autopickup;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
+import me.pulsi_.advancedautosmelt.utils.MethodUtils;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ExperienceOrb;
@@ -15,11 +16,13 @@ import java.util.Set;
 
 public class AutoPickupExp implements Listener {
 
+    private MethodUtils methodUtils;
     private AdvancedAutoSmelt plugin;
     private Set<String> autoPickupOFF;
     public AutoPickupExp(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
         this.autoPickupOFF = Commands.autoPickupOFF;
+        this.methodUtils = new MethodUtils(plugin);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -31,6 +34,8 @@ public class AutoPickupExp implements Listener {
 
         for (String disabledWorlds : config.getStringList("Disabled-Worlds"))
             if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        methodUtils.checkPickaxe(p);
 
         if (e.isCancelled()) return;
         int exp = e.getExpToDrop();

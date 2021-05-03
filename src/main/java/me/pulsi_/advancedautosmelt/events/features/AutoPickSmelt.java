@@ -2,6 +2,7 @@ package me.pulsi_.advancedautosmelt.events.features;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
+import me.pulsi_.advancedautosmelt.utils.ChatUtils;
 import me.pulsi_.advancedautosmelt.utils.MethodUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -96,6 +97,12 @@ public class AutoPickSmelt implements Listener {
                 e.getBlock().getType() == (Material.CHEST) ||
                 e.getBlock().getType() == (Material.FURNACE) ||
                 e.getBlock().getType() == (Material.ENDER_CHEST)) return;
+
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName() == config.getString(ChatUtils.c("Custom-Pickaxe.Pickaxe.Display-Name")))) return;
+        }
+
         if (config.getBoolean("AutoSmelt.Disable-Creative-Mode")) {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
         }
@@ -126,6 +133,11 @@ public class AutoPickSmelt implements Listener {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
         }
 
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName() == config.getString(ChatUtils.c("Custom-Pickaxe.Pickaxe.Display-Name")))) return;
+        }
+
         methodUtils.autoPickSmeltGold(p, config, goldIngot, goldOre, autoPickupOFF, autoSmeltOFF, e);
         removeDrops(e);
     }
@@ -146,6 +158,11 @@ public class AutoPickSmelt implements Listener {
         if (!(e.getBlock().getType() == Material.IRON_ORE)) return;
         if (config.getBoolean("AutoSmelt.Disable-Creative-Mode")) {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
+        }
+
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName() == config.getString(ChatUtils.c("Custom-Pickaxe.Pickaxe.Display-Name")))) return;
         }
 
         methodUtils.autoPickSmeltIron(p, config, ironIngot, ironOre, autoPickupOFF, autoSmeltOFF, e);
@@ -169,6 +186,11 @@ public class AutoPickSmelt implements Listener {
         if (!(p.hasPermission("advancedautosmelt.smelt.stone"))) return;
         if (config.getBoolean("AutoSmelt.Disable-Creative-Mode")) {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
+        }
+
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName() == config.getString(ChatUtils.c("Custom-Pickaxe.Pickaxe.Display-Name")))) return;
         }
 
         methodUtils.autoPickSmeltStone(p, config, stone, cobblestone, autoPickupOFF, autoSmeltOFF, e);

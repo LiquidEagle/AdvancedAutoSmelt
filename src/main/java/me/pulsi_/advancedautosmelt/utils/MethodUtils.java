@@ -46,6 +46,16 @@ public class MethodUtils {
         dropsItems(p, notSmelt);
     }
 
+    public void checkPickaxe(Player p) {
+
+        FileConfiguration config = plugin.getConfiguration();
+
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
+    }
+
     public void fortuneSupportStone(Player p, FileConfiguration config, ItemStack stone, ItemStack cobblestone, BlockBreakEvent e, Set<String> autoPickupOFF, Set<String> autoSmeltOFF) {
 
         if (config.getBoolean("AutoSmelt.Smelt-Stone")) {

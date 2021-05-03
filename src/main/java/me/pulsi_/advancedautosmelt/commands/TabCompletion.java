@@ -20,6 +20,7 @@ public class TabCompletion implements TabCompleter {
             args1.add("list");
             args1.add("info");
             args1.add("toggle");
+            args1.add("givepick");
         }
 
         List<String> infoArgs = new ArrayList<>();

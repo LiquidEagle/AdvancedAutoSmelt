@@ -1,6 +1,7 @@
 package me.pulsi_.advancedautosmelt.commands;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import me.pulsi_.advancedautosmelt.items.SmelterPickaxe;
 import me.pulsi_.advancedautosmelt.utils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -14,11 +15,13 @@ import java.util.Set;
 
 public class Commands implements CommandExecutor {
 
+    private SmelterPickaxe pick;
     private AdvancedAutoSmelt plugin;
     private String version;
     public Commands(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
         this.version = plugin.getDescription().getVersion();
+        this.pick = new SmelterPickaxe(plugin);
     }
 
     public static Set<String> autoPickupOFF = new HashSet<>();
@@ -32,6 +35,7 @@ public class Commands implements CommandExecutor {
         FileConfiguration messages = plugin.getMessages();
 
         String noPerm = messages.getString("No-Permission");
+        String receivedPickaxe = messages.getString("Received-Pickaxe");
 
         if (args.length == 0) {
             s.sendMessage("");
@@ -169,6 +173,39 @@ public class Commands implements CommandExecutor {
                 s.sendMessage("");
             } else {
                 s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.info"));
+            }
+
+        } else if (args.length == 1 && args[0].equalsIgnoreCase("givepick")) {
+            if (s.hasPermission("advancedautosmelt.givepick")) {
+                if (s instanceof Player) {
+                    Player p = (Player) s;
+                    s.sendMessage("");
+                    s.sendMessage(ChatUtils.c(receivedPickaxe));
+                    s.sendMessage("");
+                    p.getInventory().addItem(pick.smelterPickaxe());
+                } else {
+                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cYou can't use that command as a console!"));
+                }
+            } else {
+                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.givepick"));
+            }
+
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("givepick")) {
+            if (s.hasPermission("advancedautosmelt.givepick")) {
+                try {
+                    Player target = Bukkit.getPlayerExact(args[1]);
+                    target.getInventory().addItem(pick.smelterPickaxe());
+                    s.sendMessage("");
+                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2" + target.getName() + "has successfully received the Pickaxe!"));
+                    s.sendMessage("");
+                    target.sendMessage("");
+                    target.sendMessage(ChatUtils.c(receivedPickaxe));
+                    target.sendMessage("");
+                } catch (Exception e) {
+                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cI can't find that player!"));
+                }
+            } else {
+                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.givepick"));
             }
 
         } else if (args.length == 1 && args[0].equalsIgnoreCase("toggle")) {

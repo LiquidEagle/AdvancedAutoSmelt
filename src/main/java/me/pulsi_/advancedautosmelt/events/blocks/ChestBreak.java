@@ -2,6 +2,8 @@ package me.pulsi_.advancedautosmelt.events.blocks;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
+import me.pulsi_.advancedautosmelt.utils.ChatUtils;
+import me.pulsi_.advancedautosmelt.utils.MethodUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -18,6 +20,7 @@ import java.util.Set;
 
 public class ChestBreak implements Listener {
 
+    private MethodUtils methodUtils;
     private FileConfiguration config;
     private List<String> worldsBlackList;
     private boolean useLegacySupp;
@@ -32,6 +35,7 @@ public class ChestBreak implements Listener {
         this.isInvFullDrop = config.getBoolean("AutoPickup.Inv-Full-Drop-Items");
         this.isAutoPickup = config.getBoolean("AutoPickup.Enable-Autopickup");
         this.autoPickupOFF = Commands.autoPickupOFF;
+        this.methodUtils = new MethodUtils(plugin);
     }
 
     private final ItemStack chest = new ItemStack(Material.CHEST, 1);
@@ -59,6 +63,8 @@ public class ChestBreak implements Listener {
 
         for (String disabledWorlds : worldsBlackList)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        methodUtils.checkPickaxe(p);
 
         if (e.isCancelled()) return;
         if (!(e.getBlock().getType() == Material.CHEST)) return;

@@ -2,6 +2,7 @@ package me.pulsi_.advancedautosmelt.events.blocks;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
+import me.pulsi_.advancedautosmelt.utils.MethodUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Hopper;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 public class HopperBreak {
 
+    private MethodUtils methodUtils;
     private FileConfiguration config;
     private List<String> worldsBlackList;
     private boolean useLegacySupp;
@@ -30,6 +32,7 @@ public class HopperBreak {
         this.isInvFullDrop = config.getBoolean("AutoPickup.Inv-Full-Drop-Items");
         this.isAutoPickup = config.getBoolean("AutoPickup.Enable-Autopickup");
         this.autoPickupOFF = Commands.autoPickupOFF;
+        this.methodUtils = new MethodUtils(plugin);
     }
 
     private final ItemStack hopper = new ItemStack(Material.HOPPER, 1);
@@ -57,6 +60,8 @@ public class HopperBreak {
 
         for (String disabledWorlds : worldsBlackList)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
+
+        methodUtils.checkPickaxe(p);
 
         if (e.isCancelled()) return;
         if (!(e.getBlock().getType() == Material.FURNACE)) return;
