@@ -149,7 +149,10 @@ Custom-Pickaxe:
     Use-Lore: true
     Lore:
       - "&aThe magic Smelter Pickaxe"
-      - "&dFound in one of the rares mine!"
+      - "&dthat allow the player that is"
+      - "&cholding the pickaxe, to automatically"
+      - "&bsmelt ores!"
+    #If you want to show enchantments, please disable this option. -> Glowing: false
     Glowing: true
 
 

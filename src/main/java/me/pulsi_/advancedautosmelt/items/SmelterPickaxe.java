@@ -14,12 +14,14 @@ import java.util.List;
 
 public class SmelterPickaxe {
 
-    private FileConfiguration config;
+    private AdvancedAutoSmelt plugin;
     public SmelterPickaxe(AdvancedAutoSmelt plugin) {
-        this.config = plugin.getConfiguration();
+        this.plugin = plugin;
     }
 
     public ItemStack smelterPickaxe() {
+
+        FileConfiguration config = plugin.getConfiguration();
 
         String materialType = config.getString("Custom-Pickaxe.Pickaxe.Material-Type");
         String displayName = config.getString("Custom-Pickaxe.Pickaxe.Display-Name");

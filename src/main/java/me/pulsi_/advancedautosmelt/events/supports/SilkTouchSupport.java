@@ -2,7 +2,7 @@ package me.pulsi_.advancedautosmelt.events.supports;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
-import me.pulsi_.advancedautosmelt.utils.MethodUtils;
+import me.pulsi_.advancedautosmelt.utils.ChatUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,7 +20,6 @@ import java.util.Set;
 
 public class SilkTouchSupport implements Listener {
 
-    private MethodUtils methodUtils;
     private FileConfiguration config;
     private boolean isDCM;
     private boolean isAutoPickupEnabled;
@@ -37,7 +36,6 @@ public class SilkTouchSupport implements Listener {
         this.disabledWorlds = config.getStringList("Disabled-Worlds");
         this.useLegacySupp = config.getBoolean("Enable-Legacy-Support");
         this.isInvFullDrop = config.getBoolean("AutoPickup.Inv-Full-Drop-Items");
-        this.methodUtils = new MethodUtils(plugin);
     }
 
     private final Set<String> autoPickupOFF = Commands.autoPickupOFF;
@@ -121,7 +119,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -190,7 +191,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -259,7 +263,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -328,7 +335,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -397,7 +407,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -466,7 +479,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -535,7 +551,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -604,7 +623,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -679,7 +701,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -748,7 +773,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -817,7 +845,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -886,7 +917,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -955,7 +989,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}
@@ -1024,7 +1061,10 @@ public class SilkTouchSupport implements Listener {
         for (String disabledWorlds : disabledWorlds)
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (config.getBoolean("Fortune.Fortune-Support-Silktouch")) {
             if (isDCM) {if (p.getGameMode().equals(GameMode.CREATIVE)) return;}

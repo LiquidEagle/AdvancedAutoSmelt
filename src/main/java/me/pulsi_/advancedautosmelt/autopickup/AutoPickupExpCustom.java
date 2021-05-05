@@ -2,7 +2,7 @@ package me.pulsi_.advancedautosmelt.autopickup;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.Commands;
-import me.pulsi_.advancedautosmelt.utils.MethodUtils;
+import me.pulsi_.advancedautosmelt.utils.ChatUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,13 +16,11 @@ import java.util.Set;
 
 public class AutoPickupExpCustom implements Listener {
 
-    private MethodUtils methodUtils;
     private Set<String> autoPickupOFF;
     private AdvancedAutoSmelt plugin;
     public AutoPickupExpCustom(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
         this.autoPickupOFF = Commands.autoPickupOFF;
-        this.methodUtils = new MethodUtils(plugin);
     }
 
     @EventHandler
@@ -38,7 +36,10 @@ public class AutoPickupExpCustom implements Listener {
         for (String blockBlacklist : config.getStringList("Disabled-Blocks"))
             if (blockBlacklist.contains(e.getBlock().getType().toString())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (e.isCancelled()) return;
         if (!(e.getBlock().getType() == Material.GOLD_ORE)) return;
@@ -70,7 +71,7 @@ public class AutoPickupExpCustom implements Listener {
 
         if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
             if (!p.getInventory().getItemInHand().hasItemMeta()) return;
-            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName() == config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
         }
 
         if (e.isCancelled()) return;

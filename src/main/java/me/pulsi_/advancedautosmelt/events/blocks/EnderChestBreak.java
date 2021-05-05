@@ -1,7 +1,7 @@
 package me.pulsi_.advancedautosmelt.events.blocks;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
-import me.pulsi_.advancedautosmelt.utils.MethodUtils;
+import me.pulsi_.advancedautosmelt.utils.ChatUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -11,38 +11,32 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-
 public class EnderChestBreak implements Listener {
 
-    private MethodUtils methodUtils;
-    private FileConfiguration config;
-    private List<String> worldsBlackList;
-    private boolean isInvFullDrop;
-    private boolean useLegacySupp;
-    private boolean smeltEnderChest;
+    private AdvancedAutoSmelt plugin;
 
     public EnderChestBreak(AdvancedAutoSmelt plugin) {
-        this.config = plugin.getConfiguration();
-        this.useLegacySupp = config.getBoolean("Enable-Legacy-Support");
-        this.smeltEnderChest = config.getBoolean("AutoSmelt.Smelt-Enderchest");
-        this.worldsBlackList = config.getStringList("Disabled-Worlds");
-        this.isInvFullDrop = config.getBoolean("AutoPickup.Inv-Full-Drop-Items");
-        this.methodUtils = new MethodUtils(plugin);
+        this.plugin = plugin;
     }
 
     private final ItemStack enderChest = new ItemStack(Material.ENDER_CHEST, 1);
 
     public void dropsItems(Player p, ItemStack i) {
+
+        FileConfiguration config = plugin.getConfiguration();
+
         if (!p.getInventory().addItem(i).isEmpty()) {
-            if (isInvFullDrop) {
+            if (config.getBoolean("AutoPickup.Inv-Full-Drop-Items")) {
                 p.getWorld().dropItem(p.getLocation(), i);
             }
         }
     }
 
     public void removeDrops(BlockBreakEvent e) {
-        if (useLegacySupp) {
+
+        FileConfiguration config = plugin.getConfiguration();
+
+        if (config.getBoolean("Enable-Legacy-Support")) {
             e.getBlock().setType(Material.AIR);
         } else {
             e.setDropItems(false);
@@ -52,16 +46,21 @@ public class EnderChestBreak implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void enderChestBreak(BlockBreakEvent e) {
 
+        FileConfiguration config = plugin.getConfiguration();
+
         Player p = e.getPlayer();
 
-        for (String disabledWorlds : worldsBlackList)
+        for (String disabledWorlds : config.getStringList("Disabled-Worlds"))
             if (disabledWorlds.contains(p.getWorld().getName())) return;
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (e.isCancelled()) return;
         if (!(e.getBlock().getType() == Material.ENDER_CHEST)) return;
-        if (smeltEnderChest) {
+        if (config.getBoolean("AutoSmelt.Smelt-Enderchest")) {
             dropsItems(p, enderChest);
         } else {
             for (ItemStack drops : e.getBlock().getDrops()) {

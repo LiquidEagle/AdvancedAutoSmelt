@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class FortuneSupport implements Listener {
 
-    private final AdvancedAutoSmelt plugin;
+    private AdvancedAutoSmelt plugin;
     public FortuneSupport(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
     }
@@ -80,8 +80,6 @@ public class FortuneSupport implements Listener {
         }
 
         if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
-            System.out.println(p.getInventory().getItemInHand().hasItemMeta());
-            System.out.println(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))));
             if (!p.getInventory().getItemInHand().hasItemMeta()) return;
             if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
         }
@@ -175,7 +173,10 @@ public class FortuneSupport implements Listener {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
         }
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (p.hasPermission("advancedautosmelt.fortune")) {
             if (config.getBoolean("Fortune.Use-Whitelist")) {
@@ -244,7 +245,10 @@ public class FortuneSupport implements Listener {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
         }
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (p.hasPermission("advancedautosmelt.fortune")) {
             if (config.getBoolean("Fortune.Use-Whitelist")) {
@@ -310,7 +314,10 @@ public class FortuneSupport implements Listener {
             if (p.getGameMode().equals(GameMode.CREATIVE)) return;
         }
 
-        methodUtils.checkPickaxe(p);
+        if (config.getBoolean("Custom-Pickaxe.Works-only-with-custom-pickaxe")) {
+            if (!p.getInventory().getItemInHand().hasItemMeta()) return;
+            if (!(p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals(ChatUtils.c(config.getString("Custom-Pickaxe.Pickaxe.Display-Name"))))) return;
+        }
 
         if (p.hasPermission("advancedautosmelt.fortune")) {
             if (config.getBoolean("Fortune.Use-Whitelist")) {
