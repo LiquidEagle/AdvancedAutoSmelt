@@ -1,125 +1,98 @@
-##################################################################
-#                           _        _____                _ _    #
-#      /\        /\        | |      / ____|              | | |   #
-#     /  \      /  \  _   _| |_ ___| (___  _ __ ___   ___| | |_  #
-#    / /\ \    / /\ \| | | | __/ _ \\___ \| '_ ` _ \ / _ \ | __| #
-#   / ____ \  / ____ \ |_| | || (_) |___) | | | | | |  __/ | |_  #
-#  /_/    \_\/_/    \_\__,_|\__\___/_____/|_| |_| |_|\___|_|\__| #
-#                                                                #
-# Author: Pulsi_                                                 #
-# Thanks for using this plugin!                                  #
-#                                                                #
-##################################################################
+# AdvancedAutoSmelt FileConfiguration
 
-#Receive updates messages when there is a new Update available
+# Receive updates messages when there is a new Update available
 Update-Checker: true
 
-#If your server is on 1.12.2 or more, you should put this option to false
+Prefix: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> "
+
+# If your server is on 1.12.2 or more, you should put this option to false
 Enable-Legacy-Support: true
+# The plugin won't affect players in creative mode
+Disable-Creative-Mode: true
+# Worlds where the plugin won't affect
+Disabled-Worlds:
+  - example1
+  - example2
+# Blocks where the plugin won't affect
+Disabled-Blocks:
+  - SKULL
 
-######################################################
-#                   < AUTOSMELT >                    #
-######################################################
 AutoSmelt:
+  Enabled: true
+  # The list of all blocks that will be smelted
+  # you can edit it as you want.
+  #
+  # The block broken;The block drop
+  Smelt-List:
+    - IRON_ORE;IRON_INGOT
+    - GOLD_ORE;GOLD_INGOT
+    - STONE;STONE
+  # This features allow you to automatically
+  # smelt the items that are in your inventory
+  Inventory-Smelt:
+    Enabled: true
+    Smelt-List:
+      - COBBLESTONE;STONE
+      - IRON_ORE;IRON_INGOT
+      - GOLD_ORE;GOLD_INGOT
 
-  #Disable the autosmelt in creative mode, this will avoid the possibility of dupe blocks
-  Disable-Creative-Mode: true
-
-  #Automatically smelt Iron Ore -> Permission: advancedautosmelt.smelt.iron
-  Smelt-Iron: true
-  #Give or not the experience when breaking an Iron Ore Block
-  Give-Exp-Iron: true
-  #Give to the Player some Experience for Mining Iron Ores
-  Iron-Exp: 1
-
-  #Automatically smelt Gold Ore -> Permission: advancedautosmelt.smelt.gold
-  Smelt-Gold: true
-  #Give or not the experience when breaking an Iron Ore Block
-  Give-Exp_Gold: true
-  #Give to the Player some Experience for Mining Gold Ores
-  Gold-Exp: 2
-
-  #The stone will be mined like silk touch -> advancedautosmelt.smelt.stone
-  Smelt-Stone: true
-
-  #Instead of give Obsidian, it will give the EnderChest when broken
-  Smelt-Enderchest: true
-
-  #This will smelt ores not smelted in the Inventory
-  Smelt-Ores-In-Inventory: true
-  Inv-Smelt:
-    #Smelt Iron Ores in the Inventory
-    Iron-Ore: true
-
-    #Smelt Gold Ores in the Inventory
-    Gold-Ore: true
-
-    #Smelt Cobblestone in the Inventory
-    Cobblestone: true
-
-
-######################################################
-#                   < AUTOPICKUP >                   #
-######################################################
+# The autopickup will automatically pickup the blocks mined
 AutoPickup:
-
-  #Should the plugin enable this Option? -> Permission: advancedautosmelt.autopickup
-  Enable-Autopickup: true
-
-  #The player will directly receive Experience -> Permission: advancedautosmelt.autopickupexp
-  Autopickup-Experience: true
-
-  #Make the blocks broken don't drop in the ground when the inventory is full
+  # Enabled or not this feature
+  Enabled: true
+  # Drop items when the inventory is full.
+  # This will prevent the destruction of
+  # some mines blocks when having a full inventory
   Inv-Full-Drop-Items: true
+  # Enabling this feature will make the plugin
+  # process the ItemPickupEvent, to support plugins
+  # like MCMMO
+  Process-Pickup-Event: false
+  # This feature will give a custom amount of
+  # experience for every block mined.
+  #
+  # The block mined;The exp received
+  Custom-Exp:
+    Enabled: true
+    Exp-List:
+      - IRON_ORE;2
+      - GOLD_ORE;3
+      - STONE;1
 
-
-######################################################
-#                    < FORTUNE >                     #
-######################################################
 Fortune:
-
-  #Enable the fortune feature, this will give extra blocks based on your fortune level -> Permission: advancedautosmelt.fortune
+  # Enable the fortune feature, this will give extra blocks based on your fortune level
   Enable-Fortune-Support: true
-
-  #Enabling the fortune support for silktouch feature, this will give extra blocks based on
-  #your fortune level, but supporting Silk Touch
-  Fortune-Support-Silktouch: false
-
-  #Use the block whitelist
-  Use-Whitelist: true
-  #This will work with blocks too
   Whitelist:
-    - IRON_ORE
-    - COAL_ORE
-    - LAPIS_ORE
-    - DIAMOND_ORE
-    - EMERALD_ORE
-    - GOLD_ORE
-    - REDSTONE_ORE
+    # Enabling this option, only the blocks in the whitelist
+    # will be affect by fortune
+    Enabled: true
+    # This will work with blocks too
+    Block-List:
+      - IRON_ORE
+      - COAL_ORE
+      - LAPIS_ORE
+      - DIAMOND_ORE
+      - EMERALD_ORE
+      - GOLD_ORE
+      - REDSTONE_ORE
 
+InventoryAlerts:
+  # Enable this to activate the inventory full alerts
+  Enabled: true
 
-######################################################
-#                < INVENTORY FULL >                  #
-######################################################
-InventoryFull:
-
-  #Enable this to activate the inventory full alerts!
-  Inventory-Full-Alert: true
-
-  #Send a title on InventoryFull
+  # Send a title
   Title:
-    Use-Title: true
-    Title: "&c&lWarning!"
-    Sub-Title: "&7Your inventory is full!"
+    Enabled: true
+    Title: "&c&lWarning!,&7Your inventory is full!"
 
-  #Send the actionbar message on InventoryFull
+  # Send the actionbar message
   Actionbar:
-    Use-Actionbar: true
+    Enabled: true
     Message: "&c&lWarning! &7Your inventory is full!"
 
-  #Send messages on InventoryFull
+  # Send messages
   Messages:
-    Use-Messages: true
+    Enabled: true
     Messages:
       - "&8&m----*----------------------*----"
       - "&c&lAlert! &7Your inventory is full!"
@@ -128,41 +101,8 @@ InventoryFull:
 
   #Play a sound on Inventory Full
   Sound:
-    Use-Sound: true
-    Sound-Type: 'BLOCK_ANVIL_BREAK'
-    Volume: 2
-    Pitch: 1
+    Enabled: true
+    Sound-Type: "BLOCK_ANVIL_BREAK 2 1"
 
   #The delay between alerts, in ticks
   Alert-Delay: 50
-
-
-######################################################
-#                < CUSTOM PICKAXE >                  #
-######################################################
-Custom-Pickaxe:
-
-  Works-only-with-custom-pickaxe: false
-  Pickaxe:
-    Material-Type: DIAMOND_PICKAXE
-    Display-Name: "&2&lSmelter &d&lPickaxe"
-    Use-Lore: true
-    Lore:
-      - "&aThe magic Smelter Pickaxe"
-      - "&dthat allow the player that is"
-      - "&cholding the pickaxe, to automatically"
-      - "&bsmelt ores!"
-    #If you want to show enchantments, please disable this option. -> Glowing: false
-    Glowing: true
-
-
-######################################################
-#                  < BLACKLISTS >                    #
-######################################################
-Disabled-Worlds:
-  - example1
-  - example2
-
-#The blocks in this list won't work with anything, fortune, autopickup, etc..
-Disabled-Blocks:
-  - SKULL

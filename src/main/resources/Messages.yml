@@ -1,10 +1,26 @@
-#######################################################
-#             < MESSAGES CONFIGURATION >              #
-#######################################################
+# Messages configuration
 
-No-Permission: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cYou don't have the permission! (&f%permission%&c)"
-Unknown-Command: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cUnknown Command!"
-Toggled-On-Message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Your %toggled_ability% has been toggled &2On&7!"
-Toggled-Off-Message: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Your %toggled_ability% has been toggled &cOff&7!"
-Available-Options: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &aAvailable options are: &7AutoPickup, AutoSmelt, InventoryFull"
-Received-Pickaxe: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &aYou have received a Smelter Pickaxe!"
+Help-Message:
+  - ""
+  - "&d  &lAdvanced&a&lAuto&c&lSmelt &aHelp"
+  - ""
+  - "&8- &f/as reload &7Reload the Plugin"
+  - "&8- &f/as help &7Send this message"
+  - "&8- &f/as toggle <option> &7Toggle an option"
+  - ""
+
+No-Permission: "&cYou don't have the permission! (&f%permission%&c)"
+Reload-Message: "&7Successfully reloaded the plugin!"
+Unknown-Command: "&cUnknown Command!"
+Not-Player: "&cYou are not a player!"
+Cannot-Find-Player: "&cCannot find that player!"
+Available-Options: "&aAvailable options are: &7AutoPickup, AutoSmelt, InventoryAlerts"
+Option-Toggled: "&7Successfully toggled %status% &7your %option%"
+Option-Toggled-Others: "&7Successfully toggled %status% &7the %option% &7for &a%player%"
+Force-Toggled: "&7Someone has forced you to toggle your %option% &7to %status%&7."
+
+AutoPickup: "&aAutoPickup"
+AutoSmelt: "&aAutoSmelt"
+InventoryAlerts: "&aInventoryAlerts"
+On: "&2On"
+Off: "&cOff"

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'me.pulsi_'
-version = '2.8.0'
+version = '3.0.0'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -23,7 +23,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:20.1.0'
     compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
 }
 

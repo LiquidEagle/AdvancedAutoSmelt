@@ -1,4 +1,4 @@
-package me.pulsi_.advancedautosmelt.managers;
+package me.pulsi_.advancedautosmelt.externals;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -32,22 +32,12 @@ import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
-public class Metrics {
+public class bStats {
 
-    private final Plugin plugin;
-
+    private final AdvancedAutoSmelt plugin;
     private final MetricsBase metricsBase;
-
-    /**
-     * Creates a new Metrics instance.
-     *
-     * @param plugin Your plugin instance.
-     * @param serviceId The id of the service. It can be found at <a
-     *     href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
-     */
-    public Metrics(AdvancedAutoSmelt plugin, int serviceId) {
+    public bStats(AdvancedAutoSmelt plugin, int serviceId) {
         this.plugin = plugin;
         // Get the config file
         File bStatsFolder = new File(plugin.getDataFolder().getParentFile(), "bStats");
@@ -60,19 +50,15 @@ public class Metrics {
             config.addDefault("logSentData", false);
             config.addDefault("logResponseStatusText", false);
             // Inform the server owners about bStats
-            config
-                    .options()
-                    .header(
+            config.options().header(
                             "bStats (https://bStats.org) collects some basic information for plugin authors, like how\n"
                                     + "many people use their plugin and their total player count. It's recommended to keep bStats\n"
                                     + "enabled, but if you're not comfortable with this, you can turn this setting off. There is no\n"
                                     + "performance penalty associated with having metrics enabled, and data sent to bStats is fully\n"
-                                    + "anonymous.")
-                    .copyDefaults(true);
+                                    + "anonymous.").copyDefaults(true);
             try {
                 config.save(configFile);
-            } catch (IOException ignored) {
-            }
+            } catch (IOException ignored) {}
         }
         // Load the data
         boolean enabled = config.getBoolean("enabled", true);

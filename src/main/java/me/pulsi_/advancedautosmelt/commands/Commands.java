@@ -1,273 +1,197 @@
 package me.pulsi_.advancedautosmelt.commands;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
-import me.pulsi_.advancedautosmelt.items.SmelterPickaxe;
+import me.pulsi_.advancedautosmelt.managers.MessageManager;
 import me.pulsi_.advancedautosmelt.utils.ChatUtils;
+import me.pulsi_.advancedautosmelt.utils.SetUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class Commands implements CommandExecutor {
 
-    private SmelterPickaxe pick;
-    private AdvancedAutoSmelt plugin;
-    private String version;
+    private final AdvancedAutoSmelt plugin;
     public Commands(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
-        this.version = plugin.getDescription().getVersion();
-        this.pick = new SmelterPickaxe(plugin);
     }
 
-    public static Set<String> autoPickupOFF = new HashSet<>();
-    public static Set<String> autoSmeltOFF = new HashSet<>();
-    public static Set<String> inventoryFullOFF = new HashSet<>();
-
     @Override
-    public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
+    public boolean onCommand(CommandSender s, Command command, String label, String[] args) {
 
-        FileConfiguration config = plugin.getConfiguration();
-        FileConfiguration messages = plugin.getMessages();
+        MessageManager messMan = new MessageManager(plugin);
+        String on = messMan.on();
+        String off = messMan.off();
 
-        String noPerm = messages.getString("No-Permission");
-        String receivedPickaxe = messages.getString("Received-Pickaxe");
+        String autoPickup = messMan.autoPickup();
+        String autoSmelt = messMan.autoSmelt();
+        String inventoryAlerts = messMan.inventoryAlerts();
 
         if (args.length == 0) {
             s.sendMessage("");
-            s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &bv%v%, By Pulsi_").replace("%v%",version));
+            s.sendMessage(ChatUtils.color("&fRunning &8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l>"));
+            s.sendMessage(ChatUtils.color("&fVersion: &a" + plugin.getDescription().getVersion()));
+            s.sendMessage(ChatUtils.color("&fMade by Pulsi_"));
             s.sendMessage("");
-
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
-            if (s.hasPermission("advancedautosmelt.help")) {
-                s.sendMessage("");
-                s.sendMessage(ChatUtils.c("&d  &lAdvanced&a&lAuto&c&lSmelt &aHelp"));
-                s.sendMessage("");
-                s.sendMessage(ChatUtils.c("&8- &f/as reload &7Reload the Plugin"));
-                s.sendMessage(ChatUtils.c("&8- &f/as help &7Send this help message"));
-                s.sendMessage(ChatUtils.c("&8- &f/as list &7See the options of the config"));
-                s.sendMessage(ChatUtils.c("&8- &f/as toggle <option> &7Toggle an option"));
-                s.sendMessage(ChatUtils.c("&8- &f/as info &7See the Info of the plugin"));
-                s.sendMessage(ChatUtils.c("&8- &f/as restart &7Restart the plugin (&c&lDon't use it as a reload command!&7)"));
-                s.sendMessage("");
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.help"));
-            }
-
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-            if (s.hasPermission("advancedautosmelt.reload")) {
-                if (s instanceof Player) {
-                    s.sendMessage("");
-                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2Reloading Files.."));
-                    s.sendMessage(ChatUtils.c("&8[&2&lSUCCESS&8] &fMessages.yml loaded!"));
-                    s.sendMessage(ChatUtils.c("&8[&2&lSUCCESS&8] &fConfig.yml loaded!"));
-                    s.sendMessage(ChatUtils.c("&8[&2&lSUCCESS&8] &fSuccessfully reloaded the plugin!"));
-                    s.sendMessage("");
-                    plugin.getServer().getConsoleSender().sendMessage("");
-                    plugin.getServer().getConsoleSender().sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2Reloading Files.."));
-                    plugin.getServer().getConsoleSender().sendMessage(ChatUtils.c("&8[&2&lSUCCESS&8] &fMessages.yml loaded!"));
-                    plugin.getServer().getConsoleSender().sendMessage(ChatUtils.c("&8[&2&lSUCCESS&8] &fConfig.yml loaded!"));
-                    plugin.getServer().getConsoleSender().sendMessage(ChatUtils.c("&8[&2&lSUCCESS&8] &fSuccessfully reloaded the plugin!"));
-                    plugin.getServer().getConsoleSender().sendMessage("");
-                } else {
-                    s.sendMessage("");
-                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2Reloading Files.."));
-                    s.sendMessage(ChatUtils.c("&8[&2&lSUCCESS&8] &fMessages.yml loaded!"));
-                    s.sendMessage(ChatUtils.c("&8[&2&lSUCCESS&8] &fConfig.yml loaded!"));
-                    s.sendMessage(ChatUtils.c("&8[&2&lSUCCESS&8] &fSuccessfully reloaded the plugin!"));
-                    s.sendMessage("");
-                }
-                plugin.reloadConfigs();
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.reload"));
-            }
-
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("restart")) {
-            if (s.hasPermission("advancedautosmelt.restart")) {
-                s.sendMessage("");
-                s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2Restarting the plugin..."));
-                Bukkit.getPluginManager().disablePlugin(plugin);
-                Bukkit.getPluginManager().enablePlugin(plugin);
-                s.sendMessage(ChatUtils.c("&8[&2&lSUCCESS&8] &fNow everything should work!"));
-                s.sendMessage("");
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.restart"));
-            }
-
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
-            if (s.hasPermission("advancedautosmelt.list")) {
-                s.sendMessage("");
-                s.sendMessage(ChatUtils.c("&d   &lAdvanced&a&lAuto&c&lSmelt &aList"));
-                s.sendMessage("");
-                s.sendMessage(ChatUtils.c("&8- &7AutoSmelt Iron: " + config.getBoolean("AutoSmelt.Smelt-Iron")).replace("true", ChatUtils.c("&2Enabled"))
-                        .replace("false", ChatUtils.c("&cDisabled")));
-                s.sendMessage(ChatUtils.c("&8- &7AutoSmelt Gold: " + config.getBoolean("AutoSmelt.Smelt-Gold")).replace("true", ChatUtils.c("&2Enabled"))
-                        .replace("false", ChatUtils.c("&cDisabled")));
-                s.sendMessage(ChatUtils.c("&8- &7AutoSmelt Stone: " + config.getBoolean("AutoSmelt.Smelt-Stone")).replace("true", ChatUtils.c("&2Enabled"))
-                        .replace("false", ChatUtils.c("&cDisabled")));
-                s.sendMessage(ChatUtils.c("&8- &7AutoPickup: " + config.getBoolean("AutoPickup.Enable-Autopickup")).replace("true", ChatUtils.c("&2Enabled"))
-                        .replace("false", ChatUtils.c("&cDisabled")));
-                s.sendMessage(ChatUtils.c("&8- &7AutoPickupExp " + config.getBoolean("AutoPickup.Autopickup-Experience")).replace("true", ChatUtils.c("&2Enabled"))
-                        .replace("false", ChatUtils.c("&cDisabled")));
-                s.sendMessage(ChatUtils.c(""));
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.list"));
-            }
-
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("info")) {
-            if (s.hasPermission("advancedautosmelt.info")) {
-                s.sendMessage("");
-                s.sendMessage(ChatUtils.c("&d    &lAdvanced&a&lAuto&c&lSmelt &aInfo"));
-                s.sendMessage("");
-                s.sendMessage(ChatUtils.c("&8- &fAuthor: &aPulsi_"));
-                s.sendMessage(ChatUtils.c("&8- &fVersion: &av%v%").replace("%v%", plugin.getDescription().getVersion()));
-                s.sendMessage(ChatUtils.c("&8- &fPermissions: &a/as info permissions <number>"));
-                s.sendMessage(ChatUtils.c("&8- &fAliases: &aaautosmelt, autosmelt, asmelt, smelt, as"));
-                s.sendMessage("");
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.info"));
-            }
-
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("info") && args[1].equalsIgnoreCase("permissions") ||
-                args.length == 3 && args[0].equalsIgnoreCase("info") && args[1].equalsIgnoreCase("permissions")
-                        && args[2].equalsIgnoreCase("1")) {
-            if (s.hasPermission("advancedautosmelt.info")) {
-                s.sendMessage("");
-                s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Permissions List &8(&a1/3&8)"));
-                s.sendMessage(ChatUtils.c("&aSmelt Stone: &fadvancedautosmelt.smelt.stone"));
-                s.sendMessage(ChatUtils.c("&aSmelt Iron: &fadvancedautosmelt.smelt.iron"));
-                s.sendMessage(ChatUtils.c("&aSmelt Gold: &fadvancedautosmelt.smelt.gold"));
-                s.sendMessage(ChatUtils.c("&aSmeltInv: &fadvancedautosmelt.smeltinv"));
-                s.sendMessage(ChatUtils.c("&aAutopickup: &fadvancedautosmelt.autopickup"));
-                s.sendMessage("");
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.info"));
-            }
-
-        } else if (args.length == 3 && args[0].equalsIgnoreCase("info") && args[1].equalsIgnoreCase("permissions") && args[2].equalsIgnoreCase("2")) {
-            if (s.hasPermission("advancedautosmelt.info")) {
-                s.sendMessage("");
-                s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Permissions List &8(&a2/3&8)"));
-                s.sendMessage(ChatUtils.c("&aAutopickupExp: &fadvancedautosmelt.autopickupexp"));
-                s.sendMessage(ChatUtils.c("&aUpdate Notify: &fadvancedautosmelt.notify"));
-                s.sendMessage(ChatUtils.c("&aUse Fortune: &fadvancedautosmelt.fortune"));
-                s.sendMessage(ChatUtils.c("&a/as help: &fadvancedautosmelt.help"));
-                s.sendMessage(ChatUtils.c("&a/as list: &fadvancedautosmelt.list"));
-                s.sendMessage("");
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.info"));
-            }
-
-        } else if (args.length == 3 && args[0].equalsIgnoreCase("info") && args[1].equalsIgnoreCase("permissions") && args[2].equalsIgnoreCase("3")) {
-            if (s.hasPermission("advancedautosmelt.info")) {
-                s.sendMessage("");
-                s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &7Permissions List &8(&a3/3&8)"));
-                s.sendMessage(ChatUtils.c("&a/as reload: &fadvancedautosmelt.reload"));
-                s.sendMessage(ChatUtils.c("&a/as toggle autopickup: &fadvancedautosmelt.toggle.autopickup"));
-                s.sendMessage(ChatUtils.c("&a/as toggle autosmelt: &fadvancedautosmelt.toggle.autosmelt"));
-                s.sendMessage(ChatUtils.c("&a/as toggle inventoryfull: &fadvancedautosmelt.toggle.invfull"));
-                s.sendMessage("");
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.info"));
-            }
-
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("givepick")) {
-            if (s.hasPermission("advancedautosmelt.givepick")) {
-                if (s instanceof Player) {
-                    Player p = (Player) s;
-                    s.sendMessage("");
-                    s.sendMessage(ChatUtils.c(receivedPickaxe));
-                    s.sendMessage("");
-                    p.getInventory().addItem(pick.smelterPickaxe());
-                } else {
-                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cYou can't use that command as a console!"));
-                }
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.givepick"));
-            }
-
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("givepick")) {
-            if (s.hasPermission("advancedautosmelt.givepick")) {
-                try {
-                    Player target = Bukkit.getPlayerExact(args[1]);
-                    target.getInventory().addItem(pick.smelterPickaxe());
-                    s.sendMessage("");
-                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &2" + target.getName() + "has successfully received the Pickaxe!"));
-                    s.sendMessage("");
-                    target.sendMessage("");
-                    target.sendMessage(ChatUtils.c(receivedPickaxe));
-                    target.sendMessage("");
-                } catch (Exception e) {
-                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cI can't find that player!"));
-                }
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.givepick"));
-            }
-
-        } else if (args.length == 1 && args[0].equalsIgnoreCase("toggle")) {
-            s.sendMessage(ChatUtils.c(messages.getString("Available-Options")));
-
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("toggle") && args[1].equalsIgnoreCase("autopickup")) {
-            Player p = (Player) s;
-            if (p.hasPermission("advancedautosmelt.toggle.autopickup")) {
-                if (s instanceof Player) {
-                    if (!autoPickupOFF.contains(p.getName())) {
-                        autoPickupOFF.add(p.getName());
-                        s.sendMessage(ChatUtils.c(messages.getString("Toggled-Off-Message")).replace("%toggled_ability%", "AutoPickup"));
-                    } else {
-                        autoPickupOFF.remove(p.getName());
-                        s.sendMessage(ChatUtils.c(messages.getString("Toggled-On-Message")).replace("%toggled_ability%", "AutoPickup"));
-                    }
-                } else {
-                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cOnly players can execute this command!"));
-                }
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.toggle.autopickup"));
-            }
-
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("toggle") && args[1].equalsIgnoreCase("autosmelt")) {
-            Player p = (Player) s;
-            if (p.hasPermission("advancedautosmelt.toggle.autosmelt")) {
-                if (s instanceof Player) {
-                    if (!autoSmeltOFF.contains(p.getName())) {
-                        autoSmeltOFF.add(p.getName());
-                        s.sendMessage(ChatUtils.c(messages.getString("Toggled-Off-Message")).replace("%toggled_ability%", "AutoSmelt"));
-                    } else {
-                        autoSmeltOFF.remove(p.getName());
-                        s.sendMessage(ChatUtils.c(messages.getString("Toggled-On-Message")).replace("%toggled_ability%", "AutoSmelt"));
-                    }
-                } else {
-                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cOnly players can execute this command!"));
-                }
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.toggle.autosmelt"));
-            }
-
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("toggle") && args[1].equalsIgnoreCase("inventoryfull")) {
-            Player p = (Player) s;
-            if (p.hasPermission("advancedautosmelt.toggle.inventoryfull")) {
-                if (s instanceof Player) {
-                    if (!inventoryFullOFF.contains(p.getName())) {
-                        inventoryFullOFF.add(p.getName());
-                        s.sendMessage(ChatUtils.c(messages.getString("Toggled-Off-Message")).replace("%toggled_ability%", "InventoryFull"));
-                    } else {
-                        inventoryFullOFF.remove(p.getName());
-                        s.sendMessage(ChatUtils.c(messages.getString("Toggled-On-Message")).replace("%toggled_ability%", "InventoryFull"));
-                    }
-                } else {
-                    s.sendMessage(ChatUtils.c("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cOnly players can execute this command!"));
-                }
-            } else {
-                s.sendMessage(ChatUtils.c(noPerm).replace("%permission%", "advancedautosmelt.toggle.inventoryfull"));
-            }
-
-        } else {
-            s.sendMessage(ChatUtils.c(messages.getString("Unknown-Command")));
         }
+
+        if (args.length == 1) {
+            switch (args[0]) {
+                case "reload":
+                    if (!s.hasPermission("advancedautosmelt.autopickup")) {
+                        messMan.noPermission(s, "advancedautosmelt.autopickup");
+                        return false;
+                    }
+                    plugin.reloadConfigs();
+                    messMan.reloadMessage(s);
+                    break;
+
+                case "help":
+                    if (!s.hasPermission("advancedautosmelt.help")) {
+                        messMan.noPermission(s, "advancedautosmelt.help");
+                        return false;
+                    }
+                    messMan.helpMessage(s);
+                    break;
+
+                case "toggle":
+                    if (!s.hasPermission("advancedautosmelt.toggle")) {
+                        messMan.noPermission(s, "advancedautosmelt.toggle");
+                        return false;
+                    }
+                    messMan.availableOptions(s);
+                    break;
+
+                default:
+                    messMan.unknownCommand(s);
+                    break;
+            }
+        }
+
+        if (args.length == 2) {
+            switch (args[0]) {
+                case "toggle":
+                    switch (args[1]) {
+                        case "autopickup":
+                            if (!s.hasPermission("advancedautosmelt.toggle.autopickup")) {
+                                messMan.noPermission(s, "advancedautosmelt.toggle.autopickup");
+                                return false;
+                            }
+                            if (!(s instanceof Player)) {
+                                messMan.notPlayer(s);
+                                return false;
+                            }
+                            if (!SetUtils.AUTOPICKUP_OFF.contains(((Player) s).getUniqueId())) {
+                                SetUtils.AUTOPICKUP_OFF.add(((Player) s).getUniqueId());
+                                messMan.optionToggled(s, off, autoPickup);
+                            } else {
+                                SetUtils.AUTOPICKUP_OFF.remove(((Player) s).getUniqueId());
+                                messMan.optionToggled(s, on, autoPickup);
+                            }
+                            break;
+
+                        case "autosmelt":
+                            if (!s.hasPermission("advancedautosmelt.toggle.autosmelt")) {
+                                messMan.noPermission(s, "advancedautosmelt.toggle.autosmelt");
+                                return false;
+                            }
+                            if (!(s instanceof Player)) {
+                                messMan.notPlayer(s);
+                                return false;
+                            }
+                            if (!SetUtils.AUTOSMELT_OFF.contains(((Player) s).getUniqueId())) {
+                                SetUtils.AUTOSMELT_OFF.add(((Player) s).getUniqueId());
+                                messMan.optionToggled(s, off, autoSmelt);
+                            } else {
+                                SetUtils.AUTOSMELT_OFF.remove(((Player) s).getUniqueId());
+                                messMan.optionToggled(s, on, autoSmelt);
+                            }
+                            break;
+
+                        case "inventoryalerts":
+                            if (!s.hasPermission("advancedautosmelt.toggle.inventoryalerts")) {
+                                messMan.noPermission(s, "advancedautosmelt.toggle.inventoryalerts");
+                                return false;
+                            }
+                            if (!(s instanceof Player)) {
+                                messMan.notPlayer(s);
+                                return false;
+                            }
+                            if (!SetUtils.INVENTORYALERTS_OFF.contains(((Player) s).getUniqueId())) {
+                                SetUtils.INVENTORYALERTS_OFF.add(((Player) s).getUniqueId());
+                                messMan.optionToggled(s, off, inventoryAlerts);
+                            } else {
+                                SetUtils.INVENTORYALERTS_OFF.remove(((Player) s).getUniqueId());
+                                messMan.optionToggled(s, on, inventoryAlerts);
+                            }
+                            break;
+
+                        default:
+                            messMan.unknownCommand(s);
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        if (args.length == 3) {
+            switch (args[0]) {
+                case "toggle":
+                    if (!s.hasPermission("advancedautosmelt.toggle.others")) {
+                        messMan.noPermission(s, "advancedautosmelt.toggle.others");
+                        return false;
+                    }
+                    if (Bukkit.getPlayerExact(args[2]) == null) {
+                        messMan.cannotFindPlayer(s);
+                        return false;
+                    }
+                    Player p = Bukkit.getPlayerExact(args[2]);
+                    switch (args[1]) {
+                        case "autopickup":
+                            if (!SetUtils.AUTOPICKUP_OFF.contains(Bukkit.getPlayerExact(args[2]).getUniqueId())) {
+                                SetUtils.AUTOPICKUP_OFF.add(Bukkit.getPlayerExact(args[2]).getUniqueId());
+                                messMan.optionToggledOthers(s, off, autoPickup, p);
+                                messMan.forceToggle(p, off, autoPickup);
+                            } else {
+                                SetUtils.AUTOPICKUP_OFF.remove(Bukkit.getPlayerExact(args[2]).getUniqueId());
+                                messMan.optionToggledOthers(s, on, autoPickup, p);
+                                messMan.forceToggle(p, on, autoPickup);
+                            }
+                            break;
+
+                        case "autosmelt":
+                            if (!SetUtils.AUTOSMELT_OFF.contains(Bukkit.getPlayerExact(args[2]).getUniqueId())) {
+                                SetUtils.AUTOSMELT_OFF.add(Bukkit.getPlayerExact(args[2]).getUniqueId());
+                                messMan.optionToggledOthers(s, off, autoSmelt, p);
+                                messMan.forceToggle(p, off, autoSmelt);
+                            } else {
+                                SetUtils.AUTOSMELT_OFF.remove(Bukkit.getPlayerExact(args[2]).getUniqueId());
+                                messMan.optionToggledOthers(s, on, autoSmelt, p);
+                                messMan.forceToggle(p, on, autoSmelt);
+                            }
+                            break;
+
+                        case "inventoryalerts":
+                            if (!SetUtils.INVENTORYALERTS_OFF.contains(Bukkit.getPlayerExact(args[2]).getUniqueId())) {
+                                SetUtils.INVENTORYALERTS_OFF.add(Bukkit.getPlayerExact(args[2]).getUniqueId());
+                                messMan.optionToggledOthers(s, off, inventoryAlerts, p);
+                                messMan.forceToggle(p, off, inventoryAlerts);
+                            } else {
+                                SetUtils.INVENTORYALERTS_OFF.remove(Bukkit.getPlayerExact(args[2]).getUniqueId());
+                                messMan.optionToggledOthers(s, on, inventoryAlerts, p);
+                                messMan.forceToggle(p, on, inventoryAlerts);
+                            }
+                            break;
+
+                        default:
+                            messMan.unknownCommand(s);
+                            break;
+                    }
+                    break;
+            }
+        }
+
         return true;
     }
 }

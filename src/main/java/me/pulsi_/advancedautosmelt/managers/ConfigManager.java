@@ -6,7 +6,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ConfigManager {
@@ -20,16 +19,16 @@ public class ConfigManager {
     }
 
     public void createConfigs() {
-        messagesFile = new File(plugin.getDataFolder(), "Messages.yml");
-        configFile = new File(plugin.getDataFolder(), "Config.yml");
+        messagesFile = new File(plugin.getDataFolder(), "messages.yml");
+        configFile = new File(plugin.getDataFolder(), "config.yml");
 
         if (!messagesFile.exists()) {
             messagesFile.getParentFile().mkdir();
-            plugin.saveResource("Messages.yml", false);
+            plugin.saveResource("messages.yml", false);
         }
         if (!configFile.exists()) {
             configFile.getParentFile().mkdir();
-            plugin.saveResource("Config.yml", false);
+            plugin.saveResource("config.yml", false);
         }
 
         messages = new YamlConfiguration();
@@ -38,11 +37,7 @@ public class ConfigManager {
         try {
             messages.load(messagesFile);
             config.load(configFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidConfigurationException e) {
+        } catch (InvalidConfigurationException | IOException e) {
             e.printStackTrace();
         }
     }

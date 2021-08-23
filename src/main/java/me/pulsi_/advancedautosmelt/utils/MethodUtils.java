@@ -1,427 +1,123 @@
 package me.pulsi_.advancedautosmelt.utils;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Set;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class MethodUtils {
 
-    private AdvancedAutoSmelt plugin;
-    public MethodUtils(AdvancedAutoSmelt plugin) {
-        this.plugin = plugin;
+    public static void playSound(String path, Player p) {
+
+        String soundType = path.split(" ")[0];
+        int volume = Integer.parseInt(path.split(" ")[1]);
+        int pitch = Integer.parseInt(path.split(" ")[2]);
+
+        try {
+            p.playSound(p.getLocation(), Sound.valueOf(soundType), volume, pitch);
+        } catch (IllegalArgumentException exception) {
+            ChatUtils.consoleMessage("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cInvalid SoundType at: &f" + path);
+        }
     }
 
-    public void removeDrops(BlockBreakEvent e) {
+    public static void sendTitle(String path, Player p) {
+        try {
+            String title = path.split(",")[0];
+            String subTitle = path.split(",")[1];
+            p.sendTitle(ChatUtils.color(title), ChatUtils.color(subTitle));
+        } catch (NullPointerException | IllegalArgumentException e) {
+            ChatUtils.consoleMessage("&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> &cAn error occurred while sending a title at: &f" + path);
+        }
+    }
 
-        FileConfiguration config = plugin.getConfiguration();
+    public static boolean isWorldBlacklist(Player p) {
+        boolean isBlacklist = false;
+        for (String disabledWorlds : JavaPlugin.getPlugin(AdvancedAutoSmelt.class).config().getStringList("Disabled-Worlds"))
+            if (disabledWorlds.contains(p.getWorld().getName())) isBlacklist = true;
+        return isBlacklist;
+    }
 
-        if (config.getBoolean("Enable-Legacy-Support")) {
+    public static boolean isCreativeDisabled(Player p) {
+        boolean isCreativeDisabled = false;
+        if (JavaPlugin.getPlugin(AdvancedAutoSmelt.class).config().getBoolean("Disable-Creative-Mode"))
+            if (p.getGameMode() == GameMode.CREATIVE) isCreativeDisabled = true;
+        return isCreativeDisabled;
+    }
+
+    public static void removeDrops(BlockBreakEvent e) {
+        if (JavaPlugin.getPlugin(AdvancedAutoSmelt.class).config().getBoolean("Enable-Legacy-Support")) {
             e.getBlock().setType(Material.AIR);
         } else {
             e.setDropItems(false);
         }
     }
 
-    public void dropsItems(Player p, ItemStack i) {
-
-        FileConfiguration config = plugin.getConfiguration();
-
-        if (!p.getInventory().addItem(i).isEmpty()) {
-            if (config.getBoolean("AutoPickup.Inv-Full-Drop-Items")) {
-                p.getWorld().dropItem(p.getLocation(), i);
-            }
-        }
-    }
-
-    public void smeltNoPickup(ItemStack smelt, BlockBreakEvent e) {
-        e.getBlock().getWorld().dropItem(e.getBlock().getLocation(), smelt);
-    }
-
-    public void pickNoSmelt(Player p, ItemStack notSmelt) {
-        dropsItems(p, notSmelt);
-    }
-
-    public void fortuneSupportStone(Player p, FileConfiguration config, ItemStack stone, ItemStack cobblestone, BlockBreakEvent e, Set<String> autoPickupOFF, Set<String> autoSmeltOFF) {
-
-        if (config.getBoolean("AutoSmelt.Smelt-Stone")) {
-            if (config.getBoolean("AutoPickup.Enable-Autopickup")) {
-                if (!autoPickupOFF.contains(p.getName())) {
-                    if (!autoSmeltOFF.contains(p.getName())) {
-                        if (p.hasPermission("advancedautosmelt.autopickup")) {
-                            if (p.hasPermission("advancedautosmelt.smelt.stone")) {
-                                dropsItems(p, stone);
-                            } else {
-                                if (!autoPickupOFF.contains(p.getName())) {
-                                    if (p.hasPermission("advancedautosmelt.autopickup")) {
-                                        pickNoSmelt(p, cobblestone);
-                                    } else {
-                                        e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                                    }
-                                } else {
-                                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                                }
-                            }
-                        } else {
-                            if (!autoSmeltOFF.contains(p.getName())) {
-                                if (p.hasPermission("advancedautosmelt.smelt.stone")) {
-                                    smeltNoPickup(stone, e);
-                                } else {
-                                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                                }
-                            } else {
-                                e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                            }
-                        }
-                    } else {
-                        if (!autoPickupOFF.contains(p.getName())) {
-                            if (p.hasPermission("advancedautosmelt.autopickup")) {
-                                pickNoSmelt(p, cobblestone);
-                            } else {
-                                e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                            }
-                        } else {
-                            e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                        }
-                    }
-                } else {
-                    if (!autoSmeltOFF.contains(p.getName())) {
-                        if (p.hasPermission("advancedautosmelt.smelt.stone")) {
-                            smeltNoPickup(stone, e);
-                        } else {
-                            e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                        }
-                    } else {
-                        e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                    }
-                }
-            } else {
-                if (!autoSmeltOFF.contains(p.getName())) {
-                    if (p.hasPermission("advancedautosmelt.smelt.stone")) {
-                        smeltNoPickup(stone, e);
-                    } else {
-                        e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                    }
-                } else {
-                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                }
-            }
+    public static void dropsItems(Player p, ItemStack i) {
+        if (!JavaPlugin.getPlugin(AdvancedAutoSmelt.class).config().getBoolean("AutoPickup.Process-Pickup-Event")) {
+            try {
+                if (!p.getInventory().addItem(i).isEmpty())
+                    if (JavaPlugin.getPlugin(AdvancedAutoSmelt.class).config().getBoolean("AutoPickup.Inv-Full-Drop-Items"))
+                        p.getWorld().dropItem(p.getLocation(), i);
+            } catch (IllegalArgumentException ignored) {}
         } else {
-            if (config.getBoolean("AutoPickup.Enable-Autopickup")) {
-                if (!autoPickupOFF.contains(p.getName())) {
-                    pickNoSmelt(p, cobblestone);
-                } else {
-                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-                }
-            } else {
-                e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), cobblestone);
-            }
+            p.getWorld().dropItem(p.getLocation(), i).setPickupDelay(0);
         }
-        removeDrops(e);
     }
 
-    public void fortuneSupportIron(Player p, FileConfiguration config, ItemStack ironIngot, ItemStack ironOre, BlockBreakEvent e, Set<String> autoPickupOFF, Set<String> autoSmeltOFF) {
-
-        if (config.getBoolean("AutoSmelt.Smelt-Iron")) {
-            if (config.getBoolean("AutoPickup.Enable-Autopickup")) {
-                if (!autoPickupOFF.contains(p.getName())) {
-                    if (!autoSmeltOFF.contains(p.getName())) {
-                        if (p.hasPermission("advancedautosmelt.autopickup")) {
-                            if (p.hasPermission("advancedautosmelt.smelt.iron")) {
-                                dropsItems(p, ironIngot);
-                            } else {
-                                if (!autoPickupOFF.contains(p.getName())) {
-                                    if (p.hasPermission("advancedautosmelt.autopickup")) {
-                                        pickNoSmelt(p, ironOre);
-                                    } else {
-                                        e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                                    }
-                                } else {
-                                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                                }
-                            }
-                        } else {
-                            if (!autoSmeltOFF.contains(p.getName())) {
-                                if (p.hasPermission("advancedautosmelt.smelt.iron")) {
-                                    smeltNoPickup(ironIngot, e);
-                                } else {
-                                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                                }
-                            } else {
-                                e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                            }
-                        }
-                    } else {
-                        if (!autoPickupOFF.contains(p.getName())) {
-                            if (p.hasPermission("advancedautosmelt.autopickup")) {
-                                pickNoSmelt(p, ironOre);
-                            } else {
-                                e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                            }
-                        } else {
-                            e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                        }
-                    }
-                } else {
-                    if (!autoSmeltOFF.contains(p.getName())) {
-                        if (p.hasPermission("advancedautosmelt.smelt.iron")) {
-                            smeltNoPickup(ironIngot, e);
-                        } else {
-                            e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                        }
-                    } else {
-                        e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                    }
-                }
-            } else {
-                if (!autoSmeltOFF.contains(p.getName())) {
-                    if (p.hasPermission("advancedautosmelt.smelt.iron")) {
-                        smeltNoPickup(ironIngot, e);
-                    } else {
-                        e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                    }
-                } else {
-                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                }
-            }
-        } else {
-            if (config.getBoolean("AutoPickup.Enable-Autopickup")) {
-                if (!autoPickupOFF.contains(p.getName())) {
-                    pickNoSmelt(p, ironOre);
-                } else {
-                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-                }
-            } else {
-                e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), ironOre);
-            }
-        }
-        removeDrops(e);
+    public static boolean canPickup(Player p) {
+        return JavaPlugin.getPlugin(AdvancedAutoSmelt.class).config().getBoolean("AutoPickup.Enabled")
+                & p.hasPermission("advancedautosmelt.autopickup") & !SetUtils.AUTOPICKUP_OFF.contains(p.getUniqueId());
     }
 
-
-    public void fortuneSupportGold(Player p, FileConfiguration config, ItemStack goldIngot, ItemStack goldOre, BlockBreakEvent e, Set<String> autoPickupOFF, Set<String> autoSmeltOFF) {
-
-        if (config.getBoolean("AutoSmelt.Smelt-Gold")) {
-            if (config.getBoolean("AutoPickup.Enable-Autopickup")) {
-                if (!autoPickupOFF.contains(p.getName())) {
-                    if (!autoSmeltOFF.contains(p.getName())) {
-                        if (p.hasPermission("advancedautosmelt.autopickup")) {
-                            if (p.hasPermission("advancedautosmelt.smelt.gold")) {
-                                dropsItems(p, goldIngot);
-                            } else {
-                                if (!autoPickupOFF.contains(p.getName())) {
-                                    if (p.hasPermission("advancedautosmelt.autopickup")) {
-                                        pickNoSmelt(p, goldOre);
-                                    } else {
-                                        e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                                    }
-                                } else {
-                                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                                }
-                            }
-                        } else {
-                            if (!autoSmeltOFF.contains(p.getName())) {
-                                if (p.hasPermission("advancedautosmelt.smelt.gold")) {
-                                    smeltNoPickup(goldIngot, e);
-                                } else {
-                                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                                }
-                            } else {
-                                e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                            }
-                        }
-                    } else {
-                        if (!autoPickupOFF.contains(p.getName())) {
-                            if (p.hasPermission("advancedautosmelt.autopickup")) {
-                                pickNoSmelt(p, goldOre);
-                            } else {
-                                e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                            }
-                        } else {
-                            e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                        }
-                    }
-                } else {
-                    if (!autoSmeltOFF.contains(p.getName())) {
-                        if (p.hasPermission("advancedautosmelt.smelt.gold")) {
-                            smeltNoPickup(goldIngot, e);
-                        } else {
-                            e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                        }
-                    } else {
-                        e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                    }
-                }
-            } else {
-                if (!autoSmeltOFF.contains(p.getName())) {
-                    if (p.hasPermission("advancedautosmelt.smelt.gold")) {
-                        smeltNoPickup(goldIngot, e);
-                    } else {
-                        e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                    }
-                } else {
-                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                }
-            }
-        } else {
-            if (config.getBoolean("AutoPickup.Enable-Autopickup")) {
-                if (!autoPickupOFF.contains(p.getName())) {
-                    pickNoSmelt(p, goldOre);
-                } else {
-                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-                }
-            } else {
-                e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), goldOre);
-            }
-        }
-        removeDrops(e);
+    public static boolean canSmelt(Player p) {
+        return JavaPlugin.getPlugin(AdvancedAutoSmelt.class).config().getBoolean("AutoSmelt.Enabled")
+                & p.hasPermission("advancedautosmelt.autosmelt") & !SetUtils.AUTOSMELT_OFF.contains(p.getUniqueId());
     }
 
-    public void generalFortuneSupport(Player p, FileConfiguration config, ItemStack drops, Set<String> autoPickupOFF, BlockBreakEvent e) {
-        if (config.getBoolean("AutoPickup.Enable-Autopickup")) {
-            if (!autoPickupOFF.contains(p.getName())) {
-                if (p.hasPermission("advancedautosmelt.autopickup")) {
-                    dropsItems(p, drops);
-                } else {
-                    e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), drops);
-                }
-            } else {
-                e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), drops);
-            }
-        } else {
-            e.getBlock().getLocation().getWorld().dropItem(e.getBlock().getLocation(), drops);
-        }
-        removeDrops(e);
-    }
+    public static void sendActionBar(Player player, String message) {
+        String v = Bukkit.getServer().getClass().getPackage().getName();
+        v = v.substring(v.lastIndexOf(".") + 1);
+        try {
+            if (v.startsWith("1_13") || v.startsWith("1_14")) {
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder(ChatUtils.color(message)).create());
+            } else if (!(v.equalsIgnoreCase("v1_8_R1") || v.contains("v1_7_"))) {
+                Class<?> c1 = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer");
+                Class<?> c2 = Class.forName("net.minecraft.server." + v + ".ChatComponentText");
+                Class<?> c3 = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent");
+                Class<?> c4 = Class.forName("net.minecraft.server." + v + ".PacketPlayOutChat");
+                Class<?> c5 = Class.forName("net.minecraft.server." + v + ".Packet");
 
-    //===========================================================================================================================================
-    // AUTOPICKSMELT METHODS
-    //===========================================================================================================================================
+                Object p = c1.cast(player);
+                Object o = c2.getConstructor(new Class<?>[]{String.class}).newInstance(ChatUtils.color(message));
+                Object poc = c4.getConstructor(new Class<?>[]{c3, byte.class}).newInstance(o, (byte) 2);
+                Object handle = c1.getDeclaredMethod("getHandle").invoke(p);
+                Object playerConnection = handle.getClass().getDeclaredField("playerConnection").get(handle);
 
-    public void autoPickSmeltStone(Player p, FileConfiguration config, ItemStack stone, ItemStack cobblestone, Set<String> autoPickupOFF, Set<String> autoSmeltOFF, BlockBreakEvent e) {
-        if (config.getBoolean("AutoSmelt.Smelt-Stone")) {
-            if (config.getBoolean("AutoPickup.Enable-Autopickup")) {
-                if (!autoPickupOFF.contains(p.getName())) {
-                    if (!autoSmeltOFF.contains(p.getName())) {
-                        if (p.hasPermission("advancedautosmelt.autopickup")) {
-                            if (p.hasPermission("advancedautosmelt.smelt.stone")) {
-                                dropsItems(p, stone);
-                            } else {
-                                if (autoPickupOFF.contains(p.getName())) return;
-                                if (!p.hasPermission("advancedautosmelt.autopickup")) return;
-                                pickNoSmelt(p, cobblestone);
-                            }
-                        } else {
-                            if (!autoSmeltOFF.contains(p.getName())) return;
-                            if (!p.hasPermission("advancedautosmelt.smelt.stone")) return;
-                            smeltNoPickup(stone, e);
-                        }
-                    } else {
-                        if (autoPickupOFF.contains(p.getName())) return;
-                        if (!p.hasPermission("advancedautosmelt.autopickup")) return;
-                        pickNoSmelt(p, cobblestone);
-                    }
-                } else {
-                    if (autoSmeltOFF.contains(p.getName())) return;
-                    if (!p.hasPermission("advancedautosmelt.smelt.stone")) return;
-                    smeltNoPickup(stone, e);
-                }
+                playerConnection.getClass().getDeclaredMethod("sendPacket", c5).invoke(playerConnection, poc);
             } else {
-                if (autoSmeltOFF.contains(p.getName())) return;
-                if (!p.hasPermission("advancedautosmelt.smelt.stone")) return;
-                smeltNoPickup(stone, e);
-            }
-        } else {
-            if (!config.getBoolean("AutoPickup.Enable-Autopickup")) return;
-            if (autoPickupOFF.contains(p.getName())) return;
-            pickNoSmelt(p, cobblestone);
-        }
-        removeDrops(e);
-    }
+                Class<?> c1 = Class.forName("org.bukkit.craftbukkit." + v + ".entity.CraftPlayer");
+                Class<?> c2 = Class.forName("net.minecraft.server." + v + ".ChatSerializer");
+                Class<?> c3 = Class.forName("net.minecraft.server." + v + ".IChatBaseComponent");
+                Class<?> c4 = Class.forName("net.minecraft.server." + v + ".PacketPlayOutChat");
+                Class<?> c5 = Class.forName("net.minecraft.server." + v + ".Packet");
 
-    public void autoPickSmeltIron(Player p, FileConfiguration config, ItemStack ironIngot, ItemStack ironOre, Set<String> autoPickupOFF, Set<String> autoSmeltOFF, BlockBreakEvent e) {
-        if (config.getBoolean("AutoSmelt.Smelt-Iron")) {
-            if (config.getBoolean("AutoPickup.Enable-Autopickup")) {
-                if (!autoPickupOFF.contains(p.getName())) {
-                    if (!autoSmeltOFF.contains(p.getName())) {
-                        if (p.hasPermission("advancedautosmelt.autopickup")) {
-                            if (p.hasPermission("advancedautosmelt.smelt.iron")) {
-                                dropsItems(p, ironIngot);
-                            } else {
-                                if (autoPickupOFF.contains(p.getName())) return;
-                                if (!p.hasPermission("advancedautosmelt.autopickup")) return;
-                                pickNoSmelt(p, ironOre);
-                            }
-                        } else {
-                            if (!autoSmeltOFF.contains(p.getName())) return;
-                            if (!p.hasPermission("advancedautosmelt.smelt.iron")) return;
-                            smeltNoPickup(ironIngot, e);
-                        }
-                    } else {
-                        if (autoPickupOFF.contains(p.getName())) return;
-                        if (!p.hasPermission("advancedautosmelt.autopickup")) return;
-                        pickNoSmelt(p, ironOre);
-                    }
-                } else {
-                    if (autoSmeltOFF.contains(p.getName())) return;
-                    if (!p.hasPermission("advancedautosmelt.smelt.iron")) return;
-                    smeltNoPickup(ironIngot, e);
-                }
-            } else {
-                if (autoSmeltOFF.contains(p.getName())) return;
-                if (!p.hasPermission("advancedautosmelt.smelt.iron")) return;
-                smeltNoPickup(ironIngot, e);
-            }
-        } else {
-            if (!config.getBoolean("AutoPickup.Enable-Autopickup")) return;
-            if (autoPickupOFF.contains(p.getName())) return;
-            pickNoSmelt(p, ironOre);
-        }
-        removeDrops(e);
-    }
+                Object p = c1.cast(player);
+                Object cbc = c3.cast(c2.getDeclaredMethod("a", String.class).invoke(c2, "{\"text\": \"" + ChatUtils.color(message) + "\"}"));
+                Object poc = c4.getConstructor(new Class<?>[]{c3, byte.class}).newInstance(cbc, (byte) 2);
+                Object handle = c1.getDeclaredMethod("getHandle").invoke(p);
+                Object playerConnection = handle.getClass().getDeclaredField("playerConnection").get(handle);
 
-    public void autoPickSmeltGold(Player p, FileConfiguration config, ItemStack goldIngot, ItemStack goldOre, Set<String> autoPickupOFF, Set<String> autoSmeltOFF, BlockBreakEvent e) {
-        if (config.getBoolean("AutoSmelt.Smelt-Gold")) {
-            if (config.getBoolean("AutoPickup.Enable-Autopickup")) {
-                if (!autoPickupOFF.contains(p.getName())) {
-                    if (!autoSmeltOFF.contains(p.getName())) {
-                        if (p.hasPermission("advancedautosmelt.autopickup")) {
-                            if (p.hasPermission("advancedautosmelt.smelt.gold")) {
-                                dropsItems(p, goldIngot);
-                            } else {
-                                if (autoPickupOFF.contains(p.getName())) return;
-                                if (!p.hasPermission("advancedautosmelt.autopickup")) return;
-                                pickNoSmelt(p, goldOre);
-                            }
-                        } else {
-                            if (!autoSmeltOFF.contains(p.getName())) return;
-                            if (!p.hasPermission("advancedautosmelt.smelt.gold")) return;
-                            smeltNoPickup(goldIngot, e);
-                        }
-                    } else {
-                        if (autoPickupOFF.contains(p.getName())) return;
-                        if (!p.hasPermission("advancedautosmelt.autopickup")) return;
-                        pickNoSmelt(p, goldOre);
-                    }
-                } else {
-                    if (autoSmeltOFF.contains(p.getName())) return;
-                    if (!p.hasPermission("advancedautosmelt.smelt.gold")) return;
-                    smeltNoPickup(goldIngot, e);
-                }
-            } else {
-                if (autoSmeltOFF.contains(p.getName())) return;
-                if (!p.hasPermission("advancedautosmelt.smelt.gold")) return;
-                smeltNoPickup(goldIngot, e);
+                playerConnection.getClass().getDeclaredMethod("sendPacket", c5).invoke(playerConnection, poc);
             }
-        } else {
-            if (!config.getBoolean("AutoPickup.Enable-Autopickup")) return;
-            if (autoPickupOFF.contains(p.getName())) return;
-            pickNoSmelt(p, goldOre);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        removeDrops(e);
     }
 }
