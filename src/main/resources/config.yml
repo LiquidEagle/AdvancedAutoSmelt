@@ -1,108 +1,165 @@
-# AdvancedAutoSmelt FileConfiguration
+#####################################
+# +-------------------------------+ #
+# | AdvancedAutoSmelt - By Pulsi_ | #
+# +-------------------------------+ #
+#####################################
 
-# Receive updates messages when there is a new Update available
 Update-Checker: true
 
-Prefix: "&8&l<&d&lAdvanced&a&lAuto&c&lSmelt&8&l> "
+# The main plugin prefix, that will be
+# displayed before messages and commands.
+Prefix: "&8[&a&lA&9&lA&c&lS&8] "
 
-# If your server is on 1.12.2 or more, you should put this option to false
-Enable-Legacy-Support: true
-# The plugin won't affect players in creative mode
-Disable-Creative-Mode: true
-# Worlds where the plugin won't affect
-Disabled-Worlds:
-  - example1
-  - example2
-# Blocks where the plugin won't affect
-Disabled-Blocks:
-  - SKULL
+# AutoPickup options.
+AutoPickup:
+  # Enable or not this option.
+  Enabled: true
 
+  # Choose if making players enabling
+  # autopickup automatically on join.
+  Enabled-On-Join:
+    Enabled: true
+    # Choose if a player needs to have the specified
+    # permission to enable the autopickup when joining.
+    Is-Required-Permission: false
+    Permission: "your.persmission.here"
+
+  # If your server version is 1.12.2
+  # or higher, disable this option.
+  Enable-Legacy-Support: true
+
+  # To make this plugin compatible with some
+  # plugins like MCMMO, enable this option.
+  Process-PlayerPickupEvent: false
+
+  # Choose if dropping items on ground
+  # when the inventory is full or not.
+  Drop-Items-On-Inventory-Full: true
+
+  # The plugin will check for the player
+  # item and will give drops only if the
+  # block can be broken from that item.
+  # ( Usually used to avoid things like
+  # getting stone or minerals with hands )
+  Drops-Need-Correct-Item: true
+
+  # The worlds where autopickup won't work.
+  World-Blacklist:
+    - "World1"
+    - "World2"
+
+  # The blocks that won't be affected by autopickup.
+  Block-Blacklist:
+    - "SKULL"
+
+# AutoSmelt options.
 AutoSmelt:
   Enabled: true
-  # The list of all blocks that will be smelted
-  # you can edit it as you want.
-  #
-  # The block broken;The block drop
-  Smelt-List:
-    - IRON_ORE;IRON_INGOT
-    - GOLD_ORE;GOLD_INGOT
-    - STONE;STONE
-  # This features allow you to automatically
-  # smelt the items that are in your inventory
-  Inventory-Smelt:
-    Enabled: true
-    Smelt-List:
-      - COBBLESTONE;STONE
-      - IRON_ORE;IRON_INGOT
-      - GOLD_ORE;GOLD_INGOT
 
-# The autopickup will automatically pickup the blocks mined
-AutoPickup:
-  # Enabled or not this feature
-  Enabled: true
-  # Drop items when the inventory is full.
-  # This will prevent the destruction of
-  # some mines blocks when having a full inventory
-  Inv-Full-Drop-Items: true
-  # Enabling this feature will make the plugin
-  # process the ItemPickupEvent, to support plugins
-  # like MCMMO
-  Process-Pickup-Event: false
-  # This feature will give a custom amount of
-  # experience for every block mined.
-  #
-  # The block mined;The exp received
-  Custom-Exp:
+  Enabled-On-Join:
     Enabled: true
-    Exp-List:
-      - IRON_ORE;2
-      - GOLD_ORE;3
-      - STONE;1
+    Is-Required-Permission: false
+    Permission: "your.persmission.here"
+
+  Smelt-List:
+    # Block-Broken;Drop-Given
+    - "STONE;STONE"
+    - "IRON_ORE;IRON_INGOT"
+    - "GOLD_ORE;GOLD_INGOT"
+
+  # The worlds where autosmelt won't work.
+  World-Blacklist:
+    - "World1"
+    - "World2"
 
 Fortune:
-  # Enable the fortune feature, this will give extra blocks based on your fortune level
-  Enable-Fortune-Support: true
-  Whitelist:
-    # Enabling this option, only the blocks in the whitelist
-    # will be affect by fortune
-    Enabled: true
-    # This will work with blocks too
-    Block-List:
-      - IRON_ORE
-      - COAL_ORE
-      - LAPIS_ORE
-      - DIAMOND_ORE
-      - EMERALD_ORE
-      - GOLD_ORE
-      - REDSTONE_ORE
-
-InventoryAlerts:
-  # Enable this to activate the inventory full alerts
+  # Enable the fortune support, this will
+  # multiply the items picked based on your
+  # fortune level. It will work for picked-up
+  # and not picked-up blocks.
   Enabled: true
 
-  # Send a title
+  Is-Required-Permission:
+    Enabled: true
+    Permission: "advancedautosmelt.fortune"
+
+  Block-Whitelist:
+    # Enable the block whitelist.
+    # NOTE: If enabled, only the listed blocks
+    # will be affected from fortune.
+    Enabled: true
+
+    # This will reverse the list, and won't
+    # make fortune affect the listed blocks.
+    Whitelist-Is-Blacklist: false
+
+    Whitelist:
+      - "STONE"
+      - "IRON_ORE"
+      - "GOLD_ORE"
+
+  # The worlds where fortune won't work.
+  World-Blacklist:
+    - "World1"
+    - "World2"
+
+# CustomExp feature
+Custom-Exp:
+  Enabled: true
+  Exp-List:
+    # BrokenBlock;AmountOfExp
+    # Do not use decimal numbers.
+    - "STONE;1"
+    - "IRON_ORE;3"
+    - "GOLD_ORE;5"
+
+  # The worlds where custom exp won't work.
+  World-Blacklist:
+    - "World1"
+    - "World2"
+
+# Cool feature to warning players when they
+# mine while having the inventory full.
+Inventory-Full-Alerts:
+  # Disable this to disable all features.
+  Enabled: true
+
   Title:
     Enabled: true
-    Title: "&c&lWarning!,&7Your inventory is full!"
+    Title: "&c&lWARNING!,&aYour inventory is full!" # Title,SubTitle
 
-  # Send the actionbar message
-  Actionbar:
-    Enabled: true
-    Message: "&c&lWarning! &7Your inventory is full!"
-
-  # Send messages
-  Messages:
-    Enabled: true
-    Messages:
-      - "&8&m----*----------------------*----"
-      - "&c&lAlert! &7Your inventory is full!"
-      - "     &cYou are losing Items!"
-      - "&8&m----*----------------------*----"
-
-  #Play a sound on Inventory Full
   Sound:
     Enabled: true
-    Sound-Type: "BLOCK_ANVIL_BREAK 2 1"
+    Sound: "BLOCK_NOTE_BLOCK_PLING 5 1" # SoundType Volume Pitch
 
-  #The delay between alerts, in ticks
-  Alert-Delay: 50
+  Actionbar:
+    Enabled: true
+    Message: "&c&lWARNING! &aYour inventory is full!"
+
+  Message:
+    Enabled: true
+    Message:
+      - ""
+      - "      &c&lWARNING!"
+      - "&aYour inventory is full!"
+      - ""
+
+  # In seconds
+  Alert-Delay: 3
+
+Extras:
+  Inventory-Smelter:
+    # Transform blocks in others
+    Enabled: true
+    List:
+      # Block in the invetory;New transformed block
+      - "COBBLESTONE,STONE"
+      - "IRON_ORE;IRON_INGOT"
+
+  Ingot-To-Block:
+    Enabled: true
+    List:
+      # Item(x);Result(y)
+      # Every 9 x you get 1 y.
+      - "IRON_INGOT;IRON_BLOCK"
+      - "GOLD_INGOT;GOLD_BLOCK"

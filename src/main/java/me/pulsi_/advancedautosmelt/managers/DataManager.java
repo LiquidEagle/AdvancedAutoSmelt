@@ -1,57 +1,74 @@
 package me.pulsi_.advancedautosmelt.managers;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
-import me.pulsi_.advancedautosmelt.commands.Commands;
-import me.pulsi_.advancedautosmelt.commands.TabCompletion;
-import me.pulsi_.advancedautosmelt.externals.bStats;
-import me.pulsi_.advancedautosmelt.listeners.AutoPickup;
-import me.pulsi_.advancedautosmelt.externals.UpdateChecker;
-import me.pulsi_.advancedautosmelt.listeners.InventoryAlerts;
+import me.pulsi_.advancedautosmelt.commands.AutoPickupCmd;
+import me.pulsi_.advancedautosmelt.commands.AutoSmeltCmd;
+import me.pulsi_.advancedautosmelt.commands.MainCmd;
+import me.pulsi_.advancedautosmelt.external.UpdateChecker;
+import me.pulsi_.advancedautosmelt.external.bStats;
+import me.pulsi_.advancedautosmelt.listeners.BlockBreakListener;
+import me.pulsi_.advancedautosmelt.listeners.GuiListener;
+import me.pulsi_.advancedautosmelt.listeners.PlayerJoinListener;
 import me.pulsi_.advancedautosmelt.utils.ChatUtils;
+import me.pulsi_.advancedautosmelt.values.configs.ConfigValues;
+import me.pulsi_.advancedautosmelt.values.configs.MessagesValues;
 
 public class DataManager {
 
-    private final AdvancedAutoSmelt plugin;
-    public DataManager(AdvancedAutoSmelt plugin) {
-        this.plugin = plugin;
-    }
+    public static void setupPlugin(AdvancedAutoSmelt plugin) {
+        long startTime = System.currentTimeMillis();
+        long time;
 
-    public void registerEvents() {
-        plugin.getServer().getPluginManager().registerEvents(new AutoPickup(plugin), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new UpdateChecker(plugin), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new InventoryAlerts(plugin), plugin);
+        ChatUtils.log("");
+        ChatUtils.log("  &8[&a&lAdvanced&9&lAuto&c&lSmelt&8] &3v" + plugin.getDescription().getVersion());
+        ChatUtils.log("  &fEnabling plugin...");
+
+        time = System.currentTimeMillis();
+        loadConfigs(plugin, time);
+
+        time = System.currentTimeMillis();
+        registerCommands(plugin, time);
+
+        time = System.currentTimeMillis();
+        registerEvents(plugin, time);
+
+        ChatUtils.log("  &2Done! &a(" + (System.currentTimeMillis() - startTime) + " total ms)");
+        ChatUtils.log("");
+
         new bStats(plugin, 11014);
     }
 
-    public void setupCommands() {
-        plugin.getCommand("advancedautosmelt").setExecutor(new Commands(plugin));
-        plugin.getCommand("advancedautosmelt").setTabCompleter(new TabCompletion());
+    public static void shutDown() {
+        ChatUtils.log("");
+        ChatUtils.log("  &8[&a&lAdvanced&9&lAuto&c&lSmelt&8] &cDisabling plugin...");
+        ChatUtils.log("");
     }
 
-    public void startupMessage() {
-        ChatUtils.consoleMessage("");
-        ChatUtils.consoleMessage("&d             &a             _        &c_____                _ _   ");
-        ChatUtils.consoleMessage("&d     /\\     &a   /\\        | |      &c/ ____|              | | |  ");
-        ChatUtils.consoleMessage("&d    /  \\    &a  /  \\  _   _| |_ ___&c| (___  _ __ ___   ___| | |_ ");
-        ChatUtils.consoleMessage("&d   / /\\ \\  &a  / /\\ \\| | | | __/ _ \\&c\\___ \\| '_ ` _ \\ / _ \\ | __|");
-        ChatUtils.consoleMessage("&d  / ____ \\  &a/ ____ \\ |_| | || (_) |&c___) | | | | | |  __/ | |_ ");
-        ChatUtils.consoleMessage("&d /_/    \\_\\&a/_/    \\_\\__,_|\\__\\___/&c_____/|_| |_| |_|\\___|_|\\__|");
-        ChatUtils.consoleMessage("");
-        ChatUtils.consoleMessage("&2Enabling Plugin! &bv" + plugin.getDescription().getVersion());
-        ChatUtils.consoleMessage("&fAuthor: Pulsi_");
-        ChatUtils.consoleMessage("");
+    public static void reloadPlugin(AdvancedAutoSmelt plugin) {
+        new ConfigManager(plugin).reloadConfigs();
+        new ConfigValues(plugin).setupValues();
+        new MessagesValues(plugin).setupValues();
     }
 
-    public void shutdownMessage() {
-        ChatUtils.consoleMessage("");
-        ChatUtils.consoleMessage("&d             &a             _        &c_____                _ _   ");
-        ChatUtils.consoleMessage("&d     /\\     &a   /\\        | |      &c/ ____|              | | |  ");
-        ChatUtils.consoleMessage("&d    /  \\    &a  /  \\  _   _| |_ ___&c| (___  _ __ ___   ___| | |_ ");
-        ChatUtils.consoleMessage("&d   / /\\ \\  &a  / /\\ \\| | | | __/ _ \\&c\\___ \\| '_ ` _ \\ / _ \\ | __|");
-        ChatUtils.consoleMessage("&d  / ____ \\  &a/ ____ \\ |_| | || (_) |&c___) | | | | | |  __/ | |_ ");
-        ChatUtils.consoleMessage("&d /_/    \\_\\&a/_/    \\_\\__,_|\\__\\___/&c_____/|_| |_| |_|\\___|_|\\__|");
-        ChatUtils.consoleMessage("");
-        ChatUtils.consoleMessage("&cDisabling Plugin!");
-        ChatUtils.consoleMessage("");
+    private static void loadConfigs(AdvancedAutoSmelt plugin, long time) {
+        new ConfigManager(plugin).createConfigs();
+        new ConfigValues(plugin).setupValues();
+        new MessagesValues(plugin).setupValues();
+        ChatUtils.log("  &fLoaded config files! &a(" + (System.currentTimeMillis() - time) + "ms)");
+    }
+
+    private static void registerCommands(AdvancedAutoSmelt plugin, long time) {
+        plugin.getCommand("autopickup").setExecutor(new AutoPickupCmd());
+        plugin.getCommand("autosmelt").setExecutor(new AutoSmeltCmd());
+        plugin.getCommand("advancedautosmelt").setExecutor(new MainCmd(plugin));
+        ChatUtils.log("  &fRegistered commands! &a(" + (System.currentTimeMillis() - time) + "ms)");
+    }
+
+    private static void registerEvents(AdvancedAutoSmelt plugin, long time) {
+        plugin.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new BlockBreakListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new GuiListener(plugin), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new UpdateChecker(plugin), plugin);
+        ChatUtils.log("  &fRegistered events! &a(" + (System.currentTimeMillis() - time) + "ms)");
     }
 }

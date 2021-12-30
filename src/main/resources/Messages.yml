@@ -1,26 +1,17 @@
-# Messages configuration
+#####################################
+# +-------------------------------+ #
+# | AdvancedAutoSmelt - By Pulsi_ | #
+# +-------------------------------+ #
+#####################################
 
-Help-Message:
-  - ""
-  - "&d  &lAdvanced&a&lAuto&c&lSmelt &aHelp"
-  - ""
-  - "&8- &f/as reload &7Reload the Plugin"
-  - "&8- &f/as help &7Send this message"
-  - "&8- &f/as toggle <option> &7Toggle an option"
-  - ""
+# If you don't want one of these messages, just commend them
 
-No-Permission: "&cYou don't have the permission! (&f%permission%&c)"
-Reload-Message: "&7Successfully reloaded the plugin!"
-Unknown-Command: "&cUnknown Command!"
+No-Permission: "&cYou don't have the permission!"
+Plugin-Reloaded: "&2Plugin successfully reloaded!"
+AutoPickup-Disabled: "&cThe autopickup is currently disabled!"
+AutoPickup-Activated: "&7You have &a&nactivated&7 your autopickup!"
+AutoPickup-Deactivated: "&7You have &c&ndisabled&7 your autopickup!"
+AutoSmelt-Disabled: "&cThe autosmelt is currently disabled!"
+AutoSmelt-Activated: "&7You have &a&nactivated&7 your autosmelt!"
+AutoSmelt-Deactivated: "&7You have &c&ndisabled&7 your autosmelt!"
 Not-Player: "&cYou are not a player!"
-Cannot-Find-Player: "&cCannot find that player!"
-Available-Options: "&aAvailable options are: &7AutoPickup, AutoSmelt, InventoryAlerts"
-Option-Toggled: "&7Successfully toggled %status% &7your %option%"
-Option-Toggled-Others: "&7Successfully toggled %status% &7the %option% &7for &a%player%"
-Force-Toggled: "&7Someone has forced you to toggle your %option% &7to %status%&7."
-
-AutoPickup: "&aAutoPickup"
-AutoSmelt: "&aAutoSmelt"
-InventoryAlerts: "&aInventoryAlerts"
-On: "&2On"
-Off: "&cOff"
