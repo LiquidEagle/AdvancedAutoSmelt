@@ -42,7 +42,6 @@ public class MainCmd implements CommandExecutor, TabCompleter {
             MessageManager.pluginReloaded(s);
             DataManager.reloadPlugin(plugin);
         }
-
         return true;
     }
 

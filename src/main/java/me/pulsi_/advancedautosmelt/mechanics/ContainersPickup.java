@@ -13,8 +13,7 @@ public class ContainersPickup {
     public static void pickupContainer(Player p, BlockBreakEvent e) {
         Block block = e.getBlock();
         Container container = ((Container) block.getState());
-        for (ItemStack item : container.getInventory().getContents())
-            Methods.giveDrops(p, block, item);
+        for (ItemStack item : container.getInventory().getContents()) Methods.giveDrops(p, block, item);
         container.getInventory().clear();
         Methods.giveDrops(p, block, new ItemStack(Material.valueOf(block.getType().toString())));
         Methods.removeDrops(e);

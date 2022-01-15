@@ -14,6 +14,9 @@ public class MessagesValues {
     private static String autoSmeltDisabled;
     private static String autoSmeltActivated;
     private static String autoSmeltDeactivated;
+    private static String inventoryAlertsDisabled;
+    private static String inventoryAlertsActivated;
+    private static String inventoryAlertsDeactivated;
     private static String notPlayer;
 
     private final AdvancedAutoSmelt plugin;
@@ -33,6 +36,9 @@ public class MessagesValues {
         autoSmeltDisabled = messages.getString("AutoSmelt-Disabled");
         autoSmeltActivated = messages.getString("AutoSmelt-Activated");
         autoSmeltDeactivated = messages.getString("AutoSmelt-Deactivated");
+        inventoryAlertsDisabled = messages.getString("InventoryAlerts-Disabled");
+        inventoryAlertsActivated = messages.getString("InventoryAlerts-Activated");
+        inventoryAlertsDeactivated = messages.getString("InventoryAlerts-Deactivated");
         notPlayer = messages.getString("Not-Player");
     }
 
@@ -66,6 +72,18 @@ public class MessagesValues {
 
     public String getAutoSmeltDisabled() {
         return autoSmeltDisabled;
+    }
+
+    public String getInventoryAlertsActivated() {
+        return inventoryAlertsActivated;
+    }
+
+    public String getInventoryAlertsDeactivated() {
+        return inventoryAlertsDeactivated;
+    }
+
+    public String getInventoryAlertsDisabled() {
+        return inventoryAlertsDisabled;
     }
 
     public String getNotPlayer() {

@@ -3,6 +3,7 @@ package me.pulsi_.advancedautosmelt.managers;
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.AutoPickupCmd;
 import me.pulsi_.advancedautosmelt.commands.AutoSmeltCmd;
+import me.pulsi_.advancedautosmelt.commands.InventoryAlertsCmd;
 import me.pulsi_.advancedautosmelt.commands.MainCmd;
 import me.pulsi_.advancedautosmelt.external.UpdateChecker;
 import me.pulsi_.advancedautosmelt.external.bStats;
@@ -60,6 +61,7 @@ public class DataManager {
     private static void registerCommands(AdvancedAutoSmelt plugin, long time) {
         plugin.getCommand("autopickup").setExecutor(new AutoPickupCmd());
         plugin.getCommand("autosmelt").setExecutor(new AutoSmeltCmd());
+        plugin.getCommand("inventoryalerts").setExecutor(new InventoryAlertsCmd());
         plugin.getCommand("advancedautosmelt").setExecutor(new MainCmd(plugin));
         ChatUtils.log("  &fRegistered commands! &a(" + (System.currentTimeMillis() - time) + "ms)");
     }

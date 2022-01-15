@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 public class IngotToBlock {
 
     public static void ingotToBlock(Player p) {
-        if (!Values.getConfig().isIngotToBlockEnabled() || p.getInventory().firstEmpty() < 0) return;
+        if (!Values.getConfig().isIngotToBlockEnabled() || !p.hasPermission("advancedautosmelt.ingot-to-block") || p.getInventory().firstEmpty() < 0) return;
 
         for (ItemStack item : p.getInventory().getContents()) {
             if (item == null || item.getType() == Material.AIR) continue;

@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+
 import java.util.Random;
 
 public class Methods {
@@ -33,7 +34,7 @@ public class Methods {
                 return;
             }
 
-            if (AASApi.canAutoPickup(p)) {
+            if (AASApi.canAutoPickup(p, block)) {
                 p.giveExp(amount);
             } else {
                 ExperienceOrb orb = block.getWorld().spawn(block.getLocation(), ExperienceOrb.class);
@@ -64,7 +65,7 @@ public class Methods {
             }
         }
 
-        if (AASApi.canAutoPickup(p) && !Methods.isAutoPickupBlockBlacklisted(block)) {
+        if (AASApi.canAutoPickup(p, block)) {
             if (Values.getConfig().isProcessPlayerPickupEvent()) {
                 p.getWorld().dropItem(p.getLocation(), item).setPickupDelay(0);
                 return;

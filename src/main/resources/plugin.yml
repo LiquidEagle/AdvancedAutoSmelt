@@ -13,3 +13,6 @@ commands:
 
   autosmelt:
     usage: "/autosmelt"
+
+  inventoryalerts:
+    usage: "/inventoryalerts"

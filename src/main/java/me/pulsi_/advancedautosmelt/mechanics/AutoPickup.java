@@ -17,14 +17,18 @@ import java.util.Collection;
 public class AutoPickup {
 
     public static void processAutoPickup(BlockBreakEvent e) {
+        if (e.isCancelled()) return;
+
         Block block = e.getBlock();
         Player p = e.getPlayer();
         damageItem(e, p);
 
-        if (block.getState() instanceof Container) {
-            ContainersPickup.pickupContainer(p, e);
-            return;
-        }
+        try {
+            if (block.getState() instanceof Container) {
+                ContainersPickup.pickupContainer(p, e);
+                return;
+            }
+        } catch (NoClassDefFoundError ex) { /* ignored */ }
 
         Collection<ItemStack> blockDrops;
         if (Values.getConfig().isDropNeedCorrectItem()) {

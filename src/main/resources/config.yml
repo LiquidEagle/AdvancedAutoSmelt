@@ -144,12 +144,13 @@ Inventory-Full-Alerts:
       - "&aYour inventory is full!"
       - ""
 
-  # In seconds
-  Alert-Delay: 3
+  # In ticks ( 20 ticks -> 1 second )
+  Alert-Delay: 60
 
 Extras:
   Inventory-Smelter:
     # Transform blocks in others
+    # Permission required: advancedautosmelt.inventory-smelter
     Enabled: true
     List:
       # Block in the invetory;New transformed block
@@ -157,6 +158,7 @@ Extras:
       - "IRON_ORE;IRON_INGOT"
 
   Ingot-To-Block:
+    # Permission required: advancedautosmelt.ingot-to-block
     Enabled: true
     List:
       # Item(x);Result(y)

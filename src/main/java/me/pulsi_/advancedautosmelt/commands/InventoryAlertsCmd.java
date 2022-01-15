@@ -8,7 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class AutoSmeltCmd implements CommandExecutor {
+public class InventoryAlertsCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender s, Command command, String label, String[] args) {
@@ -19,29 +19,30 @@ public class AutoSmeltCmd implements CommandExecutor {
         }
 
         Player p = (Player) s;
-        if (!Values.getConfig().isAutoSmeltEnabled()) {
-            MessageManager.autoSmeltDisabled(p);
+        if (!Values.getConfig().isInventoryAlertsEnabled()) {
+            MessageManager.inventoryAlertsDeactivated(p);
             return false;
         }
 
-        if (!p.hasPermission("advancedautosmelt.toggle.autosmelt")) {
+        if (!p.hasPermission("advancedautosmelt.toggle.inventory-alerts")) {
             MessageManager.noPermission(s);
             return false;
         }
 
-        if (!MapUtils.isAutoSmeltEnabled.containsKey(p.getUniqueId())) {
-            MapUtils.isAutoSmeltEnabled.put(p.getUniqueId(), true);
-            MessageManager.autoSmeltActivated(p);
+
+        if (!MapUtils.isInventoryAlerts.containsKey(p.getUniqueId())) {
+            MapUtils.isInventoryAlerts.put(p.getUniqueId(), true);
+            MessageManager.inventoryAlertsActivated(p);
             return false;
         }
 
-        boolean isEnabled = MapUtils.isAutoSmeltEnabled.get(p.getUniqueId());
+        boolean isEnabled = MapUtils.isInventoryAlerts.get(p.getUniqueId());
         if (isEnabled) {
-            MapUtils.isAutoSmeltEnabled.put(p.getUniqueId(), false);
-            MessageManager.autoSmeltDeactivated(p);
+            MapUtils.isInventoryAlerts.put(p.getUniqueId(), false);
+            MessageManager.inventoryAlertsDisabled(p);
         } else {
-            MapUtils.isAutoSmeltEnabled.put(p.getUniqueId(), true);
-            MessageManager.autoSmeltActivated(p);
+            MapUtils.isInventoryAlerts.put(p.getUniqueId(), true);
+            MessageManager.inventoryAlertsActivated(p);
         }
 
         return true;

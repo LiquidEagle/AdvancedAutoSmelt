@@ -29,7 +29,7 @@ public class AutoPickupCmd implements CommandExecutor {
             return false;
         }
 
-        if (MapUtils.isAutoPickupEnabled.get(p.getUniqueId()) == null) {
+        if (!MapUtils.isAutoPickupEnabled.containsKey(p.getUniqueId())) {
             MapUtils.isAutoPickupEnabled.put(p.getUniqueId(), true);
             MessageManager.autoPickupActivated(p);
             return false;

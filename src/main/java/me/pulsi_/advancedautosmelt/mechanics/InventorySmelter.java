@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 public class InventorySmelter {
 
     public static void smeltInventory(Player p) {
-        if (!Values.getConfig().isInventorySmelterEnabled()) return;
+        if (!Values.getConfig().isInventorySmelterEnabled() || !p.hasPermission("advancedautosmelt.inventory-smelter")) return;
 
         Inventory inv = p.getInventory();
         for (ItemStack item : inv.getContents()) {

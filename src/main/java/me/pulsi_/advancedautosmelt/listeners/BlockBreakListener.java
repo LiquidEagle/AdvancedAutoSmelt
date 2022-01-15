@@ -9,17 +9,19 @@ import me.pulsi_.advancedautosmelt.utils.Methods;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 public class BlockBreakListener implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockBreak(BlockBreakEvent e) {
-        Block block = e.getBlock();
+        if (e.isCancelled()) return;
         Player p = e.getPlayer();
+        Block block = e.getBlock();
 
-        if (AASApi.canAutoPickup(p)) {
+        if (AASApi.canAutoPickup(p, block)) {
             int expAmount = e.getExpToDrop();
             e.setExpToDrop(0);
             p.giveExp(expAmount);

@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'me.pulsi_'
-version = '3.0.0'
+version = '3.0.1'
 
 repositories {
     mavenCentral()
@@ -18,7 +18,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
+    compileOnly('org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT')
+    compileOnly(fileTree("libs"))
 }
 
 def targetJavaVersion = 8

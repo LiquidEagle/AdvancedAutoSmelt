@@ -22,13 +22,13 @@ public class MessageManager {
         if (mess != null) p.sendMessage(addPrefix(mess));
     }
 
-    public static void autoPickupDeactivated(Player p) {
-        String mess = Values.getMessages().getAutoPickupDeactivated();
+    public static void autoPickupDisabled(Player p) {
+        String mess = Values.getMessages().getAutoPickupDisabled();
         if (mess != null) p.sendMessage(addPrefix(mess));
     }
 
-    public static void autoPickupDisabled(Player p) {
-        String mess = Values.getMessages().getAutoPickupDisabled();
+    public static void autoPickupDeactivated(Player p) {
+        String mess = Values.getMessages().getAutoPickupDeactivated();
         if (mess != null) p.sendMessage(addPrefix(mess));
     }
 
@@ -37,13 +37,28 @@ public class MessageManager {
         if (mess != null) p.sendMessage(addPrefix(mess));
     }
 
+    public static void autoSmeltDisabled(Player p) {
+        String mess = Values.getMessages().getAutoSmeltDisabled();
+        if (mess != null) p.sendMessage(addPrefix(mess));
+    }
+
     public static void autoSmeltDeactivated(Player p) {
         String mess = Values.getMessages().getAutoSmeltDeactivated();
         if (mess != null) p.sendMessage(addPrefix(mess));
     }
 
-    public static void autoSmeltDisabled(Player p) {
-        String mess = Values.getMessages().getAutoSmeltDisabled();
+    public static void inventoryAlertsActivated(Player p) {
+        String mess = Values.getMessages().getInventoryAlertsActivated();
+        if (mess != null) p.sendMessage(addPrefix(mess));
+    }
+
+    public static void inventoryAlertsDisabled(Player p) {
+        String mess = Values.getMessages().getInventoryAlertsDisabled();
+        if (mess != null) p.sendMessage(addPrefix(mess));
+    }
+
+    public static void inventoryAlertsDeactivated(Player p) {
+        String mess = Values.getMessages().getInventoryAlertsDeactivated();
         if (mess != null) p.sendMessage(addPrefix(mess));
     }
 
