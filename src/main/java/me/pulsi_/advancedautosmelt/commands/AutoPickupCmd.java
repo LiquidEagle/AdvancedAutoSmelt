@@ -29,18 +29,18 @@ public class AutoPickupCmd implements CommandExecutor {
             return false;
         }
 
-        if (!MapUtils.isAutoPickupEnabled.containsKey(p.getUniqueId())) {
-            MapUtils.isAutoPickupEnabled.put(p.getUniqueId(), true);
+        if (!MapUtils.isAutoPickupEnabled.containsKey(p)) {
+            MapUtils.isAutoPickupEnabled.put(p, true);
             MessageManager.autoPickupActivated(p);
             return false;
         }
 
-        boolean isEnabled = MapUtils.isAutoPickupEnabled.get(p.getUniqueId());
+        boolean isEnabled = MapUtils.isAutoPickupEnabled.get(p);
         if (isEnabled) {
-            MapUtils.isAutoPickupEnabled.put(p.getUniqueId(), false);
+            MapUtils.isAutoPickupEnabled.put(p, false);
             MessageManager.autoPickupDeactivated(p);
         } else {
-            MapUtils.isAutoPickupEnabled.put(p.getUniqueId(), true);
+            MapUtils.isAutoPickupEnabled.put(p, true);
             MessageManager.autoPickupActivated(p);
         }
 

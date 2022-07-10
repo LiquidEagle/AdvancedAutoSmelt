@@ -12,29 +12,30 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class AutoPickup {
 
     public static void processAutoPickup(BlockBreakEvent e) {
-        if (e.isCancelled()) return;
-
         Block block = e.getBlock();
         Player p = e.getPlayer();
         damageItem(e, p);
 
         try {
-            if (block.getState() instanceof Container) {
+            if (block.getState() instanceof Container && !block.getType().toString().contains("SHULKER")) {
                 ContainersPickup.pickupContainer(p, e);
                 return;
             }
         } catch (NoClassDefFoundError ex) { /* ignored */ }
 
-        Collection<ItemStack> blockDrops;
-        if (Values.getConfig().isDropNeedCorrectItem()) {
-            blockDrops = block.getDrops(p.getItemInHand());
+        Collection<ItemStack> blockDrops = new ArrayList<>();
+        if (block.getType().toString().contains("BED")) {
+            ItemStack bed = new ItemStack(block.getType());
+            blockDrops.add(bed);
         } else {
-            blockDrops = block.getDrops();
+            if (Values.getConfig().isDropNeedCorrectItem()) blockDrops = block.getDrops(p.getItemInHand());
+            else blockDrops = block.getDrops();
         }
 
         if (AASApi.canAutoSmelt(p)) {
@@ -50,7 +51,7 @@ public class AutoPickup {
                 try {
                     newDrop = new ItemStack(Material.valueOf(newDropIdentifier));
                 } catch (IllegalArgumentException ex) {
-                    AASLogger.error("Unknown input for &a\"" + newDropIdentifier + "\"&c: " + ex.getMessage());
+                    AASLogger.error("Unknown input for &e\"" + newDropIdentifier + "\"&c: " + ex.getMessage());
                     return;
                 }
 
@@ -71,7 +72,6 @@ public class AutoPickup {
         if (maxDurability <= 0) return;
 
         int damage = item.getDurability();
-
         int level = item.getItemMeta().getEnchantLevel(Enchantment.DURABILITY);
         boolean shouldDamage = (Math.random() < (1 / (level + 1)));
 

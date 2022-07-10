@@ -20,13 +20,18 @@ public class InventorySmelter {
 
                 String itemName = line.split(";")[0];
                 if (!item.getType().toString().equals(itemName)) continue;
+                int amount = item.getAmount();
 
                 String newItem = line.split(";")[1];
+                ItemStack newItemStack;
                 try {
-                    item.setType(Material.valueOf(newItem));
+                    newItemStack = new ItemStack(Material.valueOf(newItem), amount);
                 } catch (IllegalArgumentException e) {
                     AASLogger.warn("Unknown ItemStack input for \"" + newItem + "\": " + e.getMessage());
+                    return;
                 }
+                item.setAmount(0);
+                inv.addItem(newItemStack);
             }
         }
     }

@@ -29,18 +29,18 @@ public class AutoSmeltCmd implements CommandExecutor {
             return false;
         }
 
-        if (!MapUtils.isAutoSmeltEnabled.containsKey(p.getUniqueId())) {
-            MapUtils.isAutoSmeltEnabled.put(p.getUniqueId(), true);
+        if (!MapUtils.isAutoSmeltEnabled.containsKey(p)) {
+            MapUtils.isAutoSmeltEnabled.put(p, true);
             MessageManager.autoSmeltActivated(p);
             return false;
         }
 
-        boolean isEnabled = MapUtils.isAutoSmeltEnabled.get(p.getUniqueId());
+        boolean isEnabled = MapUtils.isAutoSmeltEnabled.get(p);
         if (isEnabled) {
-            MapUtils.isAutoSmeltEnabled.put(p.getUniqueId(), false);
+            MapUtils.isAutoSmeltEnabled.put(p, false);
             MessageManager.autoSmeltDeactivated(p);
         } else {
-            MapUtils.isAutoSmeltEnabled.put(p.getUniqueId(), true);
+            MapUtils.isAutoSmeltEnabled.put(p, true);
             MessageManager.autoSmeltActivated(p);
         }
 

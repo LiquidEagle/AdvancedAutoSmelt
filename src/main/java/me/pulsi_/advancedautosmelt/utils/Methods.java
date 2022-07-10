@@ -1,5 +1,6 @@
 package me.pulsi_.advancedautosmelt.utils;
 
+import me.pulsi_.advancedautosmelt.listeners.PickupListener;
 import me.pulsi_.advancedautosmelt.values.Values;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -9,10 +10,10 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-
 
 import java.util.Random;
 
@@ -22,24 +23,21 @@ public class Methods {
         if (!Values.getConfig().isIsCustomExpEnabled()) return;
         for (String line : Values.getConfig().getCustomExpList()) {
             if (!line.contains(";")) continue;
+            if (line.endsWith("[NEED_AUTOSMELT]") && !AASApi.canAutoSmelt(p)) continue;
 
             String blockName = line.split(";")[0];
             if (!blockName.equals(block.getType().toString())) continue;
 
             int amount;
             try {
-                amount = Integer.parseInt(line.split(";")[1]);
+                amount = Integer.parseInt(line.split(";")[1].replace("[NEED_AUTOSMELT]", ""));
             } catch (NumberFormatException ex) {
                 AASLogger.error("Invalid number for the custom exp amount! " + ex.getMessage());
                 return;
             }
 
-            if (AASApi.canAutoPickup(p, block)) {
-                p.giveExp(amount);
-            } else {
-                ExperienceOrb orb = block.getWorld().spawn(block.getLocation(), ExperienceOrb.class);
-                orb.setExperience(amount);
-            }
+            if (AASApi.canAutoPickup(p, block)) p.giveExp(amount);
+            else block.getWorld().spawn(block.getLocation(), ExperienceOrb.class).setExperience(amount);
         }
     }
 
@@ -48,41 +46,34 @@ public class Methods {
 
         ItemStack playerItem = p.getItemInHand();
         if (AASApi.canUseFortune(p) && playerItem.hasItemMeta() && playerItem.getItemMeta().hasEnchant(Enchantment.LOOT_BONUS_BLOCKS)) {
-
             int level = playerItem.getItemMeta().getEnchantLevel(Enchantment.LOOT_BONUS_BLOCKS);
             int random = new Random().nextInt(level) + 1;
 
             if (Values.getConfig().isFortuneWhitelistEnabled()) {
+                boolean contains = Values.getConfig().getFortuneWhitelist().contains(block.getType().toString());
                 if (Values.getConfig().isFortuneWhitelistIsBlacklist()) {
-                    if (!Values.getConfig().getFortuneWhitelist().contains(block.getType().toString()))
-                        item.setAmount(random);
+                    if (!contains) item.setAmount(random);
                 } else {
-                    if (Values.getConfig().getFortuneWhitelist().contains(block.getType().toString()))
-                        item.setAmount(random);
+                    if (contains) item.setAmount(random);
                 }
-            } else {
-                item.setAmount(random);
-            }
+            } else item.setAmount(random);
         }
 
         if (AASApi.canAutoPickup(p, block)) {
             if (Values.getConfig().isProcessPlayerPickupEvent()) {
-                p.getWorld().dropItem(p.getLocation(), item).setPickupDelay(0);
+                Item spawnedItem = p.getWorld().dropItem(p.getLocation(), item);
+                spawnedItem.setPickupDelay(0);
+                PickupListener.itemOwners.put(spawnedItem.getUniqueId(), p);
                 return;
             }
             if (!p.getInventory().addItem(item).isEmpty() && Values.getConfig().isDropItemsOnInventoryFull())
                 p.getWorld().dropItem(p.getLocation(), item);
-        } else {
-            p.getWorld().dropItem(block.getLocation(), item);
-        }
+        } else p.getWorld().dropItem(block.getLocation(), item);
     }
 
     public static void removeDrops(BlockBreakEvent e) {
-        if (Values.getConfig().isEnableLegacySupport()) {
-            e.getBlock().setType(Material.AIR);
-        } else {
-            e.setDropItems(false);
-        }
+        if (Values.getConfig().isEnableLegacySupport()) e.getBlock().setType(Material.AIR);
+        else e.setDropItems(false);
     }
 
     public static void playSound(Player p, String sound) {
@@ -101,20 +92,15 @@ public class Methods {
         if (path.contains(",")) {
             String title = path.split(",")[0];
             String subTitle = path.split(",")[1];
-            p.sendTitle(ChatUtils.color(title), ChatUtils.color(subTitle));
+            p.sendTitle(AASChat.color(title), AASChat.color(subTitle));
         } else {
-            p.sendTitle(ChatUtils.color(path), ChatUtils.color("&f"));
+            p.sendTitle(AASChat.color(path), AASChat.color("&f"));
         }
     }
 
     public static void sendActionBar(Player player, String message) {
         String v = Bukkit.getServer().getClass().getPackage().getName();
         v = v.substring(v.lastIndexOf(".") + 1);
-
-        if (v.contains("1_13") || v.contains("1_14") || v.contains("1_15") || v.contains("1_16") || v.contains("1_17") || v.contains("1_18")) {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder(ChatUtils.color(message)).create());
-            return;
-        }
 
         try {
             if (v.contains("v1_7_") || v.equals("v1_8_R1")) {
@@ -125,7 +111,7 @@ public class Methods {
                 Class<?> c5 = Class.forName("net.minecraft.server." + v + ".Packet");
 
                 Object p = c1.cast(player);
-                Object cbc = c3.cast(c2.getDeclaredMethod("a", String.class).invoke(c2, "{\"text\": \"" + ChatUtils.color(message) + "\"}"));
+                Object cbc = c3.cast(c2.getDeclaredMethod("a", String.class).invoke(c2, "{\"text\": \"" + AASChat.color(message) + "\"}"));
                 Object poc = c4.getConstructor(new Class<?>[]{c3, byte.class}).newInstance(cbc, (byte) 2);
                 Object handle = c1.getDeclaredMethod("getHandle").invoke(p);
                 Object playerConnection = handle.getClass().getDeclaredField("playerConnection").get(handle);
@@ -141,14 +127,18 @@ public class Methods {
             Class<?> c5 = Class.forName("net.minecraft.server." + v + ".Packet");
 
             Object p = c1.cast(player);
-            Object o = c2.getConstructor(new Class<?>[]{String.class}).newInstance(ChatUtils.color(message));
+            Object o = c2.getConstructor(new Class<?>[]{String.class}).newInstance(AASChat.color(message));
             Object poc = c4.getConstructor(new Class<?>[]{c3, byte.class}).newInstance(o, (byte) 2);
             Object handle = c1.getDeclaredMethod("getHandle").invoke(p);
             Object playerConnection = handle.getClass().getDeclaredField("playerConnection").get(handle);
 
             playerConnection.getClass().getDeclaredMethod("sendPacket", c5).invoke(playerConnection, poc);
         } catch (Exception e) {
-            AASLogger.error("Please report this error to the developer: " + e.getMessage());
+            try {
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder(AASChat.color(message)).create());
+            } catch (Exception ex) {
+                AASLogger.error("Please report this error to the developer: " + e.getMessage());
+            }
         }
     }
 

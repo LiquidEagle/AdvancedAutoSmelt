@@ -22,7 +22,7 @@ AutoPickup:
     # Choose if a player needs to have the specified
     # permission to enable the autopickup when joining.
     Is-Required-Permission: false
-    Permission: "your.persmission.here"
+    Permission: "your.permission.here"
 
   # If your server version is 1.12.2
   # or higher, disable this option.
@@ -59,7 +59,7 @@ AutoSmelt:
   Enabled-On-Join:
     Enabled: true
     Is-Required-Permission: false
-    Permission: "your.persmission.here"
+    Permission: "your.permission.here"
 
   Smelt-List:
     # Block-Broken;Drop-Given
@@ -110,8 +110,10 @@ Custom-Exp:
     # BrokenBlock;AmountOfExp
     # Do not use decimal numbers.
     - "STONE;1"
-    - "IRON_ORE;3"
-    - "GOLD_ORE;5"
+    # This means that this block will give 3 exp
+    # only if the player is able to autosmelt.
+    - "IRON_ORE;3[NEED_AUTOSMELT]"
+    - "GOLD_ORE;5[NEED_AUTOSMELT]"
 
   # The worlds where custom exp won't work.
   World-Blacklist:
@@ -153,7 +155,7 @@ Extras:
     # Permission required: advancedautosmelt.inventory-smelter
     Enabled: true
     List:
-      # Block in the invetory;New transformed block
+      # Block in the inventory;New transformed block
       - "COBBLESTONE,STONE"
       - "IRON_ORE;IRON_INGOT"
 
@@ -165,3 +167,7 @@ Extras:
       # Every 9 x you get 1 y.
       - "IRON_INGOT;IRON_BLOCK"
       - "GOLD_INGOT;GOLD_BLOCK"
+
+Placeholders:
+  Enabled: "&2Enabled"
+  Disabled: "&cDisabled"

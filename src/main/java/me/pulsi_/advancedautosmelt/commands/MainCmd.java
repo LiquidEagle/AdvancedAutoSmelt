@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainCmd implements CommandExecutor, TabCompleter {
@@ -34,7 +35,7 @@ public class MainCmd implements CommandExecutor, TabCompleter {
                 AASLogger.info("Console commands: /aas reload");
             } else {
                 Player p = (Player) s;
-                GuiHolder.getEnchanterHolder().openEnchanter(p);
+                GuiHolder.getGuiHolder().openGui(p);
             }
         }
 
@@ -48,7 +49,14 @@ public class MainCmd implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender s, Command command, String alias, String[] args) {
 
+        if (args.length == 1) {
+            List<String> listOfArgs = new ArrayList<>();
+            if (s.hasPermission("advancedautosmelt.admin")) listOfArgs.add("reload");
 
+            List<String> args1 = new ArrayList<>();
+            for (String arg : listOfArgs) if (arg.startsWith(args[0].toLowerCase())) args1.add(arg);
+            return args1;
+        }
         return null;
     }
 }

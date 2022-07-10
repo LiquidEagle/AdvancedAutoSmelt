@@ -1,7 +1,7 @@
 package me.pulsi_.advancedautosmelt.mechanics;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
-import me.pulsi_.advancedautosmelt.utils.ChatUtils;
+import me.pulsi_.advancedautosmelt.utils.AASChat;
 import me.pulsi_.advancedautosmelt.utils.MapUtils;
 import me.pulsi_.advancedautosmelt.utils.Methods;
 import me.pulsi_.advancedautosmelt.values.Values;
@@ -10,15 +10,15 @@ import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 public class InventoryAlerts {
 
-    private static final Set<UUID> TIMEOUT = new HashSet<>();
+    private static final Set<Player> TIMEOUT = new HashSet<>();
 
     public static void inventoryAlerts(Player p) {
-        if (p.getInventory().firstEmpty() > -1 || !MapUtils.isInventoryAlerts.get(p.getUniqueId())
-                || !Values.getConfig().isInventoryAlertsEnabled() || TIMEOUT.contains(p.getUniqueId())) return;
+        if (!Values.getConfig().isInventoryAlertsEnabled()) return;
+        if (!MapUtils.isInventoryAlerts.containsKey(p)) MapUtils.isInventoryAlerts.put(p, false);
+        if (p.getInventory().firstEmpty() > -1 ||  !MapUtils.isInventoryAlerts.get(p) || TIMEOUT.contains(p)) return;
 
         if (Values.getConfig().isInventoryAlertsTitleEnabled()) Methods.sendTitle(Values.getConfig().getInventoryAlertsTitle(), p);
 
@@ -26,13 +26,13 @@ public class InventoryAlerts {
 
         if (Values.getConfig().isInventoryAlertsMessageEnabled())
             for (String messages : Values.getConfig().getInventoryAlertsMessage())
-                p.sendMessage(ChatUtils.color(messages));
+                p.sendMessage(AASChat.color(messages));
 
         if (Values.getConfig().isInventoryAlertsSoundEnabled()) Methods.playSound(p, Values.getConfig().getInventoryAlertsSound());
 
         if (Values.getConfig().getInventoryAlertsDelay() != 0) {
-            TIMEOUT.add(p.getUniqueId());
-            Bukkit.getScheduler().runTaskLater(AdvancedAutoSmelt.getInstance(), () -> TIMEOUT.remove(p.getUniqueId()), Values.getConfig().getInventoryAlertsDelay());
+            TIMEOUT.add(p);
+            Bukkit.getScheduler().runTaskLater(AdvancedAutoSmelt.getInstance(), () -> TIMEOUT.remove(p), Values.getConfig().getInventoryAlertsDelay());
         }
     }
 }

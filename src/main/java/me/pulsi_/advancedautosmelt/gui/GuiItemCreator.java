@@ -1,6 +1,6 @@
 package me.pulsi_.advancedautosmelt.gui;
 
-import me.pulsi_.advancedautosmelt.utils.ChatUtils;
+import me.pulsi_.advancedautosmelt.utils.AASChat;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -16,10 +16,10 @@ public class GuiItemCreator {
         ItemStack item = new ItemStack(material, amount, damage);
         ItemMeta meta = item.getItemMeta();
 
-        meta.setDisplayName(ChatUtils.color(displayName));
+        meta.setDisplayName(AASChat.color(displayName));
 
         List<String> list = new ArrayList<>();
-        for (String line : lore) list.add(ChatUtils.color(line));
+        for (String line : lore) list.add(AASChat.color(line));
         meta.setLore(list);
 
         if (glowing) {

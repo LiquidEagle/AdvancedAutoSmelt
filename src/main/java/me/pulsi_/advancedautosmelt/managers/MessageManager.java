@@ -1,6 +1,6 @@
 package me.pulsi_.advancedautosmelt.managers;
 
-import me.pulsi_.advancedautosmelt.utils.ChatUtils;
+import me.pulsi_.advancedautosmelt.utils.AASChat;
 import me.pulsi_.advancedautosmelt.values.Values;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -69,7 +69,7 @@ public class MessageManager {
 
     private static String addPrefix(String message) {
         String prefix = Values.getConfig().getPrefix();
-        if (prefix == null) return ChatUtils.color(message);
-        return ChatUtils.color(prefix + message);
+        if (prefix == null) return AASChat.color(message);
+        return AASChat.color(prefix + message);
     }
 }

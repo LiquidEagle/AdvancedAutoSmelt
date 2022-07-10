@@ -9,8 +9,10 @@ import me.pulsi_.advancedautosmelt.external.UpdateChecker;
 import me.pulsi_.advancedautosmelt.external.bStats;
 import me.pulsi_.advancedautosmelt.listeners.BlockBreakListener;
 import me.pulsi_.advancedautosmelt.listeners.GuiListener;
+import me.pulsi_.advancedautosmelt.listeners.PickupListener;
 import me.pulsi_.advancedautosmelt.listeners.PlayerJoinListener;
-import me.pulsi_.advancedautosmelt.utils.ChatUtils;
+import me.pulsi_.advancedautosmelt.utils.AASChat;
+import me.pulsi_.advancedautosmelt.utils.MapUtils;
 import me.pulsi_.advancedautosmelt.values.configs.ConfigValues;
 import me.pulsi_.advancedautosmelt.values.configs.MessagesValues;
 
@@ -20,9 +22,10 @@ public class DataManager {
         long startTime = System.currentTimeMillis();
         long time;
 
-        ChatUtils.log("");
-        ChatUtils.log("  &8[&a&lAdvanced&9&lAuto&c&lSmelt&8] &3v" + plugin.getDescription().getVersion());
-        ChatUtils.log("  &fEnabling plugin...");
+        AASChat.log("");
+        AASChat.log("  &8[&a&lAdvanced&9&lAuto&c&lSmelt&8] &3v" + plugin.getDescription().getVersion());
+        AASChat.log("  &fEnabling plugin...");
+        new MapUtils();
 
         time = System.currentTimeMillis();
         loadConfigs(plugin, time);
@@ -33,16 +36,16 @@ public class DataManager {
         time = System.currentTimeMillis();
         registerEvents(plugin, time);
 
-        ChatUtils.log("  &2Done! &a(" + (System.currentTimeMillis() - startTime) + " total ms)");
-        ChatUtils.log("");
+        AASChat.log("  &2Done! &a(" + (System.currentTimeMillis() - startTime) + " total ms)");
+        AASChat.log("");
 
         new bStats(plugin, 11014);
     }
 
     public static void shutDown() {
-        ChatUtils.log("");
-        ChatUtils.log("  &8[&a&lAdvanced&9&lAuto&c&lSmelt&8] &cDisabling plugin...");
-        ChatUtils.log("");
+        AASChat.log("");
+        AASChat.log("  &8[&a&lAdvanced&9&lAuto&c&lSmelt&8] &cDisabling plugin...");
+        AASChat.log("");
     }
 
     public static void reloadPlugin(AdvancedAutoSmelt plugin) {
@@ -55,7 +58,7 @@ public class DataManager {
         new ConfigManager(plugin).createConfigs();
         new ConfigValues(plugin).setupValues();
         new MessagesValues(plugin).setupValues();
-        ChatUtils.log("  &fLoaded config files! &a(" + (System.currentTimeMillis() - time) + "ms)");
+        AASChat.log("  &fLoaded config files! &a(" + (System.currentTimeMillis() - time) + "ms)");
     }
 
     private static void registerCommands(AdvancedAutoSmelt plugin, long time) {
@@ -63,14 +66,16 @@ public class DataManager {
         plugin.getCommand("autosmelt").setExecutor(new AutoSmeltCmd());
         plugin.getCommand("inventoryalerts").setExecutor(new InventoryAlertsCmd());
         plugin.getCommand("advancedautosmelt").setExecutor(new MainCmd(plugin));
-        ChatUtils.log("  &fRegistered commands! &a(" + (System.currentTimeMillis() - time) + "ms)");
+        plugin.getCommand("advancedautosmelt").setTabCompleter(new MainCmd(plugin));
+        AASChat.log("  &fRegistered commands! &a(" + (System.currentTimeMillis() - time) + "ms)");
     }
 
     private static void registerEvents(AdvancedAutoSmelt plugin, long time) {
         plugin.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new BlockBreakListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new GuiListener(plugin), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new PickupListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new UpdateChecker(plugin), plugin);
-        ChatUtils.log("  &fRegistered events! &a(" + (System.currentTimeMillis() - time) + "ms)");
+        AASChat.log("  &fRegistered events! &a(" + (System.currentTimeMillis() - time) + "ms)");
     }
 }

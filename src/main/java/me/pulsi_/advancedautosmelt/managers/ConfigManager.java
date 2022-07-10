@@ -23,14 +23,8 @@ public class ConfigManager {
         configFile = new File(plugin.getDataFolder(), "config.yml");
         messagesFile = new File(plugin.getDataFolder(), "messages.yml");
 
-        if (!configFile.exists()) {
-            plugin.saveResource("config.yml", false);
-            configFile = new File(plugin.getDataFolder(), "config.yml");
-        }
-        if (!messagesFile.exists()) {
-            plugin.saveResource("messages.yml", false);
-            messagesFile = new File(plugin.getDataFolder(), "messages.yml");
-        }
+        if (!configFile.exists()) plugin.saveResource("config.yml", false);
+        if (!messagesFile.exists()) plugin.saveResource("messages.yml", false);
 
         config = new YamlConfiguration();
         messages = new YamlConfiguration();
@@ -38,7 +32,6 @@ public class ConfigManager {
         try {
             config.load(configFile);
             messages.load(messagesFile);
-            config = YamlConfiguration.loadConfiguration(configFile);
         } catch (IOException | InvalidConfigurationException e) {
             AASLogger.error(e.getMessage());
         }

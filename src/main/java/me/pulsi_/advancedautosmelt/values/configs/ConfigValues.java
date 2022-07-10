@@ -58,6 +58,9 @@ public class ConfigValues {
     private static boolean inventoryAlertsActionbarEnabled;
     private static boolean inventoryAlertsMessageEnabled;
 
+    private static String enabledPlaceholder;
+    private static String disabledPlaceholder;
+
     private final AdvancedAutoSmelt plugin;
 
     public ConfigValues(AdvancedAutoSmelt plugin) {
@@ -117,6 +120,9 @@ public class ConfigValues {
         inventoryAlertsMessageEnabled = config.getBoolean("Inventory-Full-Alerts.Message.Enabled");
 
         inventoryAlertsDelay = config.getInt("Inventory-Full-Alerts.Alert-Delay");
+
+        enabledPlaceholder = config.getString("Placeholders.Enabled");
+        disabledPlaceholder = config.getString("Placeholders.Disabled");
     }
 
     public String getPrefix() {
@@ -281,5 +287,15 @@ public class ConfigValues {
 
     public boolean isInventoryAlertsMessageEnabled() {
         return inventoryAlertsMessageEnabled;
+    }
+
+    public String getEnabledPlaceholder() {
+        if (enabledPlaceholder == null) return "&2Enabled";
+        return enabledPlaceholder;
+    }
+
+    public String getDisabledPlaceholder() {
+        if (disabledPlaceholder == null) return "&cDisabled";
+        return disabledPlaceholder;
     }
 }

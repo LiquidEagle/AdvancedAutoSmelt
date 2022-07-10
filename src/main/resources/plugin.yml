@@ -1,8 +1,11 @@
 name: AdvancedAutoSmelt
-version: '${version}'
+version: 4.0.1
 main: me.pulsi_.advancedautosmelt.AdvancedAutoSmelt
 api-version: 1.13
 load: STARTUP
+softdepend:
+  - RoseStacker
+  - PlaceholderAPI
 authors: [ Pulsi_ ]
 commands:
   advancedautosmelt:

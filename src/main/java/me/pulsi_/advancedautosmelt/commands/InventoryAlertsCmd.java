@@ -30,18 +30,18 @@ public class InventoryAlertsCmd implements CommandExecutor {
         }
 
 
-        if (!MapUtils.isInventoryAlerts.containsKey(p.getUniqueId())) {
-            MapUtils.isInventoryAlerts.put(p.getUniqueId(), true);
+        if (!MapUtils.isInventoryAlerts.containsKey(p)) {
+            MapUtils.isInventoryAlerts.put(p, true);
             MessageManager.inventoryAlertsActivated(p);
             return false;
         }
 
-        boolean isEnabled = MapUtils.isInventoryAlerts.get(p.getUniqueId());
+        boolean isEnabled = MapUtils.isInventoryAlerts.get(p);
         if (isEnabled) {
-            MapUtils.isInventoryAlerts.put(p.getUniqueId(), false);
+            MapUtils.isInventoryAlerts.put(p, false);
             MessageManager.inventoryAlertsDisabled(p);
         } else {
-            MapUtils.isInventoryAlerts.put(p.getUniqueId(), true);
+            MapUtils.isInventoryAlerts.put(p, true);
             MessageManager.inventoryAlertsActivated(p);
         }
 
