@@ -47,16 +47,19 @@ public class Methods {
         ItemStack playerItem = p.getItemInHand();
         if (AASApi.canUseFortune(p) && playerItem.hasItemMeta() && playerItem.getItemMeta().hasEnchant(Enchantment.LOOT_BONUS_BLOCKS)) {
             int level = playerItem.getItemMeta().getEnchantLevel(Enchantment.LOOT_BONUS_BLOCKS);
-            int random = new Random().nextInt(level) + 1;
 
-            if (Values.getConfig().isFortuneWhitelistEnabled()) {
-                boolean contains = Values.getConfig().getFortuneWhitelist().contains(block.getType().toString());
-                if (Values.getConfig().isFortuneWhitelistIsBlacklist()) {
-                    if (!contains) item.setAmount(random);
-                } else {
-                    if (contains) item.setAmount(random);
-                }
-            } else item.setAmount(random);
+            if (level > 0) {
+                int random = new Random().nextInt(level) + 1;
+
+                if (Values.getConfig().isFortuneWhitelistEnabled()) {
+                    boolean contains = Values.getConfig().getFortuneWhitelist().contains(block.getType().toString());
+                    if (Values.getConfig().isFortuneWhitelistIsBlacklist()) {
+                        if (!contains) item.setAmount(random);
+                    } else {
+                        if (contains) item.setAmount(random);
+                    }
+                } else item.setAmount(random);
+            }
         }
 
         if (AASApi.canAutoPickup(p, block)) {

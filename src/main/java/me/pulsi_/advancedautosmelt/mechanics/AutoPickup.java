@@ -20,7 +20,7 @@ public class AutoPickup {
     public static void processAutoPickup(BlockBreakEvent e) {
         Block block = e.getBlock();
         Player p = e.getPlayer();
-        damageItem(e, p);
+        damageItem(block, p);
 
         try {
             if (block.getState() instanceof Container && !block.getType().toString().contains("SHULKER")) {
@@ -64,8 +64,8 @@ public class AutoPickup {
         Methods.removeDrops(e);
     }
 
-    private static void damageItem(BlockBreakEvent e, Player p) {
-        if (!Values.getConfig().isEnableLegacySupport() || !Methods.blockDoesDamage(e.getBlock())) return;
+    private static void damageItem(Block block, Player p) {
+        if (!Values.getConfig().isEnableLegacySupport() || !Methods.blockDoesDamage(block)) return;
 
         ItemStack item = p.getInventory().getItemInHand();
         int maxDurability = item.getType().getMaxDurability();

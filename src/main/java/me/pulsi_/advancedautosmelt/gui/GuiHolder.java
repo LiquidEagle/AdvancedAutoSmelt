@@ -24,7 +24,7 @@ public class GuiHolder implements InventoryHolder {
     }
 
     private void buildGui() {
-        ItemStack reloadButton = GuiItemCreator.createItemStack(Material.CRAFTING_TABLE, "&2&lRELOAD", 1, false, (short) 0,
+        ItemStack reloadButton = GuiItemCreator.createItemStack(Material.LEVER, "&2&lRELOAD", 1, false, (short) 0,
                 "&7Click here to reload the plugin.");
 
         Material material;

@@ -1,5 +1,5 @@
 name: AdvancedAutoSmelt
-version: 4.0.1
+version: 4.0.3
 main: me.pulsi_.advancedautosmelt.AdvancedAutoSmelt
 api-version: 1.13
 load: STARTUP
