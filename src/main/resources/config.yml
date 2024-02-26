@@ -157,7 +157,7 @@ Extras:
     Enabled: false
 
     List: # Block in the inventory;New transformed block
-      - "COBBLESTONE,STONE"
+      - "COBBLESTONE;STONE"
       - "IRON_ORE;IRON_INGOT"
 
   Ingot-To-Block:

@@ -96,48 +96,52 @@ public class ExtraFeatures {
     }
 
     public static void loadExtraFeatures() {
-        inventoryIngotToBlockMap.clear();
-        for (String line : ConfigValues.getIngotToBlockList()) {
-            if (!line.contains(";")) {
-                AASLogger.warn("The ingot to block list format must contains a \";\" separator and 2 materials, skipping line... (Wrong line: " + line + ")");
-                continue;
+        if (ConfigValues.isIngotToBlockEnabled()) {
+            inventoryIngotToBlockMap.clear();
+            for (String line : ConfigValues.getIngotToBlockList()) {
+                if (!line.contains(";")) {
+                    AASLogger.warn("The ingot to block list format must contains a \";\" separator and 2 materials, skipping line... (Wrong line: " + line + ")");
+                    continue;
+                }
+
+                String[] split = line.split(";");
+                String ingotMaterialName = split[0], blockMaterialName = split[1];
+
+                Material ingotMaterial, blockMaterial;
+                try {
+                    ingotMaterial = Material.valueOf(ingotMaterialName);
+                    blockMaterial = Material.valueOf(blockMaterialName);
+                } catch (IllegalArgumentException e) {
+                    AASLogger.warn("The ingot to block list contains an invalid material, skipping line... (Wrong line: " + line + ")");
+                    continue;
+                }
+
+                inventoryIngotToBlockMap.put(ingotMaterial, blockMaterial);
             }
-
-            String[] split = line.split(";");
-            String ingotMaterialName = split[0], blockMaterialName = split[1];
-
-            Material ingotMaterial, blockMaterial;
-            try {
-                ingotMaterial = Material.valueOf(ingotMaterialName);
-                blockMaterial = Material.valueOf(blockMaterialName);
-            } catch (IllegalArgumentException e) {
-                AASLogger.warn("The ingot to block list contains an invalid material, skipping line... (Wrong line: " + line + ")");
-                continue;
-            }
-
-            inventoryIngotToBlockMap.put(ingotMaterial, blockMaterial);
         }
 
-        inventorySmelterMap.clear();
-        for (String line : ConfigValues.getInventorySmelterList()) {
-            if (!line.contains(";")) {
-                AASLogger.warn("The inventory smelter list format must contains a \";\" separator and 2 materials, skipping line... (Wrong line: " + line + ")");
-                continue;
+        if (ConfigValues.isInventorySmelterEnabled()) {
+            inventorySmelterMap.clear();
+            for (String line : ConfigValues.getInventorySmelterList()) {
+                if (!line.contains(";")) {
+                    AASLogger.warn("The inventory smelter list format must contains a \";\" separator and 2 materials, skipping line... (Wrong line: " + line + ")");
+                    continue;
+                }
+
+                String[] split = line.split(";");
+                String prevMaterialName = split[0], newMaterialName = split[1];
+
+                Material prevMaterial, newMaterial;
+                try {
+                    prevMaterial = Material.valueOf(prevMaterialName);
+                    newMaterial = Material.valueOf(newMaterialName);
+                } catch (IllegalArgumentException e) {
+                    AASLogger.warn("The inventory smelter list contains an invalid material, skipping line... (Wrong line: " + line + ")");
+                    continue;
+                }
+
+                inventorySmelterMap.put(prevMaterial, newMaterial);
             }
-
-            String[] split = line.split(";");
-            String prevMaterialName = split[0], newMaterialName = split[1];
-
-            Material prevMaterial, newMaterial;
-            try {
-                prevMaterial = Material.valueOf(prevMaterialName);
-                newMaterial = Material.valueOf(newMaterialName);
-            } catch (IllegalArgumentException e) {
-                AASLogger.warn("The inventory smelter list contains an invalid material, skipping line... (Wrong line: " + line + ")");
-                continue;
-            }
-
-            inventorySmelterMap.put(prevMaterial, newMaterial);
         }
     }
 }
