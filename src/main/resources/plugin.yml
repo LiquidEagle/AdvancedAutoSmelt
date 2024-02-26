@@ -1,15 +1,15 @@
 name: AdvancedAutoSmelt
-version: 4.0.3
+version: '${version}'
 main: me.pulsi_.advancedautosmelt.AdvancedAutoSmelt
 api-version: 1.13
 load: STARTUP
 softdepend:
-  - RoseStacker
   - PlaceholderAPI
+  - PrisonEnchants
 authors: [ Pulsi_ ]
 commands:
   advancedautosmelt:
-    aliases: [aas]
+    aliases: [aautosmelt, autosmelt, aas]
 
   autopickup:
     usage: "/autopickup"

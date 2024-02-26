@@ -4,11 +4,11 @@
 # +-------------------------------+ #
 #####################################
 
+# Check for updates.
 Update-Checker: true
 
-# The main plugin prefix, that will be
-# displayed before messages and commands.
-Prefix: "&8[&a&lA&9&lA&c&lS&8] "
+# Automatically update the files when there is a new update.
+Auto-Update: true
 
 # AutoPickup options.
 AutoPickup:
@@ -17,31 +17,28 @@ AutoPickup:
 
   # Choose if making players enabling
   # autopickup automatically on join.
-  Enabled-On-Join:
+  Enable-On-Join:
     Enabled: true
     # Choose if a player needs to have the specified
     # permission to enable the autopickup when joining.
     Is-Required-Permission: false
     Permission: "your.permission.here"
 
-  # If your server version is 1.12.2
-  # or higher, disable this option.
-  Enable-Legacy-Support: true
-
   # To make this plugin compatible with some
   # plugins like MCMMO, enable this option.
   Process-PlayerPickupEvent: false
 
-  # Choose if dropping items on ground
+  # Choose if dropping items on the ground
   # when the inventory is full or not.
+  # If disabled, the items that should normally
+  # go out the inventory will be destroyed.
   Drop-Items-On-Inventory-Full: true
 
-  # The plugin will check for the player
-  # item and will give drops only if the
-  # block can be broken from that item.
-  # ( Usually used to avoid things like
-  # getting stone or minerals with hands )
-  Drops-Need-Correct-Item: true
+  # This option will make the plugin check the item used to break the block.
+  # This will automatically enable silk touch support
+  # and won't give drops if breaking a block with an
+  # item that won't break it normally (example: diamond ore with wooden pickaxe)
+  Check-Fot-Item-In-Hand: true
 
   # The worlds where autopickup won't work.
   World-Blacklist:
@@ -56,14 +53,14 @@ AutoPickup:
 AutoSmelt:
   Enabled: true
 
-  Enabled-On-Join:
+  Enable-On-Join:
     Enabled: true
     Is-Required-Permission: false
     Permission: "your.permission.here"
 
+  # Format: Original-Drop-Material;New-Drop-Material
   Smelt-List:
-    # Block-Broken;Drop-Given
-    - "STONE;STONE"
+    - "COBBLESTONE;STONE"
     - "IRON_ORE;IRON_INGOT"
     - "GOLD_ORE;GOLD_INGOT"
 
@@ -106,12 +103,16 @@ Fortune:
 # CustomExp feature
 Custom-Exp:
   Enabled: true
+
+  # Format: BrokenBlock;AmountOfExp (Do not use decimal numbers.)
+  #
+  # [NEED_AUTOSMELT] means that the block will give 3 exp
+  # only if the player is able to autosmelt.
+  # (It is useful when the player doesn't have the autosmelt
+  # enabled, and we want to give him extra exp only when
+  # "smelting" the iron ore)
   Exp-List:
-    # BrokenBlock;AmountOfExp
-    # Do not use decimal numbers.
     - "STONE;1"
-    # This means that this block will give 3 exp
-    # only if the player is able to autosmelt.
     - "IRON_ORE;3[NEED_AUTOSMELT]"
     - "GOLD_ORE;5[NEED_AUTOSMELT]"
 
@@ -153,21 +154,25 @@ Extras:
   Inventory-Smelter:
     # Transform blocks in others
     # Permission required: advancedautosmelt.inventory-smelter
-    Enabled: true
-    List:
-      # Block in the inventory;New transformed block
+    Enabled: false
+
+    List: # Block in the inventory;New transformed block
       - "COBBLESTONE,STONE"
       - "IRON_ORE;IRON_INGOT"
 
   Ingot-To-Block:
     # Permission required: advancedautosmelt.ingot-to-block
-    Enabled: true
+    Enabled: false
+
+    # Item(x);Result(y)
+    # Every 9 x you get 1 y.
     List:
-      # Item(x);Result(y)
-      # Every 9 x you get 1 y.
       - "IRON_INGOT;IRON_BLOCK"
       - "GOLD_INGOT;GOLD_BLOCK"
 
 Placeholders:
   Enabled: "&2Enabled"
   Disabled: "&cDisabled"
+
+# Do never edit this for any reasons or the config may get reset.
+Config-Version: 5.0.0

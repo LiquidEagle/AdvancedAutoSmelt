@@ -1,14 +1,11 @@
-package me.pulsi_.advancedautosmelt.values.configs;
+package me.pulsi_.advancedautosmelt.values;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
-import me.pulsi_.advancedautosmelt.managers.ConfigManager;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
 
 public class ConfigValues {
-
-    private static String prefix;
 
     private static boolean updateCheckerEnabled;
 
@@ -20,8 +17,7 @@ public class ConfigValues {
     private static boolean autoPickupEnabledOnJoinNeedPerm;
     private static boolean processPlayerPickupEvent;
     private static boolean dropItemsOnInventoryFull;
-    private static boolean dropNeedCorrectItem;
-    private static boolean enableLegacySupport;
+    private static boolean checkForItemInHand;
 
     private static String autoSmeltJoinPermission;
     private static List<String> autoSmeltList;
@@ -38,8 +34,9 @@ public class ConfigValues {
     private static String fortunePermission;
     private static boolean fortuneRequirePermission;
 
-    private static List<String> customExpList;
     private static boolean customExpEnabled;
+    private static List<String> customExpList;
+    private static List<String> customExpWorldBlacklist;
 
     private static boolean inventorySmelterEnabled;
     private static List<String> inventorySmelterList;
@@ -61,36 +58,27 @@ public class ConfigValues {
     private static String enabledPlaceholder;
     private static String disabledPlaceholder;
 
-    private final AdvancedAutoSmelt plugin;
-
-    public ConfigValues(AdvancedAutoSmelt plugin) {
-        this.plugin = plugin;
-    }
-
-    public void setupValues() {
-        FileConfiguration config = new ConfigManager(plugin).getConfig();
-
-        prefix = config.getString("Prefix");
+    public static void setupValues() {
+        FileConfiguration config = AdvancedAutoSmelt.INSTANCE().getConfigs().getConfig("config.yml");
 
         updateCheckerEnabled = config.getBoolean("Update-Checker");
 
-        autoPickupJoinPermission = config.getString("AutoPickup.Enabled-On-Join.Permission");
+        autoPickupJoinPermission = config.getString("AutoPickup.Enable-On-Join.Permission");
         autoPickupWorldBlacklist = config.getStringList("AutoPickup.World-Blacklist");
         autoPickupBlockBlacklist = config.getStringList("AutoPickup.Block-Blacklist");
         autoPickupEnabled = config.getBoolean("AutoPickup.Enabled");
-        autoPickupEnabledOnJoin = config.getBoolean("AutoPickup.Enabled-On-Join.Enabled");
+        autoPickupEnabledOnJoin = config.getBoolean("AutoPickup.Enable-On-Join.Enabled");
         autoPickupEnabledOnJoinNeedPerm = config.getBoolean("AutoPickup.Enabled-On-Join.Is-Required-Permission");
         processPlayerPickupEvent = config.getBoolean("AutoPickup.Process-PlayerPickupEvent");
         dropItemsOnInventoryFull = config.getBoolean("AutoPickup.Drop-Items-On-Inventory-Full");
-        dropNeedCorrectItem = config.getBoolean("AutoPickup.Drops-Need-Correct-Item");
-        enableLegacySupport = config.getBoolean("AutoPickup.Enable-Legacy-Support");
+        checkForItemInHand = config.getBoolean("AutoPickup.Check-Fot-Item-In-Hand");
 
-        autoSmeltJoinPermission = config.getString("AutoSmelt.Enabled-On-Join.Permission");
+        autoSmeltJoinPermission = config.getString("AutoSmelt.Enable-On-Join.Permission");
         autoSmeltList = config.getStringList("AutoSmelt.Smelt-List");
         autoSmeltWorldBlacklist = config.getStringList("AutoSmelt.World-Blacklist");
         autoSmeltEnabled = config.getBoolean("AutoSmelt.Enabled");
         autoSmeltEnabledOnJoinNeedPerm = config.getBoolean("AutoSmelt.Enabled-On-Join.Is-Required-Permission");
-        autoSmeltEnabledOnJoin = config.getBoolean("AutoSmelt.Enabled-On-Join.Enabled");
+        autoSmeltEnabledOnJoin = config.getBoolean("AutoSmelt.Enable-On-Join.Enabled");
 
         fortuneWhitelist = config.getStringList("Fortune.Block-Whitelist.Whitelist");
         fortuneWorldBlacklist = config.getStringList("Fortune.World-Blacklist");
@@ -100,8 +88,9 @@ public class ConfigValues {
         fortunePermission = config.getString("Fortune.Is-Required-Permission.Permission");
         fortuneRequirePermission = config.getBoolean("Fortune.Is-Required-Permission.Enabled");
 
-        customExpList = config.getStringList("Custom-Exp.Exp-List");
         customExpEnabled = config.getBoolean("Custom-Exp.Enabled");
+        customExpList = config.getStringList("Custom-Exp.Exp-List");
+        customExpWorldBlacklist = config.getStringList("Custom-Exp.World-Blacklist");
 
         inventorySmelterEnabled = config.getBoolean("Extras.Inventory-Smelter.Enabled");
         inventorySmelterList = config.getStringList("Extras.Inventory-Smelter.List");
@@ -125,176 +114,172 @@ public class ConfigValues {
         disabledPlaceholder = config.getString("Placeholders.Disabled");
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public boolean isUpdateCheckerEnabled() {
+    public static boolean isUpdateCheckerEnabled() {
         return updateCheckerEnabled;
     }
 
-    public String getAutoPickupJoinPermission() {
+    public static String getAutoPickupJoinPermission() {
         return autoPickupJoinPermission;
     }
 
-    public List<String> getAutoPickupWorldBlacklist() {
+    public static List<String> getAutoPickupWorldBlacklist() {
         return autoPickupWorldBlacklist;
     }
 
-    public List<String> getAutoPickupBlockBlacklist() {
+    public static List<String> getAutoPickupBlockBlacklist() {
         return autoPickupBlockBlacklist;
     }
 
-    public boolean isAutoPickupEnabledOnJoin() {
+    public static boolean isAutoPickupEnabledOnJoin() {
         return autoPickupEnabledOnJoin;
     }
 
-    public boolean isAutoPickupEnabledOnJoinNeedPerm() {
+    public static boolean isAutoPickupEnabledOnJoinNeedPerm() {
         return autoPickupEnabledOnJoinNeedPerm;
     }
 
-    public boolean isAutoPickupEnabled() {
+    public static boolean isAutoPickupEnabled() {
         return autoPickupEnabled;
     }
 
-    public boolean isProcessPlayerPickupEvent() {
+    public static boolean isProcessPlayerPickupEvent() {
         return processPlayerPickupEvent;
     }
 
-    public boolean isDropItemsOnInventoryFull() {
+    public static boolean isDropItemsOnInventoryFull() {
         return dropItemsOnInventoryFull;
     }
 
-    public boolean isDropNeedCorrectItem() {
-        return dropNeedCorrectItem;
+    public static boolean isCheckForItemInHand() {
+        return checkForItemInHand;
     }
 
-    public boolean isEnableLegacySupport() {
-        return enableLegacySupport;
-    }
-
-    public String getAutoSmeltJoinPermission() {
+    public static String getAutoSmeltJoinPermission() {
         return autoSmeltJoinPermission;
     }
 
-    public List<String> getAutoSmeltList() {
+    public static List<String> getAutoSmeltList() {
         return autoSmeltList;
     }
 
-    public List<String> getAutoSmeltWorldBlacklist() {
+    public static List<String> getAutoSmeltWorldBlacklist() {
         return autoSmeltWorldBlacklist;
     }
 
-    public boolean isAutoSmeltEnabled() {
+    public static boolean isAutoSmeltEnabled() {
         return autoSmeltEnabled;
     }
 
-    public boolean isAutoSmeltEnabledOnJoinNeedPerm() {
+    public static boolean isAutoSmeltEnabledOnJoinNeedPerm() {
         return autoSmeltEnabledOnJoinNeedPerm;
     }
 
-    public boolean isAutoSmeltEnabledOnJoin() {
+    public static boolean isAutoSmeltEnabledOnJoin() {
         return autoSmeltEnabledOnJoin;
     }
 
-    public List<String> getFortuneWhitelist() {
+    public static List<String> getFortuneWhitelist() {
         return fortuneWhitelist;
     }
 
-    public List<String> getFortuneWorldBlacklist() {
+    public static List<String> getFortuneWorldBlacklist() {
         return fortuneWorldBlacklist;
     }
 
-    public boolean isFortuneEnabled() {
+    public static boolean isFortuneEnabled() {
         return fortuneEnabled;
     }
 
-    public boolean isFortuneWhitelistEnabled() {
+    public static boolean isFortuneWhitelistEnabled() {
         return fortuneWhitelistEnabled;
     }
 
-    public boolean isFortuneWhitelistIsBlacklist() {
+    public static boolean isFortuneWhitelistIsBlacklist() {
         return fortuneWhitelistIsBlacklist;
     }
 
-    public String getFortunePermission() {
+    public static String getFortunePermission() {
         return fortunePermission;
     }
 
-    public boolean isFortuneRequirePermission() {
+    public static boolean isFortuneRequirePermission() {
         return fortuneRequirePermission;
     }
 
-    public List<String> getCustomExpList() {
-        return customExpList;
-    }
-
-    public boolean isIsCustomExpEnabled() {
+    public static boolean isIsCustomExpEnabled() {
         return customExpEnabled;
     }
 
-    public boolean isInventorySmelterEnabled() {
+    public static List<String> getCustomExpList() {
+        return customExpList;
+    }
+
+    public static List<String> getCustomExpWorldBlacklist() {
+        return customExpWorldBlacklist;
+    }
+
+    public static boolean isInventorySmelterEnabled() {
         return inventorySmelterEnabled;
     }
 
-    public List<String> getInventorySmelterList() {
+    public static List<String> getInventorySmelterList() {
         return inventorySmelterList;
     }
 
-    public List<String> getIngotToBlockList() {
+    public static List<String> getIngotToBlockList() {
         return ingotToBlockList;
     }
 
-    public boolean isIngotToBlockEnabled() {
+    public static boolean isIngotToBlockEnabled() {
         return ingotToBlockEnabled;
     }
 
-    public String getInventoryAlertsTitle() {
+    public static String getInventoryAlertsTitle() {
         return inventoryAlertsTitle;
     }
 
-    public String getInventoryAlertsSound() {
+    public static String getInventoryAlertsSound() {
         return inventoryAlertsSound;
     }
 
-    public String getInventoryAlertsActionbar() {
+    public static String getInventoryAlertsActionbar() {
         return inventoryAlertsActionbar;
     }
 
-    public List<String> getInventoryAlertsMessage() {
+    public static List<String> getInventoryAlertsMessage() {
         return inventoryAlertsMessage;
     }
 
-    public int getInventoryAlertsDelay() {
+    public static int getInventoryAlertsDelay() {
         return inventoryAlertsDelay;
     }
 
-    public boolean isInventoryAlertsEnabled() {
+    public static boolean isInventoryAlertsEnabled() {
         return inventoryAlertsEnabled;
     }
 
-    public boolean isInventoryAlertsTitleEnabled() {
+    public static boolean isInventoryAlertsTitleEnabled() {
         return inventoryAlertsTitleEnabled;
     }
 
-    public boolean isInventoryAlertsSoundEnabled() {
+    public static boolean isInventoryAlertsSoundEnabled() {
         return inventoryAlertsSoundEnabled;
     }
 
-    public boolean isInventoryAlertsActionbarEnabled() {
+    public static boolean isInventoryAlertsActionbarEnabled() {
         return inventoryAlertsActionbarEnabled;
     }
 
-    public boolean isInventoryAlertsMessageEnabled() {
+    public static boolean isInventoryAlertsMessageEnabled() {
         return inventoryAlertsMessageEnabled;
     }
 
-    public String getEnabledPlaceholder() {
+    public static String getEnabledPlaceholder() {
         if (enabledPlaceholder == null) return "&2Enabled";
         return enabledPlaceholder;
     }
 
-    public String getDisabledPlaceholder() {
+    public static String getDisabledPlaceholder() {
         if (disabledPlaceholder == null) return "&cDisabled";
         return disabledPlaceholder;
     }

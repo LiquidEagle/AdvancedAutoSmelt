@@ -2,7 +2,7 @@ package me.pulsi_.advancedautosmelt.external;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.utils.AASChat;
-import me.pulsi_.advancedautosmelt.values.Values;
+import me.pulsi_.advancedautosmelt.values.ConfigValues;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -36,7 +36,7 @@ public class UpdateChecker implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        if (!Values.getConfig().isUpdateCheckerEnabled() || (!e.getPlayer().isOp() && !e.getPlayer().hasPermission("advancedautosmelt.notify")) || isUpToDate) return;
+        if (!ConfigValues.isUpdateCheckerEnabled() || (!e.getPlayer().isOp() && !e.getPlayer().hasPermission("advancedautosmelt.notify")) || isUpToDate) return;
 
         TextComponent update = new TextComponent(AASChat.color("&8[&a&lA&9&lA&c&lS&8] &aNew update available! &7(CLICK HERE)"));
         update.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.spigotmc.org/resources/%E2%9C%A8-advancedautosmelt-%E2%9C%A8-autosmelt-autopickup-inventoryfull-alert-1-7-1-16-compatible.90587/"));

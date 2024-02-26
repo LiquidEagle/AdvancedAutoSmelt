@@ -4,17 +4,34 @@
 # +-------------------------------+ #
 #####################################
 
+# Every single message is customizable, you
+# can send more than one message per time,
+# and you can also use placeholders.
+#
+# Example:
+# No-Permission:
+#   - "%prefix% &cYou don't have the"
+#   - "permission %player_name%! (%permission%)"
+
+# If you are missing a message, the plugin will notify you.
+Enable-Missing-Message-Alert: true
+
+# The main plugin prefix, that will be
+# displayed before messages and commands.
+Prefix: "&8[&a&lA&9&lA&c&lS&8]"
+
 # If you don't want one of these messages, just commend them
 
-No-Permission: "&cYou don't have the permission!"
-Plugin-Reloaded: "&2Plugin successfully reloaded!"
-AutoPickup-Disabled: "&cThe autopickup is currently disabled!"
-AutoPickup-Activated: "&7You have &a&nactivated&7 your autopickup!"
-AutoPickup-Deactivated: "&7You have &c&ndisabled&7 your autopickup!"
-AutoSmelt-Disabled: "&cThe autosmelt is currently disabled!"
-AutoSmelt-Activated: "&7You have &a&nactivated&7 your autosmelt!"
-AutoSmelt-Deactivated: "&7You have &c&ndisabled&7 your autosmelt!"
-InventoryAlerts-Disabled: "&cInventory alerts are currently disabled!"
-InventoryAlerts-Activated: "&7You have &a&nactivated&7 your inventory alerts!"
-InventoryAlerts-Deactivated: "&7You have &c&ndisabled&7 your inventory alerts!"
-Not-Player: "&cYou are not a player!"
+No-Permission: "%prefix% &cYou don't have the permission '%permission%'!"
+Plugin-Reloaded: "%prefix% &2Plugin successfully reloaded!"
+AutoPickup-Disabled: "%prefix% &cThe autopickup is currently disabled!"
+AutoPickup-Activated: "%prefix% &7You have &a&nactivated&7 your autopickup!"
+AutoPickup-Deactivated: "%prefix% &7You have &c&ndisabled&7 your autopickup!"
+AutoSmelt-Disabled: "%prefix% &cThe autosmelt is currently disabled!"
+AutoSmelt-Activated: "%prefix% &7You have &a&nactivated&7 your autosmelt!"
+AutoSmelt-Deactivated: "%prefix% &7You have &c&ndisabled&7 your autosmelt!"
+InventoryAlerts-Disabled: "%prefix% &cInventory alerts are currently disabled!"
+InventoryAlerts-Activated: "%prefix% &7You have &a&nactivated&7 your inventory alerts!"
+InventoryAlerts-Deactivated: "%prefix% &7You have &c&ndisabled&7 your inventory alerts!"
+Not-Player: "%prefix% &cYou are not a player!"
+Unknown-Command: "%prefix% &cUnknown command!"

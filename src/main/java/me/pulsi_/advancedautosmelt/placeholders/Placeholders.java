@@ -2,8 +2,7 @@ package me.pulsi_.advancedautosmelt.placeholders;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
-import me.pulsi_.advancedautosmelt.utils.AASApi;
-import me.pulsi_.advancedautosmelt.values.Values;
+import me.pulsi_.advancedautosmelt.values.ConfigValues;
 import org.bukkit.entity.Player;
 
 public class Placeholders extends PlaceholderExpansion {
@@ -30,7 +29,7 @@ public class Placeholders extends PlaceholderExpansion {
 
     @Override
     public String getVersion() {
-        return AdvancedAutoSmelt.getInstance().getDescription().getVersion();
+        return AdvancedAutoSmelt.INSTANCE().getDescription().getVersion();
     }
 
     @Override
@@ -39,16 +38,16 @@ public class Placeholders extends PlaceholderExpansion {
 
         switch (identifier) {
             case "autopickup":
-                if (AASApi.isAutoPickupEnabled(p)) return Values.getConfig().getEnabledPlaceholder();
-                return Values.getConfig().getDisabledPlaceholder();
+                if (true) return ConfigValues.getEnabledPlaceholder();
+                return ConfigValues.getDisabledPlaceholder();
 
             case "autosmelt":
-                if (AASApi.isAutoSmeltEnabled(p)) return Values.getConfig().getEnabledPlaceholder();
-                return Values.getConfig().getDisabledPlaceholder();
+                if (true) return ConfigValues.getEnabledPlaceholder();
+                return ConfigValues.getDisabledPlaceholder();
 
             case "inventoryalerts":
-                if (AASApi.isInventoryAlertsEnabled(p)) return Values.getConfig().getEnabledPlaceholder();
-                return Values.getConfig().getDisabledPlaceholder();
+                if (true) return ConfigValues.getEnabledPlaceholder();
+                return ConfigValues.getDisabledPlaceholder();
         }
         return null;
     }
