@@ -33,8 +33,18 @@ public class AASConfigs {
             String autoUpdate = config.getString("Auto-Update"), version = config.getString("Config-Version");
             if (autoUpdate == null || version == null) isToUpdate = true;
             else {
+                String plVersion = plugin.getDescription().getVersion();
                 if (!config.getBoolean("Auto-Update")) isToUpdate = false;
-                else isToUpdate = !plugin.getDescription().getVersion().equals(version);
+                else isToUpdate = !plVersion.equals(version);
+
+                if (!isToUpdate) return;
+
+                config.set("Config-Version", plVersion);
+                try {
+                    config.save(getFile("config.yml"));
+                } catch (Exception e) {
+                    AASLogger.error(e, "Could not update config version:");
+                }
             }
         }
     }
