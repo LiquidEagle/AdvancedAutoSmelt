@@ -34,7 +34,7 @@ public class AASConfigs {
             if (autoUpdate == null || version == null) isToUpdate = true;
             else {
                 if (!config.getBoolean("Auto-Update")) isToUpdate = false;
-                else isToUpdate = !AdvancedAutoSmelt.INSTANCE().getDescription().getVersion().equals(version);
+                else isToUpdate = !plugin.getDescription().getVersion().equals(version);
             }
         }
     }

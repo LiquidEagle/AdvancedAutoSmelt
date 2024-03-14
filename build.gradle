@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'me.pulsi_'
-version = '5.0.0' // ALSO CHANGE IT IN THE CONFIG.YML
+version = '5.0.1' // ALSO CHANGE IT IN THE CONFIG.YML
 
 repositories {
     mavenCentral()

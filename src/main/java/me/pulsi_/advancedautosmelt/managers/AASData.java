@@ -10,8 +10,9 @@ import me.pulsi_.advancedautosmelt.coreSystem.AdvancedAutoSmeltDropSystem;
 import me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures;
 import me.pulsi_.advancedautosmelt.external.UpdateChecker;
 import me.pulsi_.advancedautosmelt.external.bStats;
-import me.pulsi_.advancedautosmelt.listeners.BlockBreakListener;
+import me.pulsi_.advancedautosmelt.listeners.BlockBreakMethod;
 import me.pulsi_.advancedautosmelt.listeners.ServerListener;
+import me.pulsi_.advancedautosmelt.listeners.blockBreakListener.*;
 import me.pulsi_.advancedautosmelt.utils.AASChat;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
 import me.pulsi_.advancedautosmelt.utils.AASMessages;
@@ -94,8 +95,28 @@ public class AASData {
 
         PluginManager pManager = plugin.getServer().getPluginManager();
         pManager.registerEvents(new ServerListener(), plugin);
-        pManager.registerEvents(new BlockBreakListener(), plugin);
         pManager.registerEvents(new UpdateChecker(plugin), plugin);
+
+        switch (ConfigValues.getBlockBreakListenerPriority()) {
+            case "HIGHEST":
+                pManager.registerEvents(new BlockBreakListenerHighest(), plugin);
+                break;
+
+            case "HIGH":
+                pManager.registerEvents(new BlockBreakListenerHigh(), plugin);
+                break;
+
+            default:
+                pManager.registerEvents(new BlockBreakListenerNormal(), plugin);
+                break;
+
+            case "LOW":
+                pManager.registerEvents(new BlockBreakListenerLow(), plugin);
+                break;
+
+            case "LOWEST":
+                pManager.registerEvents(new BlockBreakListenerLowest(), plugin);
+        }
 
         AASLogger.log("  &aRegistered events! &8(&9" + (System.currentTimeMillis() - time) + "ms&8)");
     }

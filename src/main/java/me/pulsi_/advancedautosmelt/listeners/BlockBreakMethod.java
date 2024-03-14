@@ -6,15 +6,12 @@ import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class BlockBreakListener implements Listener {
+public class BlockBreakMethod {
 
-    @EventHandler
-    public void onBlockBreak(BlockBreakEvent e) {
+    public static void onBlockBreak(BlockBreakEvent e) {
         if (e.isCancelled()) return;
 
         Player p = e.getPlayer();

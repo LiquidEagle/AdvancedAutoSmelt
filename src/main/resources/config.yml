@@ -174,5 +174,14 @@ Placeholders:
   Enabled: "&2Enabled"
   Disabled: "&cDisabled"
 
+# Do not edit this if you don't know what it does.
+# Choose one listener priority for the block break event of AAS between:
+# - HIGHEST
+# - HIGH
+# - NORMAL
+# - LOW
+# - LOWEST
+Block-Break-Listener-Priority: "NORMAL"
+
 # Do never edit this for any reasons or the config may get reset.
-Config-Version: 5.0.0
+Config-Version: 5.0.1

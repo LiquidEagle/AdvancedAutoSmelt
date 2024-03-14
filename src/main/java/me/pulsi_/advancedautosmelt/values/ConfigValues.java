@@ -58,6 +58,8 @@ public class ConfigValues {
     private static String enabledPlaceholder;
     private static String disabledPlaceholder;
 
+    private static String blockBreakListenerPriority;
+
     public static void setupValues() {
         FileConfiguration config = AdvancedAutoSmelt.INSTANCE().getConfigs().getConfig("config.yml");
 
@@ -112,6 +114,8 @@ public class ConfigValues {
 
         enabledPlaceholder = config.getString("Placeholders.Enabled");
         disabledPlaceholder = config.getString("Placeholders.Disabled");
+
+        blockBreakListenerPriority = config.getString("Block-Break-Listener-Priority");
     }
 
     public static boolean isUpdateCheckerEnabled() {
@@ -275,12 +279,14 @@ public class ConfigValues {
     }
 
     public static String getEnabledPlaceholder() {
-        if (enabledPlaceholder == null) return "&2Enabled";
-        return enabledPlaceholder;
+        return enabledPlaceholder == null ? "&2Enabled" : enabledPlaceholder;
     }
 
     public static String getDisabledPlaceholder() {
-        if (disabledPlaceholder == null) return "&cDisabled";
-        return disabledPlaceholder;
+        return disabledPlaceholder == null ? "&cDisabled" : disabledPlaceholder;
+    }
+
+    public static String getBlockBreakListenerPriority() {
+        return blockBreakListenerPriority == null ? "NORMAL" : blockBreakListenerPriority;
     }
 }
