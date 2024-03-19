@@ -3,10 +3,13 @@ plugins {
 }
 
 group = 'me.pulsi_'
-version = '5.0.1' // ALSO CHANGE IT IN THE CONFIG.YML
+version = '5.0.2' // ALSO CHANGE IT IN THE CONFIG.YML
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://maven.enginehub.org/repo/"
+    }
     maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
@@ -21,6 +24,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.5'
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.3'
 }

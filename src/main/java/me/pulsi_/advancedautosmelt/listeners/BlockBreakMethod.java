@@ -1,5 +1,11 @@
 package me.pulsi_.advancedautosmelt.listeners;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.coreSystem.AdvancedAutoSmeltDropSystem;
 import me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures;
 import org.bukkit.GameMode;
@@ -18,6 +24,8 @@ public class BlockBreakMethod {
         if (p.getGameMode().equals(GameMode.CREATIVE)) return;
 
         Block block = e.getBlock();
+        if (!checkWorldGuard(p, block)) return;
+
         ExtraFeatures.containerPickup(p, block);
 
         ItemStack itemUsed = p.getItemInHand();
@@ -28,5 +36,19 @@ public class BlockBreakMethod {
         ExtraFeatures.smeltInventory(p);
         ExtraFeatures.inventoryIngotToBlock(p);
         ExtraFeatures.inventoryAlerts(p);
+    }
+
+    /**
+     * Check if the broken block can be broken from the selected player.
+     * @param p The player.
+     * @param block The block.
+     * @return true if the player can break it, false otherwise.
+     */
+    public static boolean checkWorldGuard(Player p, Block block) {
+        if (!AdvancedAutoSmelt.INSTANCE().isWorldguardHooked()) return true;
+
+        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(block.getLocation());
+        return container.createQuery().testState(loc, WorldGuardPlugin.inst().wrapPlayer(p), Flags.BLOCK_BREAK);
     }
 }

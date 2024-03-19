@@ -60,6 +60,8 @@ public class ConfigValues {
 
     private static String blockBreakListenerPriority;
 
+    private static boolean worldguardHook;
+
     public static void setupValues() {
         FileConfiguration config = AdvancedAutoSmelt.INSTANCE().getConfigs().getConfig("config.yml");
 
@@ -116,6 +118,7 @@ public class ConfigValues {
         disabledPlaceholder = config.getString("Placeholders.Disabled");
 
         blockBreakListenerPriority = config.getString("Block-Break-Listener-Priority");
+        worldguardHook = config.getBoolean("WorldGuard-Hook");
     }
 
     public static boolean isUpdateCheckerEnabled() {
@@ -288,5 +291,9 @@ public class ConfigValues {
 
     public static String getBlockBreakListenerPriority() {
         return blockBreakListenerPriority == null ? "NORMAL" : blockBreakListenerPriority;
+    }
+
+    public static boolean isWorldguardHook() {
+        return worldguardHook;
     }
 }

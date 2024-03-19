@@ -183,5 +183,10 @@ Placeholders:
 # - LOWEST
 Block-Break-Listener-Priority: "NORMAL"
 
+# If you have worldguard installed, hook into it to
+# check for regions where the player can't break
+# blocks to avoid any bugs.
+WorldGuard-Hook: true
+
 # Do never edit this for any reasons or the config may get reset.
-Config-Version: 5.0.1
+Config-Version: 5.0.2

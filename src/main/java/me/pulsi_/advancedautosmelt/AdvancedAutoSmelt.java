@@ -4,13 +4,14 @@ import me.pulsi_.advancedautosmelt.managers.AASConfigs;
 import me.pulsi_.advancedautosmelt.managers.AASData;
 import me.pulsi_.advancedautosmelt.placeholders.Placeholders;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class AdvancedAutoSmelt extends JavaPlugin {
 
     private static AdvancedAutoSmelt INSTANCE;
 
-    private boolean placeholderApiHooked = false;
+    private boolean placeholderApiHooked, worldguardHooked;
 
     private AASConfigs configs;
     private AASData dataManager;
@@ -39,10 +40,16 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
         dataManager.setupPlugin();
 
-        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        PluginManager plManager = getServer().getPluginManager();
+        if (plManager.getPlugin("PlaceholderAPI") != null) {
             placeholderApiHooked = true;
             new Placeholders().register();
             AASLogger.info("Hooked into PlaceholderAPI!");
+        }
+
+        if (plManager.getPlugin("WorldGuard") != null) {
+            worldguardHooked = true;
+            AASLogger.info("Hooked into WorldGuard!");
         }
     }
 
@@ -57,6 +64,10 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     public boolean isPlaceholderApiHooked() {
         return placeholderApiHooked;
+    }
+
+    public boolean isWorldguardHooked() {
+        return worldguardHooked;
     }
 
     public AASConfigs getConfigs() {
