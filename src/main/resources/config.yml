@@ -10,13 +10,12 @@ Update-Checker: true
 # Automatically update the files when there is a new update.
 Auto-Update: true
 
-# AutoPickup options.
+# Permission to toggle auto pickup: advancedautosmelt.toggle.autopickup
 AutoPickup:
   # Enable or not this option.
   Enabled: true
 
-  # Choose if making players enabling
-  # autopickup automatically on join.
+  # It will be enabled even if it doesn't have the toggle permission.
   Enable-On-Join:
     Enabled: true
     # Choose if a player needs to have the specified
@@ -49,10 +48,11 @@ AutoPickup:
   Block-Blacklist:
     - "SKULL"
 
-# AutoSmelt options.
+# Permission to toggle auto smelt: advancedautosmelt.toggle.autosmelt
 AutoSmelt:
   Enabled: true
 
+  # It will be enabled even if it doesn't have the toggle permission.
   Enable-On-Join:
     Enabled: true
     Is-Required-Permission: false
@@ -72,8 +72,8 @@ AutoSmelt:
 Fortune:
   # Enable the fortune support, this will
   # multiply the items picked based on your
-  # fortune level. It will work for picked-up
-  # and not picked-up blocks.
+  # fortune level.
+  # Fortune works for picked-up and non blocks.
   Enabled: true
 
   Is-Required-Permission:
@@ -99,6 +99,50 @@ Fortune:
   World-Blacklist:
     - "World1"
     - "World2"
+
+# Permission to toggle auto sell: advancedautosmelt.toggle.autosell
+AutoSell:
+  # Auto sell is a useful feature where you can sell every type of item for a price.
+  # You can choose in which economy the money will be deposited in the lower part of this config.
+  #
+  # IMPORTANT! READ ME: To avoid confusion.
+  # The auto sell will be processed after auto smelt and fortune modules.
+  # This means that if you mine, for example, COAL_ORE, that is then smelted
+  # into COAL, and multiplied by fortune, auto sell will sell COAL and not COAL_ORE.
+  #
+  # Auto sell won't sell items that are not present in the file "sell_prices.yml"
+  # This module support PrisonEnchants explosions, so no worries ;).
+  Enabled: false
+
+  # If this option is enabled, auto sell will automatically sell any
+  # item as soon as you get them, they won't be shown in the inventory.
+  Instant-Sell: false
+
+  # If "Instant-Sell" is disabled, you can choose if automatically
+  # sell all the items in the inventory when it's full when you
+  # try to mine another block.
+  Sell-On-Inventory-Full: true
+
+  # If you want to make the sell system use a cmd to manually sell
+  # items, enable this option and the /sellall cmd will be
+  # registered to the server, otherwise, it won't be registered.
+  # This option will need to restart the server to apply changes.
+  Register-Sell-All-Cmd: false
+
+  # Automatically detect server economy and add money using Vault.
+  Use-Vault-Economy: true
+
+  # If "Use-Vault-Economy" is disabled, you will be able to add money
+  # to the player using the custom cmd that will be run when selling.
+  #
+  # Cmd placeholders: %player% -> Player name. %amount% -> Money amount.
+  Custom-Add-Cmd: "eco give %player% %amount%"
+
+  # It will be enabled even if it doesn't have the toggle permission.
+  Enable-On-Join:
+    Enabled: true
+    Is-Required-Permission: false
+    Permission: "your.permission.here"
 
 # CustomExp feature
 Custom-Exp:
@@ -189,4 +233,4 @@ Block-Break-Listener-Priority: "NORMAL"
 WorldGuard-Hook: true
 
 # Do never edit this for any reasons or the config may get reset.
-Config-Version: 5.0.2
+Config-Version: 5.0.3

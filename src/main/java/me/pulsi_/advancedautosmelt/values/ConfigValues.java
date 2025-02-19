@@ -26,6 +26,16 @@ public class ConfigValues {
     private static boolean autoSmeltEnabledOnJoin;
     private static boolean autoSmeltEnabledOnJoinNeedPerm;
 
+    private static String autoSellJoinPermission;
+    private static String autoSellEconomyAddCmd;
+    private static boolean autoSellEnabled;
+    private static boolean autoSellInstantSell;
+    private static boolean autoSellOnInventoryFull;
+    private static boolean autoSellRegisterSellAllCmd;
+    private static boolean autoSellEnabledOnJoin;
+    private static boolean autoSellEnabledOnJoinNeedPerm;
+    private static boolean autoSellUseVaultEconomy;
+
     private static List<String> fortuneWhitelist;
     private static List<String> fortuneWorldBlacklist;
     private static boolean fortuneEnabled;
@@ -72,7 +82,7 @@ public class ConfigValues {
         autoPickupBlockBlacklist = config.getStringList("AutoPickup.Block-Blacklist");
         autoPickupEnabled = config.getBoolean("AutoPickup.Enabled");
         autoPickupEnabledOnJoin = config.getBoolean("AutoPickup.Enable-On-Join.Enabled");
-        autoPickupEnabledOnJoinNeedPerm = config.getBoolean("AutoPickup.Enabled-On-Join.Is-Required-Permission");
+        autoPickupEnabledOnJoinNeedPerm = config.getBoolean("AutoPickup.Enable-On-Join.Is-Required-Permission");
         processPlayerPickupEvent = config.getBoolean("AutoPickup.Process-PlayerPickupEvent");
         dropItemsOnInventoryFull = config.getBoolean("AutoPickup.Drop-Items-On-Inventory-Full");
         checkForItemInHand = config.getBoolean("AutoPickup.Check-Fot-Item-In-Hand");
@@ -81,8 +91,18 @@ public class ConfigValues {
         autoSmeltList = config.getStringList("AutoSmelt.Smelt-List");
         autoSmeltWorldBlacklist = config.getStringList("AutoSmelt.World-Blacklist");
         autoSmeltEnabled = config.getBoolean("AutoSmelt.Enabled");
-        autoSmeltEnabledOnJoinNeedPerm = config.getBoolean("AutoSmelt.Enabled-On-Join.Is-Required-Permission");
+        autoSmeltEnabledOnJoinNeedPerm = config.getBoolean("AutoSmelt.Enable-On-Join.Is-Required-Permission");
         autoSmeltEnabledOnJoin = config.getBoolean("AutoSmelt.Enable-On-Join.Enabled");
+
+        autoSellJoinPermission = config.getString("AutoSell.Enable-On-Join.Permission");
+        autoSellEconomyAddCmd = config.getString("AutoSell.Custom-Add-Cmd");
+        autoSellEnabledOnJoin = config.getBoolean("AutoSell.Enable-On-Join.Enabled");
+        autoSellEnabledOnJoinNeedPerm = config.getBoolean("AutoSell.Enable-On-Join.Is-Required-Permission");
+        autoSellEnabled = config.getBoolean("AutoSell.Enabled");
+        autoSellInstantSell = config.getBoolean("AutoSell.Instant-Sell");
+        autoSellOnInventoryFull = config.getBoolean("AutoSell.Sell-On-Inventory-Full");
+        autoSellRegisterSellAllCmd = config.getBoolean("AutoSell.Register-Sell-All-Cmd");
+        autoSellUseVaultEconomy = config.getBoolean("AutoSell.Use-Vault-Economy");
 
         fortuneWhitelist = config.getStringList("Fortune.Block-Whitelist.Whitelist");
         fortuneWorldBlacklist = config.getStringList("Fortune.World-Blacklist");
@@ -183,6 +203,42 @@ public class ConfigValues {
 
     public static boolean isAutoSmeltEnabledOnJoin() {
         return autoSmeltEnabledOnJoin;
+    }
+
+    public static String getAutoSellJoinPermission() {
+        return autoSellJoinPermission;
+    }
+
+    public static String getAutoSellEconomyAddCmd() {
+        return autoSellEconomyAddCmd;
+    }
+
+    public static boolean isAutoSellEnabledOnJoin() {
+        return autoSellEnabledOnJoin;
+    }
+
+    public static boolean isAutoSellEnabledOnJoinNeedPerm() {
+        return autoSellEnabledOnJoinNeedPerm;
+    }
+
+    public static boolean isAutoSellEnabled() {
+        return autoSellEnabled;
+    }
+
+    public static boolean isAutoSellInstantSell() {
+        return autoSellInstantSell;
+    }
+
+    public static boolean isAutoSellOnInventoryFull() {
+        return autoSellOnInventoryFull;
+    }
+
+    public static boolean isAutoSellRegisterSellAllCmd() {
+        return autoSellRegisterSellAllCmd;
+    }
+
+    public static boolean isAutoSellUseVaultEconomy() {
+        return autoSellUseVaultEconomy;
     }
 
     public static List<String> getFortuneWhitelist() {

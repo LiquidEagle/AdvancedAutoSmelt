@@ -2,7 +2,6 @@ package me.pulsi_.advancedautosmelt.managers;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
-import me.pulsi_.advancedautosmelt.values.ConfigValues;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,22 +16,15 @@ public class AASConfigs {
 
     private final AdvancedAutoSmelt plugin;
 
-    private FileConfiguration config, messages;
-    private final boolean isToUpdate;
-
     public AASConfigs(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
 
-        this.config = new YamlConfiguration();
-        this.messages = new YamlConfiguration();
+        if (getFile("config.yml").exists()) {
+            FileConfiguration config = getConfig("config.yml");
 
-        if (!getFile("config.yml").exists()) isToUpdate = true;
-        else {
-            reloadConfig("config.yml");
-
-            String autoUpdate = config.getString("Auto-Update"), version = config.getString("Config-Version");
-            if (autoUpdate == null || version == null) isToUpdate = true;
-            else {
+            String autoUpdate = config.getString("Auto-Update"), version = config.getString("config-version");
+            if (autoUpdate != null && version != null) {
+                boolean isToUpdate;
                 String plVersion = plugin.getDescription().getVersion();
                 if (!config.getBoolean("Auto-Update")) isToUpdate = false;
                 else isToUpdate = !plVersion.equals(version);
@@ -52,40 +44,33 @@ public class AASConfigs {
     public void setupConfigFiles() {
         setupFile("config.yml");
         setupFile("messages.yml");
+        setupFile("sell_prices.yml");
     }
 
+    /**
+     * Load and return the specified config file.
+     *
+     * @param name The name of the config file.
+     * @return The config file loaded on the moment.
+     */
     public FileConfiguration getConfig(String name) {
-        switch (name) {
-            case "config.yml":
-                return config;
-            case "messages.yml":
-                return messages;
-            default:
-                return null;
+        YamlConfiguration config = new YamlConfiguration();
+        File file = getFile(name);
+        if (file == null) {
+            AASLogger.warn("Could not load configuration file \"" + name + "\" because it does not exist.");
+            return config;
         }
+
+        try {
+            config.load(file);
+        } catch (Exception e) {
+            AASLogger.error(e, "Could not load configuration file \"" + name + "\".");
+        }
+        return config;
     }
 
     public File getFile(String name) {
         return new File(plugin.getDataFolder(), name);
-    }
-
-    public void reloadConfig(String name) {
-        try {
-            switch (name) {
-                case "config.yml":
-                    config = YamlConfiguration.loadConfiguration(getFile(name));
-                    break;
-                case "messages.yml":
-                    messages = YamlConfiguration.loadConfiguration(getFile(name));
-            }
-        } catch (IllegalArgumentException e) {
-            AASLogger.error(e, "Could not reload " + name + "!");
-        }
-    }
-
-    public void reloadConfigs() {
-        reloadConfig("config.yml");
-        reloadConfig("messages.yml");
     }
 
     public void setupFile(String fileName) {
@@ -99,9 +84,6 @@ public class AASConfigs {
             } catch (IOException e) {
                 AASLogger.error(e, "Could not create the file \"" + fileName + "\".");
             }
-        } else if (!isToUpdate) {
-            reloadConfig(fileName);
-            return;
         }
 
         HashMap<Integer, FileLine> file = new HashMap<>();
@@ -220,7 +202,6 @@ public class AASConfigs {
             builder.append(line).append("\n");
         }
         recreateFile(folderFile, builder.toString());
-        reloadConfig(fileName);
     }
 
     public void recreateFile(File file, String fileBuilder) {

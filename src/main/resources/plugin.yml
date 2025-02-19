@@ -6,6 +6,7 @@ load: STARTUP
 softdepend:
   - PlaceholderAPI
   - PrisonEnchants
+  - Vault
 authors: [ Pulsi_ ]
 commands:
   advancedautosmelt:
@@ -17,5 +18,11 @@ commands:
   autosmelt:
     usage: "/autosmelt"
 
+  autosell:
+    usage: "/autosell"
+
   inventoryalerts:
     usage: "/inventoryalerts"
+
+  sellall:
+    usage: "/sellall"

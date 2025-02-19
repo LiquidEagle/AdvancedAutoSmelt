@@ -2,15 +2,13 @@ package me.pulsi_.advancedautosmelt.managers;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.CmdRegisterer;
-import me.pulsi_.advancedautosmelt.commands.baseCmds.AutoPickupCmd;
-import me.pulsi_.advancedautosmelt.commands.baseCmds.AutoSmeltCmd;
-import me.pulsi_.advancedautosmelt.commands.baseCmds.InventoryAlertsCmd;
-import me.pulsi_.advancedautosmelt.commands.baseCmds.MainCmd;
+import me.pulsi_.advancedautosmelt.commands.baseCmds.*;
 import me.pulsi_.advancedautosmelt.coreSystem.AdvancedAutoSmeltDropSystem;
 import me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures;
 import me.pulsi_.advancedautosmelt.external.UpdateChecker;
 import me.pulsi_.advancedautosmelt.external.bStats;
 import me.pulsi_.advancedautosmelt.listeners.BlockBreakMethod;
+import me.pulsi_.advancedautosmelt.listeners.PrisonEnchantsListener;
 import me.pulsi_.advancedautosmelt.listeners.ServerListener;
 import me.pulsi_.advancedautosmelt.listeners.blockBreakListener.*;
 import me.pulsi_.advancedautosmelt.utils.AASChat;
@@ -34,11 +32,9 @@ public class AASData {
         AASLogger.log("  &bEnabling plugin...");
 
         loadConfigs();
+        reloadPlugin();
         registerCommands();
         registerEvents();
-
-        AdvancedAutoSmeltDropSystem.loadDropSystem();
-        ExtraFeatures.loadExtraFeatures();
 
         AASLogger.log("  &2Done! &8(&9" + (System.currentTimeMillis() - startTime) + " total ms&8)");
         AASLogger.log("");
@@ -54,7 +50,6 @@ public class AASData {
 
     public boolean reloadPlugin() {
         try {
-            plugin.getConfigs().reloadConfigs();
             ConfigValues.setupValues();
             AASMessages.loadMessages();
 
@@ -80,11 +75,16 @@ public class AASData {
     private void registerCommands() {
         long time = System.currentTimeMillis();
 
-        plugin.getCommand("autopickup").setExecutor(new AutoPickupCmd());
-        plugin.getCommand("autosmelt").setExecutor(new AutoSmeltCmd());
-        plugin.getCommand("inventoryalerts").setExecutor(new InventoryAlertsCmd());
         plugin.getCommand("advancedautosmelt").setExecutor(new MainCmd());
         plugin.getCommand("advancedautosmelt").setTabCompleter(new MainCmd());
+
+        plugin.getCommand("autopickup").setExecutor(new AutoPickupCmd());
+        plugin.getCommand("autosmelt").setExecutor(new AutoSmeltCmd());
+        plugin.getCommand("autosell").setExecutor(new AutoSellCmd());
+        plugin.getCommand("inventoryalerts").setExecutor(new InventoryAlertsCmd());
+
+        if (ConfigValues.isAutoSellRegisterSellAllCmd()) plugin.getCommand("sellall").setExecutor(new SellAllCmd());
+
         CmdRegisterer.registerCmds();
 
         AASLogger.log("  &aRegistered commands! &8(&9" + (System.currentTimeMillis() - time) + "ms&8)");
@@ -106,17 +106,20 @@ public class AASData {
                 pManager.registerEvents(new BlockBreakListenerHigh(), plugin);
                 break;
 
-            default:
-                pManager.registerEvents(new BlockBreakListenerNormal(), plugin);
-                break;
-
             case "LOW":
                 pManager.registerEvents(new BlockBreakListenerLow(), plugin);
                 break;
 
             case "LOWEST":
                 pManager.registerEvents(new BlockBreakListenerLowest(), plugin);
+                break;
+
+            default:
+                pManager.registerEvents(new BlockBreakListenerNormal(), plugin);
         }
+
+        if (AdvancedAutoSmelt.INSTANCE().isPrisonEnchantsHooked() && ConfigValues.isAutoSellInstantSell())
+            pManager.registerEvents(new PrisonEnchantsListener(), plugin);
 
         AASLogger.log("  &aRegistered events! &8(&9" + (System.currentTimeMillis() - time) + "ms&8)");
     }

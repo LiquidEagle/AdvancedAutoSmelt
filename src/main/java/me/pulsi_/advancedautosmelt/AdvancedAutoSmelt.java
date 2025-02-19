@@ -1,23 +1,32 @@
 package me.pulsi_.advancedautosmelt;
 
+import me.pulsi_.advancedautosmelt.listeners.PrisonEnchantsListener;
 import me.pulsi_.advancedautosmelt.managers.AASConfigs;
 import me.pulsi_.advancedautosmelt.managers.AASData;
 import me.pulsi_.advancedautosmelt.placeholders.Placeholders;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
+import me.pulsi_.advancedautosmelt.values.ConfigValues;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class AdvancedAutoSmelt extends JavaPlugin {
 
     private static AdvancedAutoSmelt INSTANCE;
 
-    private boolean placeholderApiHooked, worldguardHooked;
+    private boolean placeholderApiHooked, worldGuardHooked, prisonEnchantsHooked;
 
     private AASConfigs configs;
     private AASData dataManager;
 
     private String serverVersion;
     private int serverVersionInt;
+
+    private static Economy vaultEconomy = null;
+
+    private int tries = 0;
 
     @Override
     public void onEnable() {
@@ -32,15 +41,31 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         } catch (NumberFormatException e) {
             AASLogger.error("Failed to identify server version, contact the developer if the issue persist!");
         }
-
         serverVersionInt = number;
+
+        PluginManager plManager = getServer().getPluginManager();
+        if (plManager.getPlugin("PrisonEnchants") != null) { // Load before because it needs to check for hook of PE for registering the listener.
+            prisonEnchantsHooked = true;
+            plManager.registerEvents(new PrisonEnchantsListener(), this);
+            AASLogger.info("Hooked into PrisonEnchants!");
+        }
 
         configs = new AASConfigs(this);
         dataManager = new AASData(this);
-
         dataManager.setupPlugin();
 
-        PluginManager plManager = getServer().getPluginManager();
+        if (ConfigValues.isAutoSellEnabled() && ConfigValues.isAutoSellUseVaultEconomy()) {
+            if (!setupVault()) {
+                if (tries == 3) AASLogger.warn("Could not setup Vault economy because it has not been found.");
+                else {
+                    Bukkit.getScheduler().runTaskLater(this, this::onEnable, 2);
+                    AASLogger.warn("Could not setup Vault economy for autosell because it has not been found, trying again... (" + (tries + 1) + " try)");
+                    tries++;
+                    return;
+                }
+            }
+        }
+
         if (plManager.getPlugin("PlaceholderAPI") != null) {
             placeholderApiHooked = true;
             new Placeholders().register();
@@ -48,7 +73,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         }
 
         if (plManager.getPlugin("WorldGuard") != null) {
-            worldguardHooked = true;
+            worldGuardHooked = true;
             AASLogger.info("Hooked into WorldGuard!");
         }
     }
@@ -62,12 +87,25 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         return INSTANCE;
     }
 
+    private boolean setupVault() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) return false;
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) return false;
+
+        vaultEconomy = rsp.getProvider();
+        return true;
+    }
+
     public boolean isPlaceholderApiHooked() {
         return placeholderApiHooked;
     }
 
-    public boolean isWorldguardHooked() {
-        return worldguardHooked;
+    public boolean isWorldGuardHooked() {
+        return worldGuardHooked;
+    }
+
+    public boolean isPrisonEnchantsHooked() {
+        return prisonEnchantsHooked;
     }
 
     public AASConfigs getConfigs() {
@@ -84,5 +122,9 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     public int getServerVersionInt() {
         return serverVersionInt;
+    }
+
+    public static Economy getVaultEconomy() {
+        return vaultEconomy;
     }
 }

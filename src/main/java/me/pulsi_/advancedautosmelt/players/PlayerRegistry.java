@@ -33,6 +33,11 @@ public class PlayerRegistry {
             else if (p.hasPermission(ConfigValues.getAutoSmeltJoinPermission())) player.setAutoSmeltEnabled(true);
         }
 
+        if (ConfigValues.isAutoSellEnabled() && ConfigValues.isAutoSellEnabledOnJoin()) {
+            if (!ConfigValues.isAutoSellEnabledOnJoinNeedPerm()) player.setAutoSellEnabled(true);
+            else if (p.hasPermission(ConfigValues.getAutoSellJoinPermission())) player.setAutoSellEnabled(true);
+        }
+
         players.put(uuid, player);
     }
 

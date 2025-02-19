@@ -13,88 +13,27 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
+/**
+ * Class to hold stored data of different feature modules and utility methods.
+ */
 public class ExtraFeatures {
 
-    private static final HashMap<Material, Material> inventoryIngotToBlockMap = new HashMap<>(), inventorySmelterMap = new HashMap<>();
-    private static final Set<UUID> inventoryAlertsCooldown = new HashSet<>();
+    protected static final HashMap<Material, Double> sellPrices = new HashMap<>();
+    protected static final HashMap<Material, Pair> expMap = new HashMap<>();
+    protected static final HashMap<Material, Material> inventoryIngotToBlockMap = new HashMap<>(), inventorySmelterMap = new HashMap<>();
+    protected static final Set<UUID> inventoryAlertsCooldown = new HashSet<>();
 
-    public static void containerPickup(Player p, Block block) {
-        BlockState state = block.getState();
-        if (!AdvancedAutoSmeltDropSystem.canAutoPickup(p, block) || !(state instanceof Container)) return;
-
-        World world = block.getWorld();
-        Location loc = p.getLocation();
-        Container container = ((Container) state);
-
-        for (ItemStack item : container.getInventory().getContents()) {
-            if (item == null) continue;
-
-            Collection<ItemStack> dropsLeft = p.getInventory().addItem(item).values();
-            if (!dropsLeft.isEmpty()) for (ItemStack dropLeft : dropsLeft) world.dropItem(loc, dropLeft);
-        }
-
-        container.getInventory().clear();
-    }
-
-    public static void inventoryIngotToBlock(Player p) {
-        if (!ConfigValues.isIngotToBlockEnabled() || !p.hasPermission(AASPermissions.ingotToBlock) || p.getInventory().firstEmpty() < 0) return;
-
-        Inventory inv = p.getInventory();
-        for (ItemStack item : inv.getContents()) {
-            if (item == null) continue;
-
-            Material ingotMaterial = item.getType();
-            if (!inventoryIngotToBlockMap.containsKey(ingotMaterial)) continue;
-
-            int amount = item.getAmount();
-            if (amount < 9) continue;
-
-            int blockAmount = amount / 9, newAmount = amount - (9 * blockAmount);
-            inv.addItem(new ItemStack(inventoryIngotToBlockMap.get(ingotMaterial), blockAmount));
-            item.setAmount(newAmount);
-        }
-    }
-
-    public static void inventoryAlerts(Player p) {
-        if (!ConfigValues.isInventoryAlertsEnabled() || p.getInventory().firstEmpty() > -1) return;
-
-        UUID uuid = p.getUniqueId();
-        if (inventoryAlertsCooldown.contains(uuid)) return;
-
-        if (ConfigValues.isInventoryAlertsTitleEnabled()) AASUtils.sendTitle(ConfigValues.getInventoryAlertsTitle(), p);
-
-        if (ConfigValues.isInventoryAlertsActionbarEnabled()) AASUtils.sendActionBar(p, ConfigValues.getInventoryAlertsActionbar());
-
-        if (ConfigValues.isInventoryAlertsMessageEnabled())
-            for (String messages : ConfigValues.getInventoryAlertsMessage())
-                p.sendMessage(AASChat.color(messages));
-
-        if (ConfigValues.isInventoryAlertsSoundEnabled()) AASUtils.playSound(p, ConfigValues.getInventoryAlertsSound());
-
-        if (ConfigValues.getInventoryAlertsDelay() != 0) {
-            inventoryAlertsCooldown.add(uuid);
-            Bukkit.getScheduler().runTaskLater(AdvancedAutoSmelt.INSTANCE(), () -> inventoryAlertsCooldown.remove(uuid), ConfigValues.getInventoryAlertsDelay());
-        }
-    }
-
-    public static void smeltInventory(Player p) {
-        if (!ConfigValues.isInventorySmelterEnabled() || !p.hasPermission(AASPermissions.inventorySmelter)) return;
-
-        Inventory inv = p.getInventory();
-        for (ItemStack item : inv.getContents()) {
-            if (item == null) continue;
-
-            Material prevMaterial = item.getType();
-            if (inventorySmelterMap.containsKey(prevMaterial)) item.setType(inventorySmelterMap.get(prevMaterial));
-        }
-    }
-
+    /**
+     * Method to call before initializing the events to cache settings such as maps for ingot-to-block or smelt features.
+     */
     public static void loadExtraFeatures() {
         if (ConfigValues.isIngotToBlockEnabled()) {
             inventoryIngotToBlockMap.clear();
@@ -143,5 +82,69 @@ public class ExtraFeatures {
                 inventorySmelterMap.put(prevMaterial, newMaterial);
             }
         }
+
+        if (ConfigValues.isAutoSellEnabled()) {
+            sellPrices.clear();
+
+            FileConfiguration sellPricesConfig = AdvancedAutoSmelt.INSTANCE().getConfigs().getConfig("sell_prices.yml");
+            for (String id : sellPricesConfig.getKeys(false)) {
+                Material material;
+                try {
+                    material = Material.valueOf(id);
+                } catch (IllegalArgumentException e) {
+                    AASLogger.warn("The material id \"" + id + "\" in the file \"sell_prices.yml\" is not a valid material. (Skipping it)");
+                    continue;
+                }
+
+                double price = sellPricesConfig.getDouble(id);
+                if (price <= 0) {
+                    AASLogger.warn("The price of the material \"" + id + "\" in the file \"sell_prices.yml\" must be higher than 0. (Skipping it)");
+                    continue;
+                }
+
+                sellPrices.put(material, price);
+            }
+        }
+
+        if (ConfigValues.isIsCustomExpEnabled()) {
+            expMap.clear();
+            for (String line : ConfigValues.getCustomExpList()) {
+                if (!line.contains(";")) {
+                    AASLogger.warn("The custom exp list format must contains a \";\" separator, 1 material and 1 number, skipping line... (Wrong line: " + line + ")");
+                    continue;
+                }
+
+                String[] split = line.split(";");
+                String blockMaterialName = split[0], expAmountString = split[1];
+
+                boolean needAutoSmelt = false;
+                if (expAmountString.contains("[NEED_AUTOSMELT]")) {
+                    expAmountString = expAmountString.replace("[NEED_AUTOSMELT]", "");
+                    needAutoSmelt = true;
+                }
+
+                Material blockMaterial;
+                int expAmount;
+                try {
+                    blockMaterial = Material.valueOf(blockMaterialName);
+                    expAmount = Integer.parseInt(expAmountString);
+                } catch (NumberFormatException e) {
+                    AASLogger.warn("The custom exp list contains an invalid number, skipping line... (Wrong line: " + line + ")");
+                    continue;
+                } catch (IllegalArgumentException e) {
+                    AASLogger.warn("The custom exp list contains an invalid material, skipping line... (Wrong line: " + line + ")");
+                    continue;
+                }
+
+                Pair pair = new Pair();
+                pair.k = expAmount;
+                pair.v = needAutoSmelt;
+                expMap.put(blockMaterial, pair);
+            }
+        }
+    }
+
+    public static class Pair {
+        Object k, v;
     }
 }

@@ -1,8 +1,10 @@
 package me.pulsi_.advancedautosmelt.coreSystem;
 
+import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.players.PlayerRegistry;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,34 +17,108 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public abstract class AdvancedAutoSmeltDropSystem {
 
     private static DropGetter dropGetter;
     private static DropSmelter dropSmelter;
     private static FortuneApplier fortuneApplier;
-    private static ExpGiver expGiver;
     private static DropGiver dropGiver;
 
+    /**
+     * Give the drops the player, smelt, multiply and give exp, and process all the features that this plugin has.
+     *
+     * @param p            The player.
+     * @param block        The block where to get all the drops.
+     * @param itemUsed     The item used to break the block.
+     * @param fortuneLevel The level of fortune that the item has.
+     */
     public static void giveDrops(Player p, Block block, ItemStack itemUsed, int fortuneLevel) {
-        Collection<ItemStack> drops = dropGetter.getDrops(itemUsed, block);
-        if (drops.isEmpty()) return;
+        Bukkit.getScheduler().runTaskAsynchronously(AdvancedAutoSmelt.INSTANCE(), () -> {
+            Collection<ItemStack> drops = dropGetter.getDrops(itemUsed, block);
+            if (drops.isEmpty()) return;
 
-        dropSmelter.smeltDrops(p, drops);
-        fortuneApplier.applyFortune(p, block, drops, fortuneLevel);
+            dropSmelter.smeltDrops(p, drops);
+            fortuneApplier.applyFortune(p, block, drops, fortuneLevel);
 
-        expGiver.giveExp(p, block);
-        dropGiver.giveDrops(p, block, drops);
+            if (ConfigValues.isAutoSellEnabled() && ConfigValues.isAutoSellInstantSell()) {
+                double sellMoney = 0;
+                for (ItemStack drop : new ArrayList<>(drops)) { // Check which of the drops is sellable.
+                    if (AutoSell.isSellable(drop)) {
+                        sellMoney += AutoSell.getPrice(drop);
+                        drops.remove(drop); // Sum the price and remove the drop to not send it into the player's inventory.
+                    }
+                }
+
+                if (ConfigValues.isAutoSellUseVaultEconomy()) {
+                    Economy vault = AdvancedAutoSmelt.getVaultEconomy();
+                    if (vault != null) vault.depositPlayer(p, sellMoney);
+                } else {
+
+                }
+            }
+            AdvancedAutoSmeltDropSystem.giveExp(p, block);
+            dropGiver.giveDrops(p, block, drops);
+        });
     }
 
+    /**
+     * Return a list of drops that should be given from the specified block, smelted and multiplied by fortune.
+     *
+     * @param p            The player that broke the block.
+     * @param block        The block broken.
+     * @param itemUsed     The item used to break the block.
+     * @param fortuneLevel The level of fortune that is in the item.
+     */
+    public static Collection<ItemStack> getModifiedDrops(Player p, Block block, ItemStack itemUsed, int fortuneLevel) {
+        Collection<ItemStack> drops = dropGetter.getDrops(itemUsed, block);
+        dropSmelter.smeltDrops(p, drops);
+        fortuneApplier.applyFortune(p, block, drops, fortuneLevel);
+        return drops;
+    }
+
+    /**
+     * Get the exp that you should receive from the specified block.
+     *
+     * @param p     The player to check if he can obtain custom exp.
+     * @param block The block to check.
+     * @return The amount of exp received.
+     */
+    public static int getBlockExp(Player p, Block block) {
+        if (!ConfigValues.isIsCustomExpEnabled()) return 0;
+
+        Material type = block.getType();
+        if (!ExtraFeatures.expMap.containsKey(type)) return 0;
+
+        ExtraFeatures.Pair values = ExtraFeatures.expMap.get(type);
+
+        boolean needAutoSmelt = (boolean) values.v;
+        if (needAutoSmelt && !AdvancedAutoSmeltDropSystem.canAutoSmelt(p)) return 0;
+
+        return (int) values.k; // Exp amount
+    }
+
+    /**
+     * Give the custom exp of the specified block to the player, spawning an orb on the ground if he can't auto pickup.
+     *
+     * @param p     The player that will receive the exp.
+     * @param block The block where to get the exp.
+     */
+    public static void giveExp(Player p, Block block) {
+        int exp = getBlockExp(p, block);
+
+        if (AdvancedAutoSmeltDropSystem.canAutoPickup(p, block)) p.giveExp(exp);
+        else block.getWorld().spawn(block.getLocation(), ExperienceOrb.class).setExperience(exp);
+    }
+
+    /**
+     * Load the drop system and all its modules.
+     */
     public static void loadDropSystem() {
         DropGetter.loadDropGetter();
         DropSmelter.loadDropSmelter();
         FortuneApplier.loadFortuneApplier();
-        ExpGiver.loadExpGiver();
         DropGiver.loadDropGiver();
     }
 
@@ -200,91 +276,6 @@ public abstract class AdvancedAutoSmeltDropSystem {
         }
     }
 
-    private abstract static class ExpGiver {
-        private static final HashMap<Material, AdvancedAutoSmeltDropSystem.Pair> expMap = new HashMap<>();
-
-        public abstract void giveExp(Player p, Block block);
-
-        public static void loadExpGiver() {
-            expMap.clear();
-            for (String line : ConfigValues.getCustomExpList()) {
-                if (!line.contains(";")) {
-                    AASLogger.warn("The custom exp list format must contains a \";\" separator, 1 material and 1 number, skipping line... (Wrong line: " + line + ")");
-                    continue;
-                }
-
-                String[] split = line.split(";");
-                String blockMaterialName = split[0], expAmountString = split[1];
-
-                boolean needAutoSmelt = false;
-                if (expAmountString.contains("[NEED_AUTOSMELT]")) {
-                    expAmountString = expAmountString.replace("[NEED_AUTOSMELT]", "");
-                    needAutoSmelt = true;
-                }
-
-                Material blockMaterial;
-                int expAmount;
-                try {
-                    blockMaterial = Material.valueOf(blockMaterialName);
-                    expAmount = Integer.parseInt(expAmountString);
-                } catch (NumberFormatException e) {
-                    AASLogger.warn("The custom exp list contains an invalid number, skipping line... (Wrong line: " + line + ")");
-                    continue;
-                } catch (IllegalArgumentException e) {
-                    AASLogger.warn("The custom exp list contains an invalid material, skipping line... (Wrong line: " + line + ")");
-                    continue;
-                }
-
-                AdvancedAutoSmeltDropSystem.Pair pair = new AdvancedAutoSmeltDropSystem.Pair();
-                pair.k = expAmount;
-                pair.v = needAutoSmelt;
-                expMap.put(blockMaterial, pair);
-            }
-
-            if (ConfigValues.isIsCustomExpEnabled()) {
-                if (ConfigValues.isAutoPickupEnabled()) {
-                    expGiver = new ExpGiver() {
-                        @Override
-                        public void giveExp(Player p, Block block) {
-                            if (!canMineCustomExp(p)) return;
-
-                            Material dropMaterial = block.getType();
-                            if (!expMap.containsKey(dropMaterial)) return;
-
-                            int exp = (int) expMap.get(dropMaterial).k;
-                            boolean needAutoSmelt = (boolean) expMap.get(dropMaterial).v;
-                            if (needAutoSmelt && !canAutoSmelt(p)) return;
-
-                            if (canAutoPickup(p, block)) p.giveExp(exp);
-                            else block.getWorld().spawn(block.getLocation(), ExperienceOrb.class).setExperience(exp);
-                        }
-                    };
-                } else {
-                    expGiver = new ExpGiver() {
-                        @Override
-                        public void giveExp(Player p, Block block) {
-                            if (!canMineCustomExp(p)) return;
-
-                            Material dropMaterial = block.getType();
-                            if (!expMap.containsKey(dropMaterial)) return;
-
-                            int exp = (int) expMap.get(dropMaterial).k;
-                            boolean needAutoSmelt = (boolean) expMap.get(dropMaterial).v;
-                            if (!needAutoSmelt || canAutoSmelt(p))
-                                block.getWorld().spawn(block.getLocation(), ExperienceOrb.class).setExperience(exp);
-                        }
-                    };
-                }
-            } else {
-                expGiver = new ExpGiver() {
-                    @Override
-                    public void giveExp(Player p, Block block) {
-                    }
-                };
-            }
-        }
-    }
-
     private abstract static class DropGiver {
         public abstract void giveDrops(Player p, Block block, Collection<ItemStack> drops);
 
@@ -389,9 +380,5 @@ public abstract class AdvancedAutoSmeltDropSystem {
                 };
             }
         }
-    }
-
-    private static class Pair {
-        Object k, v;
     }
 }

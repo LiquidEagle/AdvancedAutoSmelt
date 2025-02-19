@@ -2,7 +2,7 @@ package me.pulsi_.advancedautosmelt.players;
 
 public class AASPlayer {
 
-    private boolean autoPickupEnabled, autoSmeltEnabled, inventoryAlertsEnabled;
+    private boolean autoPickupEnabled, autoSmeltEnabled, autoSellEnabled, inventoryAlertsEnabled;
 
     public boolean isAutoPickupEnabled() {
         return autoPickupEnabled;
@@ -10,6 +10,10 @@ public class AASPlayer {
 
     public boolean isAutoSmeltEnabled() {
         return autoSmeltEnabled;
+    }
+
+    public boolean isAutoSellEnabled() {
+        return autoSellEnabled;
     }
 
     public boolean isInventoryAlertsEnabled() {
@@ -22,6 +26,10 @@ public class AASPlayer {
 
     public void setAutoSmeltEnabled(boolean autoSmeltEnabled) {
         this.autoSmeltEnabled = autoSmeltEnabled;
+    }
+
+    public void setAutoSellEnabled(boolean autoSellEnabled) {
+        this.autoSellEnabled = autoSellEnabled;
     }
 
     public void setInventoryAlertsEnabled(boolean inventoryAlertsEnabled) {
