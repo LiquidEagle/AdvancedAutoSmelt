@@ -7,8 +7,6 @@ import me.pulsi_.advancedautosmelt.coreSystem.AdvancedAutoSmeltDropSystem;
 import me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures;
 import me.pulsi_.advancedautosmelt.external.UpdateChecker;
 import me.pulsi_.advancedautosmelt.external.bStats;
-import me.pulsi_.advancedautosmelt.listeners.BlockBreakMethod;
-import me.pulsi_.advancedautosmelt.listeners.PrisonEnchantsListener;
 import me.pulsi_.advancedautosmelt.listeners.ServerListener;
 import me.pulsi_.advancedautosmelt.listeners.blockBreakListener.*;
 import me.pulsi_.advancedautosmelt.utils.AASChat;
@@ -117,9 +115,6 @@ public class AASData {
             default:
                 pManager.registerEvents(new BlockBreakListenerNormal(), plugin);
         }
-
-        if (AdvancedAutoSmelt.INSTANCE().isPrisonEnchantsHooked() && ConfigValues.isAutoSellInstantSell())
-            pManager.registerEvents(new PrisonEnchantsListener(), plugin);
 
         AASLogger.log("  &aRegistered events! &8(&9" + (System.currentTimeMillis() - time) + "ms&8)");
     }

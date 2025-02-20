@@ -35,6 +35,9 @@ public class ConfigValues {
     private static boolean autoSellEnabledOnJoin;
     private static boolean autoSellEnabledOnJoinNeedPerm;
     private static boolean autoSellUseVaultEconomy;
+    private static boolean autoSellRecapEnabled;
+    private static int autoSellRecapDelay;
+
 
     private static List<String> fortuneWhitelist;
     private static List<String> fortuneWorldBlacklist;
@@ -67,10 +70,18 @@ public class ConfigValues {
 
     private static String enabledPlaceholder;
     private static String disabledPlaceholder;
+    private static String thousands;
+    private static String millions;
+    private static String billions;
+    private static String trillions;
+    private static String quadrillions;
+    private static String quintillions;
+    private static String thousandsSeparator;
+    private static String decimalsSeparator;
 
     private static String blockBreakListenerPriority;
 
-    private static boolean worldguardHook;
+    private static boolean worldGuardHook;
 
     public static void setupValues() {
         FileConfiguration config = AdvancedAutoSmelt.INSTANCE().getConfigs().getConfig("config.yml");
@@ -103,6 +114,8 @@ public class ConfigValues {
         autoSellOnInventoryFull = config.getBoolean("AutoSell.Sell-On-Inventory-Full");
         autoSellRegisterSellAllCmd = config.getBoolean("AutoSell.Register-Sell-All-Cmd");
         autoSellUseVaultEconomy = config.getBoolean("AutoSell.Use-Vault-Economy");
+        autoSellRecapEnabled = config.getBoolean("AutoSell.AutoSell-Recap.Enabled");
+        autoSellRecapDelay = config.getInt("AutoSell.AutoSell-Recap.Delay");
 
         fortuneWhitelist = config.getStringList("Fortune.Block-Whitelist.Whitelist");
         fortuneWorldBlacklist = config.getStringList("Fortune.World-Blacklist");
@@ -134,11 +147,19 @@ public class ConfigValues {
 
         inventoryAlertsDelay = config.getInt("Inventory-Full-Alerts.Alert-Delay");
 
-        enabledPlaceholder = config.getString("Placeholders.Enabled");
-        disabledPlaceholder = config.getString("Placeholders.Disabled");
+        enabledPlaceholder = config.getString("Placeholders.Enabled", "&2Enabled");
+        disabledPlaceholder = config.getString("Placeholders.Disabled", "&cDisabled");
+        thousands = config.getString("Placeholders.Thousands", "K");
+        millions = config.getString("Placeholders.Millions", "B");
+        billions = config.getString("Placeholders.Billions", "B");
+        trillions = config.getString("Placeholders.Trillions", "T");
+        quadrillions = config.getString("Placeholders.Quadrillions", "Q");
+        quintillions = config.getString("Placeholders.Quintillions", "QQ");
+        thousandsSeparator = config.getString("Placeholders.Thousands-Separator", ".");
+        decimalsSeparator = config.getString("Placeholders.Decimals-Separator", ",");
 
-        blockBreakListenerPriority = config.getString("Block-Break-Listener-Priority");
-        worldguardHook = config.getBoolean("WorldGuard-Hook");
+        blockBreakListenerPriority = config.getString("Block-Break-Listener-Priority", "NORMAL");
+        worldGuardHook = config.getBoolean("WorldGuard-Hook");
     }
 
     public static boolean isUpdateCheckerEnabled() {
@@ -241,6 +262,14 @@ public class ConfigValues {
         return autoSellUseVaultEconomy;
     }
 
+    public static boolean isAutoSellRecapEnabled() {
+        return autoSellRecapEnabled;
+    }
+
+    public static int getAutoSellRecapDelay() {
+        return autoSellRecapDelay;
+    }
+
     public static List<String> getFortuneWhitelist() {
         return fortuneWhitelist;
     }
@@ -338,18 +367,50 @@ public class ConfigValues {
     }
 
     public static String getEnabledPlaceholder() {
-        return enabledPlaceholder == null ? "&2Enabled" : enabledPlaceholder;
+        return enabledPlaceholder;
     }
 
     public static String getDisabledPlaceholder() {
-        return disabledPlaceholder == null ? "&cDisabled" : disabledPlaceholder;
+        return disabledPlaceholder;
+    }
+
+    public static String getThousands() {
+        return thousands;
+    }
+
+    public static String getMillions() {
+        return millions;
+    }
+
+    public static String getBillions() {
+        return billions;
+    }
+
+    public static String getTrillions() {
+        return trillions;
+    }
+
+    public static String getQuadrillions() {
+        return quadrillions;
+    }
+
+    public static String getQuintillions() {
+        return quintillions;
+    }
+
+    public static String getThousandsSeparator() {
+        return thousandsSeparator;
+    }
+
+    public static String getDecimalsSeparator() {
+        return decimalsSeparator;
     }
 
     public static String getBlockBreakListenerPriority() {
-        return blockBreakListenerPriority == null ? "NORMAL" : blockBreakListenerPriority;
+        return blockBreakListenerPriority;
     }
 
-    public static boolean isWorldguardHook() {
-        return worldguardHook;
+    public static boolean isWorldGuardHook() {
+        return worldGuardHook;
     }
 }

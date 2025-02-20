@@ -22,8 +22,8 @@ public class MainCmd implements CommandExecutor, TabCompleter {
         if (!AASUtils.hasPermission(s, AASPermissions.adminPermission)) return false;
 
         if (args.length == 0) {
-            AASMessages.send(s, "%prefix% &7Plugin made by &aPulsi_&7, running on version &av" + AdvancedAutoSmelt.INSTANCE().getDescription().getVersion() + "&7:", true);
-            AASMessages.send(s, "%prefix% &7Type &a/aas reload &7to reload the plugin.", true);
+            AASMessages.send(s, "%prefix% &7Plugin made by &aPulsi_&7, running on version &av" + AdvancedAutoSmelt.INSTANCE().getDescription().getVersion() + "&7:");
+            AASMessages.send(s, "%prefix% &7Type &a/aas reload &7to reload the plugin.");
             return true;
         }
 

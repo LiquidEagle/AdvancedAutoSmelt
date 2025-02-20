@@ -1,23 +1,12 @@
 package me.pulsi_.advancedautosmelt.coreSystem;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
-import me.pulsi_.advancedautosmelt.utils.AASChat;
+import me.pulsi_.advancedautosmelt.utils.AASFormatter;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
-import me.pulsi_.advancedautosmelt.utils.AASPermissions;
-import me.pulsi_.advancedautosmelt.utils.AASUtils;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Container;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -30,6 +19,31 @@ public class ExtraFeatures {
     protected static final HashMap<Material, Pair> expMap = new HashMap<>();
     protected static final HashMap<Material, Material> inventoryIngotToBlockMap = new HashMap<>(), inventorySmelterMap = new HashMap<>();
     protected static final Set<UUID> inventoryAlertsCooldown = new HashSet<>();
+
+    /**
+     * Check if the specified player has the inventory full.
+     *
+     * @param p The player to check.
+     * @return true if full, false otherwise.
+     */
+    public static boolean isInventoryFull(Player p) {
+        return p.getInventory().firstEmpty() == -1;
+    }
+
+    /**
+     * Return the specified string with the money identifier formatted.
+     *
+     * @param amount     The money amount.
+     * @return The string formatted.
+     */
+    public static List<String> getMoneyReplacer(double amount) {
+        List<String> values = new ArrayList<>();
+        values.add("%amount%$" + AASFormatter.formatCommas(amount));
+        values.add("%amount_long%$" + (long) amount);
+        values.add("%amount_formatted%$" + AASFormatter.formatPrecise(amount));
+        values.add("%amount_formatted_long%$" + AASFormatter.formatLong(amount));
+        return values;
+    }
 
     /**
      * Method to call before initializing the events to cache settings such as maps for ingot-to-block or smelt features.

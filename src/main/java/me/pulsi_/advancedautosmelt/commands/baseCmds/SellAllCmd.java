@@ -1,7 +1,7 @@
 package me.pulsi_.advancedautosmelt.commands.baseCmds;
 
-import me.pulsi_.advancedautosmelt.players.AASPlayer;
-import me.pulsi_.advancedautosmelt.players.PlayerRegistry;
+import me.pulsi_.advancedautosmelt.coreSystem.AutoSell;
+import me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures;
 import me.pulsi_.advancedautosmelt.utils.AASMessages;
 import me.pulsi_.advancedautosmelt.utils.AASPermissions;
 import me.pulsi_.advancedautosmelt.utils.AASUtils;
@@ -23,15 +23,14 @@ public class SellAllCmd implements CommandExecutor {
             return false;
         }
 
-        if (!AASUtils.hasPermission(p, AASPermissions.autoPickupTogglePermission)) return false;
+        if (!AASUtils.hasPermission(p, AASPermissions.autoSellSellAllPermission)) return false;
 
-        AASPlayer player = PlayerRegistry.getPlayer(p);
-
-        boolean enabled = player.isAutoSellEnabled();
-        if (enabled) AASMessages.send(p, "AutoSell-Deactivated");
-        else AASMessages.send(p, "AutoSell-Activated");
-
-        player.setAutoSellEnabled(!enabled);
+        double price = AutoSell.sellInventory(p);
+        AASMessages.send(
+                p,
+                "AutoSell-SellAll-Message",
+                ExtraFeatures.getMoneyReplacer(price)
+        );
         return true;
     }
 }

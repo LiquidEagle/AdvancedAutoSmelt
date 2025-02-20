@@ -83,7 +83,7 @@ public abstract class AASCommand {
         if (hasCooldown() && getCooldown() > 0 && !(s instanceof ConsoleCommandSender)) {
             if (cooldownMap.containsKey(s.getName()) && cooldownMap.get(s.getName()) > System.currentTimeMillis()) {
                 if (getCooldownMessage() != null && !getCooldownMessage().isEmpty())
-                    AASMessages.send(s, getCooldownMessage(), true);
+                    AASMessages.send(s, getCooldownMessage());
                 return;
             }
             cooldownMap.put(s.getName(), System.currentTimeMillis() + (getCooldown() * 1000L));
@@ -107,11 +107,11 @@ public abstract class AASCommand {
     }
 
     private void sendUsage(CommandSender s) {
-        AASMessages.send(s, "%prefix% &7Command usage: &3" + getUsageWithColors(getUsage()), true);
+        AASMessages.send(s, "%prefix% &7Command usage: &3" + getUsageWithColors(getUsage()));
     }
 
     private void sendConfirm(CommandSender s) {
         String preConfirm = "%prefix% &c", confirm = getConfirmMessage();
-        AASMessages.send(s, preConfirm + confirm, true);
+        AASMessages.send(s, preConfirm + confirm);
     }
 }

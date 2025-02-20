@@ -3,152 +3,219 @@ package me.pulsi_.advancedautosmelt.utils;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class AASMessages {
 
     private static final HashMap<String, List<String>> messages = new HashMap<>();
+    private static final String[] idsToSkip = {
+            "Prefix",
+            "Enable-Missing-Message-Alert"
+    };
 
-    private static String prefix = null;
+    private static String prefix = AASChat.prefix;
 
-    private static boolean enableMissingMessageAlert;
-
-    public static void send(Player p, String message, boolean fromString) {
-        send(p, message, new ArrayList<>(), fromString);
+    /**
+     * Send the desired message to the specified target.
+     * You can choose to send a message from the
+     * messages file using its identifier or a text.
+     *
+     * @param target     The target.
+     * @param identifier The message identifier in the messages file or the text to send.
+     */
+    public static void send(Player target, String identifier) {
+        send(target, identifier, new String[0]);
     }
 
-    public static void send(CommandSender s, String message, boolean fromString) {
-        send(s, message, new ArrayList<>(), fromString);
+    /**
+     * Send the desired message to the specified target.
+     * You can choose to send a message from the
+     * messages file using its identifier or a text.
+     *
+     * @param target     The target.
+     * @param identifier The message identifier in the messages file or the text to send.
+     * @param replacers  A list of possible replacements.
+     */
+    public static void send(Player target, String identifier, List<String> replacers) {
+        send(target, identifier, replacers.toArray(new String[0]));
     }
 
-    public static void send(Player p, String message, List<String> stringsToReplace, boolean fromString) {
-        if (p == null) return;
+    /**
+     * Send the desired message to the specified target.
+     * You can choose to send a message from the
+     * messages file using its identifier or a text.
+     *
+     * @param target     The target.
+     * @param identifier The message identifier in the messages file or the text to send.
+     * @param replacers  A list of possible replacements.
+     */
+    public static void send(Player target, String identifier, String... replacers) {
+        if (target == null || identifier == null || identifier.isEmpty()) return;
 
-        if (!fromString) {
-            send(p, message, stringsToReplace);
-            return;
+        List<String> texts = new ArrayList<>();
+        if (!messages.containsKey(identifier)) texts.add(identifier);
+        else {
+            for (String message : messages.get(identifier))
+                if (!message.isEmpty()) texts.add(message);
         }
 
-        for (String stringToReplace : stringsToReplace) {
-            if (!stringToReplace.contains("$")) continue;
-            String oldChar = stringToReplace.split("\\$")[0];
-            String replacement = stringToReplace.split("\\$")[1];
-            message = message.replace(oldChar, replacement);
-        }
-        p.sendMessage(format(p, message));
+        for (String message : applyReplacers(texts, replacers)) target.sendMessage(format(target, message));
     }
 
-    public static void send(CommandSender s, String message, List<String> stringsToReplace, boolean fromString) {
-        if (s == null) return;
-
-        if (!fromString) {
-            send(s, message, stringsToReplace);
-            return;
-        }
-
-        for (String stringToReplace : stringsToReplace) {
-            if (!stringToReplace.contains("$")) continue;
-            String oldChar = stringToReplace.split("\\$")[0];
-            String replacement = stringToReplace.split("\\$")[1];
-            message = message.replace(oldChar, replacement);
-        }
-        s.sendMessage(format(s, message));
+    /**
+     * Send the desired message to the specified target.
+     * You can choose to send a message from the
+     * messages file using its identifier or a text.
+     *
+     * @param target     The target.
+     * @param identifier The message identifier in the messages file or the text to send.
+     */
+    public static void send(CommandSender target, String identifier) {
+        send(target, identifier, new String[0]);
     }
 
-    public static void send(Player p, String identifier) {
-        send(p, identifier, new ArrayList<>());
+    /**
+     * Send the desired message to the specified target.
+     * You can choose to send a message from the
+     * messages file using its identifier or a text.
+     *
+     * @param target     The target.
+     * @param identifier The message identifier in the messages file or the text to send.
+     * @param replacers  A list of possible replacements.
+     */
+    public static void send(CommandSender target, String identifier, List<String> replacers) {
+        send(target, identifier, replacers.toArray(new String[0]));
     }
 
-    public static void send(Player p, String identifier, String... stringsToReplace) {
-        send(p, identifier, Arrays.asList(stringsToReplace));
-    }
+    /**
+     * Send the desired message to the specified target.
+     * You can choose to send a message from the
+     * messages file using its identifier or a text.
+     *
+     * @param target     The target.
+     * @param identifier The message identifier in the messages file or the text to send.
+     * @param replacers  A list of possible replacements.
+     */
+    public static void send(CommandSender target, String identifier, String... replacers) {
+        if (target == null || identifier == null || identifier.isEmpty()) return;
 
-    public static void send(Player p, String identifier, List<String>... stringsToReplace) {
-        if (p == null) return;
-
-        if (!messages.containsKey(identifier)) {
-            if (enableMissingMessageAlert)
-                p.sendMessage(addPrefix("%prefix% &cThe \"" + identifier + "&c\" messages is missing in the messages file!"));
-            return;
+        List<String> texts = new ArrayList<>();
+        if (!messages.containsKey(identifier)) texts.add(identifier);
+        else {
+            for (String message : messages.get(identifier))
+                if (!message.isEmpty()) texts.add(message);
         }
 
-        List<String> listOfMessages = messages.get(identifier);
-        for (String message : listOfMessages) {
-            for (List<String> replacers : stringsToReplace) {
-                for (String stringToReplace : replacers) {
-                    if (!stringToReplace.contains("$")) continue;
-                    String oldChar = stringToReplace.split("\\$")[0];
-                    String replacement = stringToReplace.split("\\$")[1];
-                    message = message.replace(oldChar, replacement);
-                }
+        for (String message : applyReplacers(texts, replacers)) target.sendMessage(format(target, message));
+    }
+
+    /**
+     * Return a list of the input text list with all the replacers applied.
+     * <p>
+     * The BankPlus replacer has the following format: "textToReplace$replacement"
+     *
+     * @param texts     The text list input.
+     * @param replacers A list of possible replacements.
+     * @return A copy of the input list with replacers applied.
+     */
+    public static List<String> applyReplacers(List<String> texts, String... replacers) {
+        if (replacers == null || replacers.length == 0) return texts;
+
+        List<String> replacedTexts = new ArrayList<>();
+        for (String message : texts) {
+            if (message == null || message.isEmpty()) continue;
+
+            for (String replacer : replacers) {
+                if (replacer == null || !replacer.contains("$")) continue;
+
+                String[] split = replacer.split("\\$");
+                message = message.replace(split[0], split[1]);
             }
-            if (!message.equals("")) p.sendMessage(format(p, message));
+            replacedTexts.add(message);
         }
+        return replacedTexts;
     }
 
-    public static void send(CommandSender s, String identifier) {
-        send(s, identifier, new ArrayList<>());
-    }
-
-    public static void send(CommandSender s, String identifier, String... stringsToReplace) {
-        send(s, identifier, Arrays.asList(stringsToReplace));
-    }
-
-    public static void send(CommandSender s, String identifier, List<String>... stringsToReplace) {
-        if (s == null) return;
-
-        if (!messages.containsKey(identifier)) {
-            if (enableMissingMessageAlert)
-                s.sendMessage(addPrefix("%prefix% &cThe \"" + identifier + "&c\" messages is missing in the messages file!"));
-            return;
-        }
-
-        List<String> listOfMessages = messages.get(identifier);
-        for (String message : listOfMessages) {
-            for (List<String> replacers : stringsToReplace) {
-                for (String stringToReplace : replacers) {
-                    if (!stringToReplace.contains("$")) continue;
-                    String oldChar = stringToReplace.split("\\$")[0];
-                    String replacement = stringToReplace.split("\\$")[1];
-                    message = message.replace(oldChar, replacement);
-                }
-            }
-            if (!message.equals("")) s.sendMessage(format(s, message));
-        }
-    }
-
+    /**
+     * Load all the message values from the given config file.
+     */
     public static void loadMessages() {
         messages.clear();
 
-        FileConfiguration config = AdvancedAutoSmelt.INSTANCE().getConfigs().getConfig("messages.yml");
-        for (String path : config.getConfigurationSection("").getKeys(false)) {
-            if (!path.equals("Enable-Missing-Message-Alert"))
-                messages.put(path, config.getStringList(path).isEmpty() ? Collections.singletonList(config.getString(path)) : config.getStringList(path));
+        FileConfiguration messagesConfig = AdvancedAutoSmelt.INSTANCE().getConfigs().getConfig("messages.yml");
+
+        for (String identifier : messagesConfig.getKeys(false))
+            if (!isIgnoredId(identifier)) messages.put(identifier, getPossibleMessages(messagesConfig, identifier));
+
+        String prefixString = messagesConfig.getString("Prefix");
+        prefix = prefixString == null ? AASChat.prefix : prefixString;
+    }
+
+    /**
+     * Get a list of possible messages from the given identifier.
+     *
+     * @param section The section of the messages.yml.
+     * @param id      The identifier name.
+     * @return A list of messages.
+     */
+    public static List<String> getPossibleMessages(ConfigurationSection section, String id) {
+        List<String> configMessages = section.getStringList(id);
+        if (configMessages.isEmpty()) {
+            String singleMessage = section.getString(id);
+            if (singleMessage != null && !singleMessage.isEmpty()) configMessages.add(singleMessage);
         }
-
-        if (messages.containsKey("Prefix")) {
-            List<String> prefixes = messages.get("Prefix");
-            prefix = prefixes.isEmpty() ? AASChat.prefix : prefixes.get(0);
-        } else prefix = AASChat.prefix;
-        enableMissingMessageAlert = config.getBoolean("Enable-Missing-Message-Alert");
+        return configMessages;
     }
 
-    public static String addPrefix(String message) {
-        return AASChat.color(message.replace("%prefix%", getPrefix()));
+    /**
+     * Return the specified message formatted with the existing placeholders.
+     *
+     * @param text The origin text.
+     * @return The formatted message.
+     */
+    public static String format(String text) {
+        return AASChat.color(text.replace("%prefix%", prefix));
     }
 
-    public static String getPrefix() {
-        return prefix;
+    /**
+     * Return the specified message formatted with the existing placeholders.
+     *
+     * @param p    The player, for placeholderApi placeholders.
+     * @param text The origin text.
+     * @return The formatted message.
+     */
+    public static String format(Player p, String text) {
+        text = AASChat.color(text.replace("%prefix%", prefix));
+        return AdvancedAutoSmelt.INSTANCE().isPlaceholderApiHooked() ? PlaceholderAPI.setPlaceholders(p, text) : text;
     }
 
-    private static String format(Player p, String text) {
-        return AdvancedAutoSmelt.INSTANCE().isPlaceholderApiHooked() ? PlaceholderAPI.setPlaceholders(p, addPrefix(text)) : addPrefix(text);
+    /**
+     * Return the specified message formatted with the existing placeholders.
+     *
+     * @param s    The command sender.
+     * @param text The origin text.
+     * @return The formatted message.
+     */
+    public static String format(CommandSender s, String text) {
+        text = AASChat.color(text.replace("%prefix%", prefix));
+        return s instanceof Player ? format((Player) s, text) : text;
     }
 
-    private static String format(CommandSender s, String text) {
-        return s instanceof Player ? format((Player) s, addPrefix(text)) : addPrefix(text);
+    /**
+     * Check if the specified id is to be skipped. (Example: "Prefix")
+     *
+     * @param id The id to check.
+     * @return true if is skippable, false otherwise.
+     */
+    public static boolean isIgnoredId(String id) {
+        for (String idToSkip : idsToSkip)
+            if (id.equals(idToSkip)) return true;
+        return false;
     }
 }

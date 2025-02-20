@@ -23,7 +23,7 @@ public class AutoSellCmd implements CommandExecutor {
             return false;
         }
 
-        if (!AASUtils.hasPermission(p, AASPermissions.autoPickupTogglePermission)) return false;
+        if (!AASUtils.hasPermission(p, AASPermissions.autoSellTogglePermission)) return false;
 
         AASPlayer player = PlayerRegistry.getPlayer(p);
 

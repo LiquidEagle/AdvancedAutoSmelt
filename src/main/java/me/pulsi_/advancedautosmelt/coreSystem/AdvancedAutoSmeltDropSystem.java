@@ -1,10 +1,8 @@
 package me.pulsi_.advancedautosmelt.coreSystem;
 
-import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.players.PlayerRegistry;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,11 +12,17 @@ import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Random;
 
+/**
+ * All the different methods are divided to load the best case
+ * for each situation, doing the minimum necessary checks and
+ * highly improving the performance.
+ */
 public abstract class AdvancedAutoSmeltDropSystem {
 
     private static DropGetter dropGetter;
@@ -35,47 +39,19 @@ public abstract class AdvancedAutoSmeltDropSystem {
      * @param fortuneLevel The level of fortune that the item has.
      */
     public static void giveDrops(Player p, Block block, ItemStack itemUsed, int fortuneLevel) {
-        Bukkit.getScheduler().runTaskAsynchronously(AdvancedAutoSmelt.INSTANCE(), () -> {
-            Collection<ItemStack> drops = dropGetter.getDrops(itemUsed, block);
-            if (drops.isEmpty()) return;
-
-            dropSmelter.smeltDrops(p, drops);
-            fortuneApplier.applyFortune(p, block, drops, fortuneLevel);
-
-            if (ConfigValues.isAutoSellEnabled() && ConfigValues.isAutoSellInstantSell()) {
-                double sellMoney = 0;
-                for (ItemStack drop : new ArrayList<>(drops)) { // Check which of the drops is sellable.
-                    if (AutoSell.isSellable(drop)) {
-                        sellMoney += AutoSell.getPrice(drop);
-                        drops.remove(drop); // Sum the price and remove the drop to not send it into the player's inventory.
-                    }
-                }
-
-                if (ConfigValues.isAutoSellUseVaultEconomy()) {
-                    Economy vault = AdvancedAutoSmelt.getVaultEconomy();
-                    if (vault != null) vault.depositPlayer(p, sellMoney);
-                } else {
-
-                }
-            }
-            AdvancedAutoSmeltDropSystem.giveExp(p, block);
-            dropGiver.giveDrops(p, block, drops);
-        });
-    }
-
-    /**
-     * Return a list of drops that should be given from the specified block, smelted and multiplied by fortune.
-     *
-     * @param p            The player that broke the block.
-     * @param block        The block broken.
-     * @param itemUsed     The item used to break the block.
-     * @param fortuneLevel The level of fortune that is in the item.
-     */
-    public static Collection<ItemStack> getModifiedDrops(Player p, Block block, ItemStack itemUsed, int fortuneLevel) {
         Collection<ItemStack> drops = dropGetter.getDrops(itemUsed, block);
+        if (drops.isEmpty()) return;
+
         dropSmelter.smeltDrops(p, drops);
         fortuneApplier.applyFortune(p, block, drops, fortuneLevel);
-        return drops;
+
+        if (ConfigValues.isAutoSellEnabled()) {
+            if (ConfigValues.isAutoSellInstantSell()) AutoSell.sellItems(p, drops);
+            else if (ConfigValues.isAutoSellOnInventoryFull() && ExtraFeatures.isInventoryFull(p))
+                AutoSell.sellInventory(p);
+        }
+        if (ConfigValues.isIsCustomExpEnabled()) giveExp(p, block);
+        dropGiver.giveDrops(p, block, drops);
     }
 
     /**
@@ -181,6 +157,7 @@ public abstract class AdvancedAutoSmeltDropSystem {
     }
 
     private abstract static class DropGetter {
+
         public abstract Collection<ItemStack> getDrops(ItemStack itemUsed, Block block);
 
         public static void loadDropGetter() {

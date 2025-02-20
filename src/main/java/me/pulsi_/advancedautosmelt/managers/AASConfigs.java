@@ -14,7 +14,11 @@ import java.util.Scanner;
 
 public class AASConfigs {
 
+    private static final String configVersion = "Config-Version";
+
     private final AdvancedAutoSmelt plugin;
+
+    boolean isToUpdate = false;
 
     public AASConfigs(AdvancedAutoSmelt plugin) {
         this.plugin = plugin;
@@ -22,29 +26,39 @@ public class AASConfigs {
         if (getFile("config.yml").exists()) {
             FileConfiguration config = getConfig("config.yml");
 
-            String autoUpdate = config.getString("Auto-Update"), version = config.getString("config-version");
-            if (autoUpdate != null && version != null) {
-                boolean isToUpdate;
-                String plVersion = plugin.getDescription().getVersion();
-                if (!config.getBoolean("Auto-Update")) isToUpdate = false;
-                else isToUpdate = !plVersion.equals(version);
+            String version = config.getString(configVersion);
+            if (version == null) isToUpdate = true;
+            else {
+                boolean autoUpdate = config.getBoolean("Auto-Update");
+                if (!autoUpdate) isToUpdate = false;
+                else {
+                    String plVersion = plugin.getDescription().getVersion();
+                    isToUpdate = !plVersion.equals(version);
 
-                if (!isToUpdate) return;
-
-                config.set("Config-Version", plVersion);
-                try {
-                    config.save(getFile("config.yml"));
-                } catch (Exception e) {
-                    AASLogger.error(e, "Could not update config version:");
+                    File configFile = getFile("config.yml");
+                    if (isToUpdate && configFile.exists()) {
+                        config.set(configVersion, plVersion);
+                        try { // Set the config to the updated version to load it in the setup method correctly.
+                            config.save(configFile);
+                        } catch (IOException e) {
+                            AASLogger.warn("Could not update config file version: " + e.getMessage());
+                        }
+                    }
                 }
             }
         }
     }
 
+    /**
+     * Method to call after the constructor to generate, and in case, update the existing files.
+     */
     public void setupConfigFiles() {
         setupFile("config.yml");
         setupFile("messages.yml");
-        setupFile("sell_prices.yml");
+        if (!getFile("sell_prices.yml").exists())
+            plugin.saveResource("sell_prices.yml", false);
+
+        isToUpdate = false;
     }
 
     /**
@@ -73,18 +87,19 @@ public class AASConfigs {
         return new File(plugin.getDataFolder(), name);
     }
 
+    /**
+     * Set up the file, create it if missing or update it if necessary.
+     *
+     * @param fileName The name of the file.
+     */
     public void setupFile(String fileName) {
         File folderFile = getFile(fileName);
         boolean exist = folderFile.exists();
 
         if (!exist) {
-            try {
-                folderFile.getParentFile().mkdir();
-                folderFile.createNewFile();
-            } catch (IOException e) {
-                AASLogger.error(e, "Could not create the file \"" + fileName + "\".");
-            }
-        }
+            plugin.saveResource(fileName, false);
+            return;
+        } else if (!isToUpdate) return;
 
         HashMap<Integer, FileLine> file = new HashMap<>();
 

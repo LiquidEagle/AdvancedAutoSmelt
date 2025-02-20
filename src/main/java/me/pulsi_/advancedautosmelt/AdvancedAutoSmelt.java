@@ -1,6 +1,5 @@
 package me.pulsi_.advancedautosmelt;
 
-import me.pulsi_.advancedautosmelt.listeners.PrisonEnchantsListener;
 import me.pulsi_.advancedautosmelt.managers.AASConfigs;
 import me.pulsi_.advancedautosmelt.managers.AASData;
 import me.pulsi_.advancedautosmelt.placeholders.Placeholders;
@@ -43,13 +42,6 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         }
         serverVersionInt = number;
 
-        PluginManager plManager = getServer().getPluginManager();
-        if (plManager.getPlugin("PrisonEnchants") != null) { // Load before because it needs to check for hook of PE for registering the listener.
-            prisonEnchantsHooked = true;
-            plManager.registerEvents(new PrisonEnchantsListener(), this);
-            AASLogger.info("Hooked into PrisonEnchants!");
-        }
-
         configs = new AASConfigs(this);
         dataManager = new AASData(this);
         dataManager.setupPlugin();
@@ -66,6 +58,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
             }
         }
 
+        PluginManager plManager = getServer().getPluginManager();
         if (plManager.getPlugin("PlaceholderAPI") != null) {
             placeholderApiHooked = true;
             new Placeholders().register();

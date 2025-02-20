@@ -19,7 +19,7 @@ public class InventoryAlerts {
      * @param p The player to alert.
      */
     public static void inventoryAlerts(Player p) {
-        if (!ConfigValues.isInventoryAlertsEnabled() || p.getInventory().firstEmpty() > -1) return;
+        if (!ConfigValues.isInventoryAlertsEnabled() || !ExtraFeatures.isInventoryFull(p)) return;
 
         UUID uuid = p.getUniqueId();
         if (inventoryAlertsCooldown.contains(uuid)) return;

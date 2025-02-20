@@ -68,10 +68,10 @@ public class ReloadCmd extends AASCommand {
         if (confirm(s)) return false;
 
         long start = System.currentTimeMillis();
-        AASMessages.send(s, "%prefix% &7Initializing reload task...", true);
+        AASMessages.send(s, "%prefix% &7Initializing reload task...");
 
-        if (AdvancedAutoSmelt.INSTANCE().getDataManager().reloadPlugin()) AASMessages.send(s, "%prefix% &2Successfully reloaded the plugin! &8(&bTook " + (System.currentTimeMillis() - start) + "ms&8)", true);
-        else AASMessages.send(s, "%prefix% &cSomething went wrong while reloading the plugin, check the console for more info.", true);
+        if (AdvancedAutoSmelt.INSTANCE().getDataManager().reloadPlugin()) AASMessages.send(s, "%prefix% &2Successfully reloaded the plugin! &8(&bTook " + (System.currentTimeMillis() - start) + "ms&8)");
+        else AASMessages.send(s, "%prefix% &cSomething went wrong while reloading the plugin, check the console for more info.");
 
         return true;
     }

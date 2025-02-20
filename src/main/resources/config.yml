@@ -127,6 +127,8 @@ AutoSell:
   # items, enable this option and the /sellall cmd will be
   # registered to the server, otherwise, it won't be registered.
   # This option will need to restart the server to apply changes.
+  #
+  # Permission needed: advancedautosmelt.sellall
   Register-Sell-All-Cmd: false
 
   # Automatically detect server economy and add money using Vault.
@@ -137,6 +139,12 @@ AutoSell:
   #
   # Cmd placeholders: %player% -> Player name. %amount% -> Money amount.
   Custom-Add-Cmd: "eco give %player% %amount%"
+
+  # Send the auto sell recap message once every the specified delay.
+  # The message is in the messages.yml file.
+  AutoSell-Recap:
+    Enabled: true
+    Delay: 1200 # In ticks, 20 ticks = 1 second. (1 minute)
 
   # It will be enabled even if it doesn't have the toggle permission.
   Enable-On-Join:
@@ -217,6 +225,16 @@ Extras:
 Placeholders:
   Enabled: "&2Enabled"
   Disabled: "&cDisabled"
+
+  # Money placeholders.
+  Thousands: "K"
+  Millions: "M"
+  Billions: "B"
+  Trillions: "T"
+  Quadrillions: "Q"
+  Quintillions: "QQ"
+  Thousands-Separator: "."
+  Decimals-Separator: ","
 
 # Do not edit this if you don't know what it does.
 # Choose one listener priority for the block break event of AAS between:
