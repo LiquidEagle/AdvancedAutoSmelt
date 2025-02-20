@@ -5,6 +5,7 @@ import me.pulsi_.advancedautosmelt.managers.AASData;
 import me.pulsi_.advancedautosmelt.placeholders.Placeholders;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
+import me.pulsi_.prisonenchants.utils.PELogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -15,7 +16,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     private static AdvancedAutoSmelt INSTANCE;
 
-    private boolean placeholderApiHooked, worldGuardHooked, prisonEnchantsHooked;
+    private boolean placeholderApiHooked, worldGuardHooked;
 
     private AASConfigs configs;
     private AASData dataManager;
@@ -50,7 +51,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
             if (!setupVault()) {
                 if (tries == 3) AASLogger.warn("Could not setup Vault economy because it has not been found.");
                 else {
-                    Bukkit.getScheduler().runTaskLater(this, this::onEnable, 2);
+                    Bukkit.getScheduler().runTaskLater(this, this::onEnable, 20);
                     AASLogger.warn("Could not setup Vault economy for autosell because it has not been found, trying again... (" + (tries + 1) + " try)");
                     tries++;
                     return;
@@ -85,6 +86,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) return false;
 
+        PELogger.info("Vault economy set up completed correctly.");
         vaultEconomy = rsp.getProvider();
         return true;
     }
@@ -95,10 +97,6 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
 
     public boolean isWorldGuardHooked() {
         return worldGuardHooked;
-    }
-
-    public boolean isPrisonEnchantsHooked() {
-        return prisonEnchantsHooked;
     }
 
     public AASConfigs getConfigs() {

@@ -12,16 +12,11 @@ commands:
     aliases: [aautosmelt, autosmelt, aas]
 
   autopickup:
-    usage: "/autopickup"
 
   autosmelt:
-    usage: "/autosmelt"
 
   autosell:
-    usage: "/autosell"
 
   inventoryalerts:
-    usage: "/inventoryalerts"
 
   sellall:
-    usage: "/sellall"

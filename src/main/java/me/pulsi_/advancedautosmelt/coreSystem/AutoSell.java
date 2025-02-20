@@ -4,6 +4,7 @@ import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
 import me.pulsi_.advancedautosmelt.utils.AASMessages;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
+import me.pulsi_.prisonenchants.utils.PELogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
