@@ -1,6 +1,7 @@
 package me.pulsi_.advancedautosmelt.values;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class ConfigValues {
     private static boolean autoSellUseVaultEconomy;
     private static boolean autoSellRecapEnabled;
     private static int autoSellRecapDelay;
-
+    private static ConfigurationSection autoSellMultipliers;
 
     private static List<String> fortuneWhitelist;
     private static List<String> fortuneWorldBlacklist;
@@ -116,6 +117,7 @@ public class ConfigValues {
         autoSellUseVaultEconomy = config.getBoolean("AutoSell.Use-Vault-Economy");
         autoSellRecapEnabled = config.getBoolean("AutoSell.AutoSell-Recap.Enabled");
         autoSellRecapDelay = config.getInt("AutoSell.AutoSell-Recap.Delay");
+        autoSellMultipliers = config.getConfigurationSection("AutoSell.AutoSell-Multipliers");
 
         fortuneWhitelist = config.getStringList("Fortune.Block-Whitelist.Whitelist");
         fortuneWorldBlacklist = config.getStringList("Fortune.World-Blacklist");
@@ -268,6 +270,16 @@ public class ConfigValues {
 
     public static int getAutoSellRecapDelay() {
         return autoSellRecapDelay;
+    }
+
+    /**
+     * Get the configuration section of the auto sell multipliers.
+     * Permissions as keys, Multipliers as value.
+     *
+     * @return The configuration section of multipliers.
+     */
+    public static ConfigurationSection getAutoSellMultipliers() {
+        return autoSellMultipliers;
     }
 
     public static List<String> getFortuneWhitelist() {

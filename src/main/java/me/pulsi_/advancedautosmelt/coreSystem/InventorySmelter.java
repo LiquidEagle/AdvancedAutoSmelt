@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import static me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures.inventoryIngotToBlockMap;
-import static me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures.inventorySmelterMap;
+import static me.pulsi_.advancedautosmelt.coreSystem.CoreLoader.inventoryIngotToBlockMap;
+import static me.pulsi_.advancedautosmelt.coreSystem.CoreLoader.inventorySmelterMap;
 
 public class InventorySmelter {
 

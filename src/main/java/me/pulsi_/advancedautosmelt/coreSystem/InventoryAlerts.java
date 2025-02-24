@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import static me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures.inventoryAlertsCooldown;
+import static me.pulsi_.advancedautosmelt.coreSystem.CoreLoader.inventoryAlertsCooldown;
 
 public class InventoryAlerts {
 
@@ -19,7 +19,7 @@ public class InventoryAlerts {
      * @param p The player to alert.
      */
     public static void inventoryAlerts(Player p) {
-        if (!ConfigValues.isInventoryAlertsEnabled() || !ExtraFeatures.isInventoryFull(p)) return;
+        if (!ConfigValues.isInventoryAlertsEnabled() || !AASUtils.isInventoryFull(p)) return;
 
         UUID uuid = p.getUniqueId();
         if (inventoryAlertsCooldown.contains(uuid)) return;

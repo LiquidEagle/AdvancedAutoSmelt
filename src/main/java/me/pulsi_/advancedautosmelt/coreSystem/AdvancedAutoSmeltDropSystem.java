@@ -2,6 +2,7 @@ package me.pulsi_.advancedautosmelt.coreSystem;
 
 import me.pulsi_.advancedautosmelt.players.PlayerRegistry;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
+import me.pulsi_.advancedautosmelt.utils.AASUtils;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -47,7 +48,7 @@ public abstract class AdvancedAutoSmeltDropSystem {
 
         if (ConfigValues.isAutoSellEnabled()) {
             if (ConfigValues.isAutoSellInstantSell()) AutoSell.sellItems(p, drops);
-            else if (ConfigValues.isAutoSellOnInventoryFull() && ExtraFeatures.isInventoryFull(p))
+            else if (ConfigValues.isAutoSellOnInventoryFull() && AASUtils.isInventoryFull(p))
                 AutoSell.sellInventory(p);
         }
         if (ConfigValues.isIsCustomExpEnabled()) giveExp(p, block);
@@ -65,9 +66,9 @@ public abstract class AdvancedAutoSmeltDropSystem {
         if (!ConfigValues.isIsCustomExpEnabled()) return 0;
 
         Material type = block.getType();
-        if (!ExtraFeatures.expMap.containsKey(type)) return 0;
+        if (!CoreLoader.expMap.containsKey(type)) return 0;
 
-        ExtraFeatures.Pair values = ExtraFeatures.expMap.get(type);
+        CoreLoader.Pair values = CoreLoader.expMap.get(type);
 
         boolean needAutoSmelt = (boolean) values.v;
         if (needAutoSmelt && !AdvancedAutoSmeltDropSystem.canAutoSmelt(p)) return 0;

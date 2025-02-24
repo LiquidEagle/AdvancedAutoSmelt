@@ -5,6 +5,7 @@ import me.pulsi_.advancedautosmelt.utils.AASFormatter;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -13,22 +14,13 @@ import java.util.*;
 /**
  * Class to hold stored data of different feature modules and utility methods.
  */
-public class ExtraFeatures {
+public class CoreLoader {
 
+    protected static final HashMap<String, Double> autoSellMultipliers = new HashMap<>();
     protected static final HashMap<Material, Double> sellPrices = new HashMap<>();
     protected static final HashMap<Material, Pair> expMap = new HashMap<>();
     protected static final HashMap<Material, Material> inventoryIngotToBlockMap = new HashMap<>(), inventorySmelterMap = new HashMap<>();
     protected static final Set<UUID> inventoryAlertsCooldown = new HashSet<>();
-
-    /**
-     * Check if the specified player has the inventory full.
-     *
-     * @param p The player to check.
-     * @return true if full, false otherwise.
-     */
-    public static boolean isInventoryFull(Player p) {
-        return p.getInventory().firstEmpty() == -1;
-    }
 
     /**
      * Return the specified string with the money identifier formatted.
@@ -117,6 +109,24 @@ public class ExtraFeatures {
                 }
 
                 sellPrices.put(material, price);
+            }
+
+            autoSellMultipliers.clear();
+            ConfigurationSection section = ConfigValues.getAutoSellMultipliers();
+            if (section != null) {
+                for (String permission : section.getKeys(false)) {
+                    String multiplierString = section.getString(permission);
+                    if (multiplierString == null) {
+                        AASLogger.warn("The autosell multiplier \"" + permission + "\" does not specify a percentage.");
+                        continue;
+                    }
+
+                    try {
+                        autoSellMultipliers.put(permission, Double.parseDouble(multiplierString.replace("%", "")));
+                    } catch (NumberFormatException e) {
+                        AASLogger.warn("Invalid autosell multiplier percentage specified in multiplier \"" + permission + "\".");
+                    }
+                }
             }
         }
 

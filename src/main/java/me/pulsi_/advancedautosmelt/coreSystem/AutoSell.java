@@ -4,7 +4,6 @@ import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
 import me.pulsi_.advancedautosmelt.utils.AASMessages;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
-import me.pulsi_.prisonenchants.utils.PELogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,7 +14,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures.sellPrices;
+import static me.pulsi_.advancedautosmelt.coreSystem.CoreLoader.autoSellMultipliers;
+import static me.pulsi_.advancedautosmelt.coreSystem.CoreLoader.sellPrices;
 
 public class AutoSell {
 
@@ -67,6 +67,8 @@ public class AutoSell {
      * @param amount The money amount.
      */
     public static void giveMoney(Player p, double amount) {
+        amount += (amount / 100) * getAutoSellMultiplier(p);
+
         String n = p.getName();
         if (ConfigValues.isAutoSellUseVaultEconomy()) {
             Economy vault = AdvancedAutoSmelt.getVaultEconomy();
@@ -92,11 +94,24 @@ public class AutoSell {
                 AASMessages.send(
                         p,
                         "AutoSell-Recap-Message",
-                        ExtraFeatures.getMoneyReplacer(recap.get(uuid))
+                        CoreLoader.getMoneyReplacer(recap.get(uuid))
                 );
                 recap.remove(uuid);
             }, ConfigValues.getAutoSellRecapDelay());
         }
+    }
+
+    /**
+     * Get the total percentage of active multiplier on the specified player.
+     *
+     * @param p The player to check.
+     * @return The multiplier percentage, or 0 if none found.
+     */
+    public static double getAutoSellMultiplier(Player p) {
+        double multipliers = 0;
+        for (String permission : autoSellMultipliers.keySet())
+            if (p.hasPermission(permission)) multipliers += autoSellMultipliers.get(permission);
+        return multipliers;
     }
 
     /**

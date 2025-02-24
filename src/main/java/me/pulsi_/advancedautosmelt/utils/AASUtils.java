@@ -8,6 +8,16 @@ import org.bukkit.entity.Player;
 
 public class AASUtils {
 
+    /**
+     * Check if the specified player has the inventory full.
+     *
+     * @param p The player to check.
+     * @return true if full, false otherwise.
+     */
+    public static boolean isInventoryFull(Player p) {
+        return p.getInventory().firstEmpty() == -1;
+    }
+
     public static void playSound(Player p, String sound) {
         String soundType = sound.split(" ")[0];
         int volume = Integer.parseInt(sound.split(" ")[1]);

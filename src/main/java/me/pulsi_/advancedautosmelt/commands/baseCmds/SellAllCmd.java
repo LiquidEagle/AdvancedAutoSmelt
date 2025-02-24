@@ -1,7 +1,7 @@
 package me.pulsi_.advancedautosmelt.commands.baseCmds;
 
 import me.pulsi_.advancedautosmelt.coreSystem.AutoSell;
-import me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures;
+import me.pulsi_.advancedautosmelt.coreSystem.CoreLoader;
 import me.pulsi_.advancedautosmelt.utils.AASMessages;
 import me.pulsi_.advancedautosmelt.utils.AASPermissions;
 import me.pulsi_.advancedautosmelt.utils.AASUtils;
@@ -29,7 +29,7 @@ public class SellAllCmd implements CommandExecutor {
         AASMessages.send(
                 p,
                 "AutoSell-SellAll-Message",
-                ExtraFeatures.getMoneyReplacer(price)
+                CoreLoader.getMoneyReplacer(price)
         );
         return true;
     }

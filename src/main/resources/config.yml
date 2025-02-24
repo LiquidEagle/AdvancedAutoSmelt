@@ -140,6 +140,15 @@ AutoSell:
   # Cmd placeholders: %player% -> Player name. %amount% -> Money amount.
   Custom-Add-Cmd: "eco give %player% %amount%"
 
+  # List of permission that if given to the player,
+  # they will increase the auto sell money outcome.
+  $AutoSell-Multiplier:
+    # If the player has the permission "autosell_permission1" the sell outcome will be increased by 5%
+    # Auto sell multiplier are be summed, so having 2 permissions will result if a total % of perm1 + perm2.
+    autosell_permission1: "5%"
+    autosell_permission2: "10%"
+    autosell_permission3: "15%" # You can also use decimals.
+
   # Send the auto sell recap message once every the specified delay.
   # The message is in the messages.yml file.
   AutoSell-Recap:

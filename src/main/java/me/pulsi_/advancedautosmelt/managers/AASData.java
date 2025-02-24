@@ -4,7 +4,7 @@ import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
 import me.pulsi_.advancedautosmelt.commands.CmdRegisterer;
 import me.pulsi_.advancedautosmelt.commands.baseCmds.*;
 import me.pulsi_.advancedautosmelt.coreSystem.AdvancedAutoSmeltDropSystem;
-import me.pulsi_.advancedautosmelt.coreSystem.ExtraFeatures;
+import me.pulsi_.advancedautosmelt.coreSystem.CoreLoader;
 import me.pulsi_.advancedautosmelt.external.UpdateChecker;
 import me.pulsi_.advancedautosmelt.external.bStats;
 import me.pulsi_.advancedautosmelt.listeners.ServerListener;
@@ -52,7 +52,7 @@ public class AASData {
             AASMessages.loadMessages();
 
             AdvancedAutoSmeltDropSystem.loadDropSystem();
-            ExtraFeatures.loadExtraFeatures();
+            CoreLoader.loadExtraFeatures();
         } catch (Exception e) {
             AASLogger.warn(e, "Something went wrong while trying to reload the plugin.");
             return false;

@@ -5,7 +5,6 @@ import me.pulsi_.advancedautosmelt.managers.AASData;
 import me.pulsi_.advancedautosmelt.placeholders.Placeholders;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
-import me.pulsi_.prisonenchants.utils.PELogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -86,7 +85,7 @@ public final class AdvancedAutoSmelt extends JavaPlugin {
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) return false;
 
-        PELogger.info("Vault economy set up completed correctly.");
+        AASLogger.info("Vault economy set up completed correctly.");
         vaultEconomy = rsp.getProvider();
         return true;
     }
