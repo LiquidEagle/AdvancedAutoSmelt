@@ -5,6 +5,10 @@ plugins {
 group = 'me.pulsi_'
 version = '5.0.3' // ALSO CHANGE IT IN THE CONFIG.YML
 
+//setBuildDir(new File("C:\\Users\\faste\\Desktop\\1.16.4")); // PC
+//setBuildDir(new File("C:\\Users\\faste\\Desktop\\Test Servers\\1.16.4")); // Laptop
+//setLibsDirName("plugins");
+
 repositories {
     mavenCentral()
     maven {

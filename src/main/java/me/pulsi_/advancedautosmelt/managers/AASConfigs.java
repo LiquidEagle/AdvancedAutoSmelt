@@ -96,10 +96,8 @@ public class AASConfigs {
         File folderFile = getFile(fileName);
         boolean exist = folderFile.exists();
 
-        if (!exist) {
-            plugin.saveResource(fileName, false);
-            return;
-        } else if (!isToUpdate) return;
+        if (!exist) plugin.saveResource(fileName, false);
+        else if (!isToUpdate) return;
 
         HashMap<Integer, FileLine> file = new HashMap<>();
 

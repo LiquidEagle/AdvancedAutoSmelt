@@ -142,7 +142,7 @@ AutoSell:
 
   # List of permission that if given to the player,
   # they will increase the auto sell money outcome.
-  $AutoSell-Multiplier:
+  $AutoSell-Multipliers:
     # If the player has the permission "autosell_permission1" the sell outcome will be increased by 5%
     # Auto sell multiplier are be summed, so having 2 permissions will result if a total % of perm1 + perm2.
     autosell_permission1: "5%"

@@ -108,6 +108,7 @@ public class AutoSell {
      * @return The multiplier percentage, or 0 if none found.
      */
     public static double getAutoSellMultiplier(Player p) {
+        AASLogger.info(String.valueOf(autoSellMultipliers));
         double multipliers = 0;
         for (String permission : autoSellMultipliers.keySet())
             if (p.hasPermission(permission)) multipliers += autoSellMultipliers.get(permission);
