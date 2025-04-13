@@ -22,14 +22,12 @@ public class AutoPickupCmd implements CommandExecutor {
             AASMessages.send(p, "AutoPickup-Disabled");
             return false;
         }
-        // Moved player declaration here to use in permission check
-        AASPlayer player = PlayerRegistry.getPlayer(p);
 
         if (!AASUtils.hasPermission(p, AASPermissions.autoPickupTogglePermission)) {
-            // ~ Check if player had AutoPickup enabled before losing permission & disable if true.
-            if (player.isAutoPickupEnabled()) {player.setAutoPickupEnabled(false);}
             return false;
         }
+
+        AASPlayer player = PlayerRegistry.getPlayer(p);
 
         boolean enabled = player.isAutoPickupEnabled();
         if (enabled) AASMessages.send(p, "AutoPickup-Deactivated");

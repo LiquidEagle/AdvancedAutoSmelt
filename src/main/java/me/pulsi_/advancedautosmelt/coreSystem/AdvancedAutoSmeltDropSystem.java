@@ -1,7 +1,9 @@
 package me.pulsi_.advancedautosmelt.coreSystem;
 
+import me.pulsi_.advancedautosmelt.players.AASPlayer;
 import me.pulsi_.advancedautosmelt.players.PlayerRegistry;
 import me.pulsi_.advancedautosmelt.utils.AASLogger;
+import me.pulsi_.advancedautosmelt.utils.AASPermissions;
 import me.pulsi_.advancedautosmelt.utils.AASUtils;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
 import org.bukkit.Bukkit;
@@ -100,6 +102,23 @@ public abstract class AdvancedAutoSmeltDropSystem {
     }
 
     /**
+     * Check if player has permission to use the autopickup feature.
+     * @param p     Player to check.
+     * @return true if you have permission, false otherwise.
+     * Will also disable the autopickup if the player had it enabled but loses permission.
+     */
+    public static boolean checkPickupPermission(Player p) {
+        if(p == null) return false;
+
+        AASPlayer player = PlayerRegistry.getPlayer(p);
+        if (!p.hasPermission(AASPermissions.autoPickupTogglePermission)) {
+            // ~ Check if player had AutoPickup enabled before losing permission & disable if true.
+            if (player.isAutoPickupEnabled()) {player.setAutoPickupEnabled(false);}
+            return false;
+        } else return p.hasPermission(AASPermissions.autoPickupTogglePermission);
+    }
+
+    /**
      * Check if the player can autopickup that block. (Depending on the player permissions, block location or blacklist)
      *
      * @param p     The player.
@@ -108,10 +127,11 @@ public abstract class AdvancedAutoSmeltDropSystem {
      */
     public static boolean canAutoPickup(Player p, Block block) {
         boolean canAutoPickup = PlayerRegistry.getPlayer(p).isAutoPickupEnabled();
+        boolean hasPermission = checkPickupPermission(p);
         boolean isBlockBlacklist = ConfigValues.getAutoPickupBlockBlacklist().contains(block.getType().toString());
         boolean isWorldBlacklist = ConfigValues.getAutoPickupWorldBlacklist().contains(p.getWorld().getName());
 
-        return canAutoPickup && !isBlockBlacklist && !isWorldBlacklist;
+        return hasPermission && canAutoPickup && !isBlockBlacklist && !isWorldBlacklist;
     }
 
     /**
