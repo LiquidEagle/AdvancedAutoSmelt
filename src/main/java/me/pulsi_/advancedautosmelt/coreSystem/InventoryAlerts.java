@@ -1,6 +1,7 @@
 package me.pulsi_.advancedautosmelt.coreSystem;
 
 import me.pulsi_.advancedautosmelt.AdvancedAutoSmelt;
+import me.pulsi_.advancedautosmelt.players.PlayerRegistry;
 import me.pulsi_.advancedautosmelt.utils.AASChat;
 import me.pulsi_.advancedautosmelt.utils.AASUtils;
 import me.pulsi_.advancedautosmelt.values.ConfigValues;
@@ -19,7 +20,7 @@ public class InventoryAlerts {
      * @param p The player to alert.
      */
     public static void inventoryAlerts(Player p) {
-        if (!ConfigValues.isInventoryAlertsEnabled() || !AASUtils.isInventoryFull(p)) return;
+        if (!ConfigValues.isInventoryAlertsEnabled() || !AASUtils.isInventoryFull(p) || !PlayerRegistry.getPlayer(p).isInventoryAlertsEnabled()) return;
 
         UUID uuid = p.getUniqueId();
         if (inventoryAlertsCooldown.contains(uuid)) return;
